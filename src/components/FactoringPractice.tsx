@@ -3,6 +3,7 @@ import {
   checkFactoringAnswer,
   getBinomialCount,
   getBlankCount,
+  getFactorPowers,
   getFactoringDifficultyLabel,
   isGroupingProblem,
   parseBinomialInputs,
@@ -13,7 +14,6 @@ import {
 import {
   FactoredAnswerDisplay,
   formatElapsed,
-  GroupingPolynomialDisplay,
   PolynomialDisplay,
 } from './PolynomialMath'
 
@@ -51,6 +51,7 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
   const [finalTimeMs, setFinalTimeMs] = useState<number | null>(null)
 
   const binomialCount = getBinomialCount(problem)
+  const factorPowers = getFactorPowers(problem)
   const modeLabel = getFactoringDifficultyLabel(difficulty)
   const isGrouping = isGroupingProblem(problem)
 
@@ -97,7 +98,7 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
     setFinalTimeMs(timeMs)
     setElapsedMs(timeMs)
 
-    const parsed = parseBinomialInputs(blanks, signs)
+    const parsed = parseBinomialInputs(blanks, signs, getFactorPowers(problem))
     if (!parsed) {
       setChecked(true)
       setCorrect(false)
@@ -161,17 +162,14 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
           </span>
         </div>
         <p className="factoring-prompt">
-          {isGrouping && problem.groupingTerms ? (
-            <GroupingPolynomialDisplay terms={problem.groupingTerms} />
-          ) : (
-            <PolynomialDisplay coeffs={problem.coeffs} />
-          )}
+          <PolynomialDisplay coeffs={problem.coeffs} />
         </p>
 
         <div className="factoring-answer-row">
           {Array.from({ length: binomialCount }, (_, binomialIndex) => {
             const aIndex = binomialIndex * 2
             const bIndex = aIndex + 1
+            const power = factorPowers[binomialIndex] ?? 1
             return (
               <span key={binomialIndex} className="factoring-binomial">
                 (
@@ -181,10 +179,13 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
                   className="factoring-blank"
                   value={blanks[aIndex]}
                   onChange={(e) => updateBlank(aIndex, e.target.value)}
-                  aria-label={`Coefficient of x in binomial ${binomialIndex + 1}`}
+                  aria-label={`Coefficient of x${power > 1 ? `^${power}` : ''} in binomial ${binomialIndex + 1}`}
                   disabled={inputsLocked}
                 />
-                <span className="factoring-x">x</span>
+                <span className="factoring-x">
+                  x
+                  {power > 1 ? <sup className="math-exp">{power}</sup> : null}
+                </span>
                 <button
                   type="button"
                   className="factoring-sign-toggle"

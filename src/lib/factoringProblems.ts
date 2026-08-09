@@ -1,16 +1,18 @@
 export interface FactoringBinomial {
-  /** Coefficient of x */
+  /** Coefficient of the variable term (x or x²) */
   a: number
   /** Constant term */
   b: number
+  /** Power of the variable term; default 1 (linear). Use 2 for ax² + b. */
+  power?: number
 }
 
 export type FactoringDifficulty = 'easy' | 'hard'
 
 export type FactoringProblemKind = 'quadratic' | 'grouping'
 
-/** Hard mode: chance of a 4-term grouping polynomial */
-export const GROUPING_QUESTION_CHANCE = 0.2
+/** Hard mode: chance of a cubic grouping polynomial like (ax²+b)(cx+d) */
+export const GROUPING_QUESTION_CHANCE = 0.25
 
 export interface FactoringProblem {
   id: string
@@ -18,18 +20,25 @@ export interface FactoringProblem {
   coeffs: number[]
   factors: FactoringBinomial[]
   prompt: string
-  /** Show as ax² + bx + cx + d (four separate terms) */
-  groupingTerms?: [number, number, number, number]
 }
 
+function variablePower(factor: FactoringBinomial): number {
+  return factor.power ?? 1
+}
+
+/** Multiply binomials of the form (a x^p + b) */
 function multiplyBinomials(factors: FactoringBinomial[]): number[] {
   let poly = [1]
-  for (const { a, b } of factors) {
-    const linear = [a, b]
-    const next = new Array(poly.length + 1).fill(0)
+  for (const factor of factors) {
+    const power = variablePower(factor)
+    const factorPoly = new Array(power + 1).fill(0)
+    factorPoly[0] = factor.a
+    factorPoly[power] = factor.b
+
+    const next = new Array(poly.length + power).fill(0)
     for (let i = 0; i < poly.length; i += 1) {
-      for (let j = 0; j < linear.length; j += 1) {
-        next[i + j] += poly[i] * linear[j]
+      for (let j = 0; j < factorPoly.length; j += 1) {
+        next[i + j] += poly[i] * factorPoly[j]
       }
     }
     poly = next
@@ -74,55 +83,60 @@ export function formatPolynomial(coeffs: number[]): string {
   return parts.join('') || '0'
 }
 
-function formatGroupingPolynomial(terms: [number, number, number, number]): string {
-  const [ac, ad, bc, bd] = terms
-  return (
-    formatTerm(ac, 2, true) +
-    formatTerm(ad, 1, false) +
-    formatTerm(bc, 1, false) +
-    formatTerm(bd, 0, false)
-  )
-}
-
-function getGroupingTerms(factors: FactoringBinomial[]): [number, number, number, number] | null {
-  if (factors.length !== 2) return null
-  const [f1, f2] = factors
-  const ac = f1.a * f2.a
-  const ad = f1.a * f2.b
-  const bc = f1.b * f2.a
-  const bd = f1.b * f2.b
-  if (ad === 0 || bc === 0) return null
-  return [ac, ad, bc, bd]
-}
-
 function coeffsKey(coeffs: number[]): string {
   return coeffs.join(',')
 }
 
-function addUniqueQuadratic(
+function gcd(a: number, b: number): number {
+  let x = Math.abs(a)
+  let y = Math.abs(b)
+  while (y !== 0) {
+    const t = y
+    y = x % y
+    x = t
+  }
+  return x
+}
+
+function isPerfectSquare(n: number): boolean {
+  if (n < 0) return false
+  const root = Math.round(Math.sqrt(n))
+  return root * root === n
+}
+
+/** True when ax² + b factors further as a difference of squares over the integers. */
+function isDifferenceOfSquaresBinomial(a: number, b: number): boolean {
+  return a * b < 0 && isPerfectSquare(Math.abs(a)) && isPerfectSquare(Math.abs(b))
+}
+
+function addUniqueProblem(
   bank: Map<string, FactoringProblem>,
   factors: FactoringBinomial[],
   idCounter: { value: number },
   maxAbsCoeff: number,
   kind: FactoringProblemKind = 'quadratic',
-  groupingTerms?: [number, number, number, number],
 ): void {
   const coeffs = multiplyBinomials(factors)
   if (coeffs.some((value) => Math.abs(value) > maxAbsCoeff)) return
+  if (coeffs[0] === 0) return
 
-  const key = `${kind}:${coeffsKey(coeffs)}`
+  // Prefer positive leading coefficient for the expanded polynomial.
+  let storedFactors = factors
+  let storedCoeffs = coeffs
+  if (storedCoeffs[0] < 0) {
+    storedFactors = factors.map(flipSign)
+    storedCoeffs = multiplyBinomials(storedFactors)
+  }
+
+  const key = `${kind}:${coeffsKey(storedCoeffs)}`
   if (bank.has(key)) return
 
   bank.set(key, {
     id: `f-${idCounter.value++}`,
     kind,
-    coeffs,
-    factors,
-    prompt:
-      kind === 'grouping' && groupingTerms
-        ? formatGroupingPolynomial(groupingTerms)
-        : formatPolynomial(coeffs),
-    groupingTerms,
+    coeffs: storedCoeffs,
+    factors: storedFactors,
+    prompt: formatPolynomial(storedCoeffs),
   })
 }
 
@@ -131,7 +145,7 @@ const EASY_MAX_MIDDLE = 24
 const EASY_MAX_CONSTANT = 40
 const HARD_MAX_LEADING = 14
 const HARD_MAX_ABS_COEFF = 120
-const GROUPING_MAX_ABS_COEFF = 80
+const GROUPING_MAX_ABS_COEFF = 120
 const MAX_BANK_SIZE = 1000
 
 function nonzeroInts(min: number, max: number): number[] {
@@ -152,7 +166,7 @@ function buildEasyQuestionBank(): FactoringProblem[] {
     if (coeffs[0] < 2 || coeffs[0] > EASY_MAX_LEADING) return
     if (Math.abs(coeffs[1]) > EASY_MAX_MIDDLE) return
     if (Math.abs(coeffs[2]) > EASY_MAX_CONSTANT) return
-    addUniqueQuadratic(bank, factors, idCounter, EASY_MAX_CONSTANT)
+    addUniqueProblem(bank, factors, idCounter, EASY_MAX_CONSTANT)
   }
 
   for (const a of nonzeroInts(2, EASY_MAX_LEADING)) {
@@ -193,7 +207,7 @@ function buildHardQuadraticBank(): FactoringProblem[] {
     const coeffs = multiplyBinomials(factors)
     if (coeffs.length !== 3) return
     if (coeffs[0] < 2 || coeffs[0] > HARD_MAX_LEADING) return
-    addUniqueQuadratic(bank, factors, idCounter, HARD_MAX_ABS_COEFF)
+    addUniqueProblem(bank, factors, idCounter, HARD_MAX_ABS_COEFF)
   }
 
   for (const a of nonzeroInts(2, 8)) {
@@ -226,39 +240,48 @@ function buildHardQuadraticBank(): FactoringProblem[] {
     : problems
 }
 
+/**
+ * Build cubics that factor by grouping into exactly two binomials:
+ * (ax² + b)(cx + d) — two parentheses, two terms each (worksheet #31–34 style).
+ */
 function buildHardGroupingBank(): FactoringProblem[] {
   const bank = new Map<string, FactoringProblem>()
   const idCounter = { value: 0 }
 
-  for (const a of nonzeroInts(2, 10)) {
-    for (const c of nonzeroInts(2, 10)) {
-      for (const b of nonzeroInts(-12, 12)) {
+  for (const a of nonzeroInts(1, 9)) {
+    for (const b of nonzeroInts(-12, 12)) {
+      if (gcd(a, b) !== 1) continue
+      if (isDifferenceOfSquaresBinomial(a, b)) continue
+
+      for (const c of nonzeroInts(1, 9)) {
         for (const d of nonzeroInts(-12, 12)) {
+          if (gcd(c, d) !== 1) continue
+
+          // Canonical positive-leading form (matches what students can enter).
           const factors: FactoringBinomial[] = [
-            { a, b },
-            { a: c, b: d },
+            { a, b, power: 2 },
+            { a: c, b: d, power: 1 },
           ]
-          const groupingTerms = getGroupingTerms(factors)
-          if (!groupingTerms) continue
+
           const coeffs = multiplyBinomials(factors)
+          if (coeffs.length !== 4) continue
+          // Require all four terms nonzero — true grouping cubics like the worksheet.
+          if (coeffs.some((value) => value === 0)) continue
           if (coeffs.some((value) => Math.abs(value) > GROUPING_MAX_ABS_COEFF)) continue
-          addUniqueQuadratic(
+
+          addUniqueProblem(
             bank,
             factors,
             idCounter,
             GROUPING_MAX_ABS_COEFF,
             'grouping',
-            groupingTerms,
           )
         }
       }
     }
   }
 
-  const problems = Array.from(bank.values())
-  return problems.length > MAX_BANK_SIZE
-    ? shuffle(problems).slice(0, MAX_BANK_SIZE)
-    : problems
+  return shuffle(Array.from(bank.values()))
 }
 
 let easyBankCacheVar: FactoringProblem[] | null = null
@@ -292,7 +315,7 @@ function shuffle<T>(items: T[]): T[] {
 }
 
 function flipSign(f: FactoringBinomial): FactoringBinomial {
-  return { a: -f.a, b: -f.b }
+  return { a: -f.a, b: -f.b, power: f.power }
 }
 
 function withSignFlips(factors: FactoringBinomial[]): FactoringBinomial[][] {
@@ -321,9 +344,9 @@ function parseCoefBlank(value: string): number | null {
   return n
 }
 
-function normalizeBinomial({ a, b }: FactoringBinomial): FactoringBinomial {
-  if (a < 0) return { a: -a, b: -b }
-  return { a, b }
+function normalizeBinomial(factor: FactoringBinomial): FactoringBinomial {
+  if (factor.a < 0) return flipSign(factor)
+  return factor
 }
 
 function normalizePolyCoeffs(coeffs: number[]): number[] {
@@ -343,6 +366,7 @@ function coeffsEqual(a: number[], b: number[]): boolean {
 export function parseBinomialInputs(
   values: string[],
   signs?: ('+' | '-')[],
+  powers?: number[],
 ): FactoringBinomial[] | null {
   if (values.length % 2 !== 0) return null
   const bins: FactoringBinomial[] = []
@@ -353,7 +377,8 @@ export function parseBinomialInputs(
     if (a === null || bRaw === null) return null
     const sign = signs?.[i / 2] ?? '+'
     const b = sign === '-' ? -Math.abs(bRaw) : Math.abs(bRaw)
-    bins.push({ a, b })
+    const power = powers?.[i / 2] ?? 1
+    bins.push({ a, b, power })
   }
 
   return bins
@@ -380,8 +405,9 @@ export function checkFactoringAnswer(
   }
 
   if (userFactors.length === 2) {
-    if (matchesTarget([userFactors[1], userFactors[0]])) return true
-    for (const signed of withSignFlips([userFactors[1], userFactors[0]])) {
+    const swapped = [userFactors[1], userFactors[0]]
+    if (matchesTarget(swapped)) return true
+    for (const signed of withSignFlips(swapped)) {
       if (matchesTarget(signed.map(normalizeBinomial))) return true
     }
   }
@@ -391,8 +417,16 @@ export function checkFactoringAnswer(
 
 export function formatCorrectAnswer(problem: FactoringProblem): string {
   return problem.factors
-    .map(({ a, b }) => {
-      const xPart = a === 1 ? 'x' : a === -1 ? '−x' : `${a}x`
+    .map((factor) => {
+      const { a, b } = factor
+      const power = variablePower(factor)
+      let xPart: string
+      if (power === 1) {
+        xPart = a === 1 ? 'x' : a === -1 ? '−x' : `${a}x`
+      } else {
+        const coefPart = a === 1 ? 'x' : a === -1 ? '−x' : `${a}x`
+        xPart = `${coefPart}${power}`
+      }
       const constPart = b >= 0 ? ` + ${b}` : ` − ${Math.abs(b)}`
       return `(${xPart}${constPart})`
     })
@@ -420,7 +454,7 @@ export function pickFactoringProblem(
 }
 
 export function isGroupingProblem(problem: FactoringProblem): boolean {
-  return problem.kind === 'grouping' && problem.groupingTerms !== undefined
+  return problem.kind === 'grouping'
 }
 
 export function getBlankCount(problem: FactoringProblem): number {
@@ -429,6 +463,10 @@ export function getBlankCount(problem: FactoringProblem): number {
 
 export function getBinomialCount(problem: FactoringProblem): number {
   return problem.factors.length
+}
+
+export function getFactorPowers(problem: FactoringProblem): number[] {
+  return problem.factors.map(variablePower)
 }
 
 export function getFactoringDifficultyLabel(difficulty: FactoringDifficulty): string {

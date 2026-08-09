@@ -55,67 +55,40 @@ export function PolynomialDisplay({ coeffs }: { coeffs: number[] }) {
   return <span className="math-polynomial">{nodes.length ? nodes : '0'}</span>
 }
 
-/** Render ax² + bx + cx + d with four separate terms for grouping */
-export function GroupingPolynomialDisplay({
-  terms,
-}: {
-  terms: [number, number, number, number]
-}) {
-  const [ac, ad, bc, bd] = terms
-  const nodes: ReactNode[] = []
-  let first = true
+function formatFactorVariable(a: number, power: number): ReactNode {
+  const abs = Math.abs(a)
+  const sign = a < 0 ? '−' : ''
+  const coef = abs === 1 ? '' : String(abs)
 
-  const pushTerm = (coef: number, power: number, key: string) => {
-    if (coef === 0) return
-    const abs = Math.abs(coef)
-    const prefix = termSignPrefix(coef, first)
-
-    if (power === 0) {
-      nodes.push(
-        <span key={key}>
-          {prefix}
-          {abs}
-        </span>,
-      )
-    } else if (power === 1) {
-      const body = abs === 1 ? 'x' : `${abs}x`
-      nodes.push(
-        <span key={key}>
-          {prefix}
-          {body}
-        </span>,
-      )
-    } else {
-      const body = abs === 1 ? 'x' : `${abs}x`
-      nodes.push(
-        <span key={key}>
-          {prefix}
-          {body}
-          <sup className="math-exp">{power}</sup>
-        </span>,
-      )
-    }
-
-    first = false
+  if (power === 1) {
+    return (
+      <>
+        {sign}
+        {coef}
+        x
+      </>
+    )
   }
 
-  pushTerm(ac, 2, 'ac')
-  pushTerm(ad, 1, 'ad')
-  pushTerm(bc, 1, 'bc')
-  pushTerm(bd, 0, 'bd')
-
-  return <span className="math-polynomial">{nodes.length ? nodes : '0'}</span>
+  return (
+    <>
+      {sign}
+      {coef}
+      x<sup className="math-exp">{power}</sup>
+    </>
+  )
 }
 
 export function FactoredAnswerDisplay({ factors }: { factors: FactoringBinomial[] }) {
   return (
     <span className="math-polynomial">
-      {factors.map(({ a, b }, index) => {
-        const xPart = a === 1 ? 'x' : a === -1 ? '−x' : `${a}x`
+      {factors.map((factor, index) => {
+        const { a, b } = factor
+        const power = factor.power ?? 1
         const constPart = b >= 0 ? ` + ${b}` : ` − ${Math.abs(b)}`
         return (
           <span key={index}>
-            ({xPart}
+            ({formatFactorVariable(a, power)}
             {constPart})
           </span>
         )
