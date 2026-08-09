@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { FactoringPractice } from './FactoringPractice'
 import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
 import { CONTINENTS } from '../lib/countries'
 import { ThemeToggle } from '../lib/theme'
@@ -197,6 +198,8 @@ export function HomeScreen({
           </ul>
         )}
       </section>
+
+      <FactoringPractice />
     </div>
   )
 }

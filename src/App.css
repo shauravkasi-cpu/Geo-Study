@@ -990,3 +990,122 @@
     width: 100%;
   }
 }
+
+/* Factoring practice */
+.factoring-section {
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
+  margin-top: 0.5rem;
+}
+
+.factoring-score {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.factoring-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 4px 16px var(--shadow);
+}
+
+.factoring-prompt-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.factoring-prompt {
+  margin: 0 0 1.25rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+  font-family: 'Cambria Math', 'Times New Roman', serif;
+  color: var(--text);
+}
+
+.factoring-answer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-family: 'Cambria Math', 'Times New Roman', serif;
+}
+
+.factoring-binomial {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  white-space: nowrap;
+}
+
+.factoring-blank {
+  width: 2.6rem;
+  height: 2.2rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--bg-subtle);
+  color: var(--text);
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.factoring-blank:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
+}
+
+.factoring-x {
+  font-weight: 600;
+}
+
+.factoring-plus {
+  color: var(--text-muted);
+  margin: 0 0.05rem;
+}
+
+.factoring-feedback {
+  margin: 0 0 0.85rem;
+  font-size: 0.92rem;
+}
+
+.factoring-feedback-correct {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.factoring-feedback-wrong {
+  color: var(--error);
+}
+
+.factoring-solution {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.factoring-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .factoring-prompt {
+    font-size: 1.2rem;
+  }
+
+  .factoring-answer-row {
+    font-size: 1rem;
+  }
+}
