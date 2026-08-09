@@ -1,8 +1,5 @@
 import type { ReactNode } from 'react'
-import type {
-  FactoringBinomial,
-  FactoringQuadraticFactor,
-} from '../lib/factoringProblems'
+import type { FactoringBinomial } from '../lib/factoringProblems'
 
 function termSignPrefix(coef: number, first: boolean): string {
   const positive = coef > 0
@@ -58,18 +55,13 @@ export function PolynomialDisplay({ coeffs }: { coeffs: number[] }) {
   return <span className="math-polynomial">{nodes.length ? nodes : '0'}</span>
 }
 
-function LinearFactorDisplay({ a, b }: FactoringBinomial) {
-  const xPart = a === 1 ? 'x' : a === -1 ? '−x' : `${a}x`
-  const constPart = b >= 0 ? ` + ${b}` : ` − ${Math.abs(b)}`
-  return (
-    <span>
-      ({xPart}
-      {constPart})
-    </span>
-  )
-}
-
-function QuadraticFactorDisplay({ a, b, c }: FactoringQuadraticFactor) {
+/** Render ax² + bx + cx + d with four separate terms for grouping */
+export function GroupingPolynomialDisplay({
+  terms,
+}: {
+  terms: [number, number, number, number]
+}) {
+  const [ac, ad, bc, bd] = terms
   const nodes: ReactNode[] = []
   let first = true
 
@@ -107,34 +99,27 @@ function QuadraticFactorDisplay({ a, b, c }: FactoringQuadraticFactor) {
     first = false
   }
 
-  nodes.push(<span key="open">(</span>)
-  pushTerm(a, 2, 'a')
-  pushTerm(b, 1, 'b')
-  pushTerm(c, 0, 'c')
-  nodes.push(<span key="close">)</span>)
+  pushTerm(ac, 2, 'ac')
+  pushTerm(ad, 1, 'ad')
+  pushTerm(bc, 1, 'bc')
+  pushTerm(bd, 0, 'bd')
 
-  return <span>{nodes}</span>
+  return <span className="math-polynomial">{nodes.length ? nodes : '0'}</span>
 }
 
 export function FactoredAnswerDisplay({ factors }: { factors: FactoringBinomial[] }) {
   return (
     <span className="math-polynomial">
-      {factors.map((factor, index) => (
-        <LinearFactorDisplay key={index} {...factor} />
-      ))}
-    </span>
-  )
-}
-
-export function CubicFactoredAnswerDisplay({
-  cubicFactors,
-}: {
-  cubicFactors: { linear: FactoringBinomial; quadratic: FactoringQuadraticFactor }
-}) {
-  return (
-    <span className="math-polynomial">
-      <LinearFactorDisplay {...cubicFactors.linear} />
-      <QuadraticFactorDisplay {...cubicFactors.quadratic} />
+      {factors.map(({ a, b }, index) => {
+        const xPart = a === 1 ? 'x' : a === -1 ? '−x' : `${a}x`
+        const constPart = b >= 0 ? ` + ${b}` : ` − ${Math.abs(b)}`
+        return (
+          <span key={index}>
+            ({xPart}
+            {constPart})
+          </span>
+        )
+      })}
     </span>
   )
 }
