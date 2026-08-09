@@ -9,7 +9,6 @@ export function SiteShell({ children }: SiteShellProps) {
     <div className="site-shell">
       <p className="site-credit site-credit-top">Created by Shaurav Kasi</p>
       {children}
-      <p className="site-credit site-credit-bottom">Created by Shaurav Kasi</p>
     </div>
   )
 }

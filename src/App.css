@@ -60,12 +60,6 @@
   right: 1rem;
 }
 
-.site-credit-bottom {
-  position: fixed;
-  bottom: 0.45rem;
-  right: 1rem;
-}
-
 /* Buttons */
 .btn-primary {
   background: var(--accent);
