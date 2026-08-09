@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
+  checkCubicFactoringAnswer,
   checkFactoringAnswer,
   getBinomialCount,
   getBlankCount,
   getFactoringDifficultyLabel,
   isCubicProblem,
   parseBinomialInputs,
+  parseCubicFactoringInputs,
   pickFactoringProblem,
   type FactoringDifficulty,
   type FactoringProblem,
 } from '../lib/factoringProblems'
 import {
+  CubicFactoredAnswerDisplay,
   FactoredAnswerDisplay,
   formatElapsed,
   PolynomialDisplay,
@@ -31,6 +34,15 @@ function emptySigns(count: number): BinomialSign[] {
   return Array.from({ length: count }, () => '+')
 }
 
+function getInitialCubicInputs() {
+  return {
+    linearBlanks: emptyBlanks(2),
+    linearSign: '+' as BinomialSign,
+    quadBlanks: emptyBlanks(3),
+    quadSigns: emptySigns(2),
+  }
+}
+
 export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps) {
   const [problem, setProblem] = useState<FactoringProblem>(() =>
     pickFactoringProblem(new Set(), difficulty),
@@ -41,6 +53,7 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
   const [signs, setSigns] = useState<BinomialSign[]>(() =>
     emptySigns(getBinomialCount(problem)),
   )
+  const [cubicInputs, setCubicInputs] = useState(getInitialCubicInputs)
   const [checked, setChecked] = useState(false)
   const [correct, setCorrect] = useState<boolean | null>(null)
   const [score, setScore] = useState({ correct: 0, total: 0 })
@@ -49,9 +62,9 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
   const [elapsedMs, setElapsedMs] = useState(0)
   const [finalTimeMs, setFinalTimeMs] = useState<number | null>(null)
 
-  const binomialCount = getBinomialCount(problem)
-  const modeLabel = getFactoringDifficultyLabel(difficulty)
   const isCubic = isCubicProblem(problem)
+  const binomialCount = isCubic ? 0 : getBinomialCount(problem)
+  const modeLabel = getFactoringDifficultyLabel(difficulty)
 
   useEffect(() => {
     if (checked) return undefined
@@ -91,25 +104,77 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
     setFinalTimeMs(null)
   }, [])
 
+  const updateCubicBlank = useCallback(
+    (part: 'linear' | 'quad', index: number, value: string) => {
+      if (!/^\d*$/.test(value)) return
+      setCubicInputs((prev) => {
+        if (part === 'linear') {
+          const linearBlanks = [...prev.linearBlanks]
+          linearBlanks[index] = value
+          return { ...prev, linearBlanks }
+        }
+        const quadBlanks = [...prev.quadBlanks]
+        quadBlanks[index] = value
+        return { ...prev, quadBlanks }
+      })
+      setChecked(false)
+      setCorrect(null)
+      setFinalTimeMs(null)
+    },
+    [],
+  )
+
+  const toggleCubicSign = useCallback((part: 'linear' | 'quad', index: number) => {
+    setCubicInputs((prev) => {
+      if (part === 'linear') {
+        return { ...prev, linearSign: prev.linearSign === '+' ? '-' : '+' }
+      }
+      const quadSigns = [...prev.quadSigns] as BinomialSign[]
+      quadSigns[index] = quadSigns[index] === '+' ? '-' : '+'
+      return { ...prev, quadSigns }
+    })
+    setChecked(false)
+    setCorrect(null)
+    setFinalTimeMs(null)
+  }, [])
+
   const handleCheck = useCallback(() => {
     const timeMs = Date.now() - questionStart
     setFinalTimeMs(timeMs)
     setElapsedMs(timeMs)
 
-    const parsed = parseBinomialInputs(blanks, signs)
-    if (!parsed) {
-      setChecked(true)
-      setCorrect(false)
-      return
+    let isCorrect = false
+
+    if (isCubicProblem(problem)) {
+      const parsed = parseCubicFactoringInputs(
+        cubicInputs.linearBlanks,
+        cubicInputs.linearSign,
+        cubicInputs.quadBlanks,
+        cubicInputs.quadSigns,
+      )
+      if (!parsed) {
+        setChecked(true)
+        setCorrect(false)
+        return
+      }
+      isCorrect = checkCubicFactoringAnswer(problem, parsed.linear, parsed.quadratic)
+    } else {
+      const parsed = parseBinomialInputs(blanks, signs)
+      if (!parsed) {
+        setChecked(true)
+        setCorrect(false)
+        return
+      }
+      isCorrect = checkFactoringAnswer(problem, parsed)
     }
-    const isCorrect = checkFactoringAnswer(problem, parsed)
+
     setChecked(true)
     setCorrect(isCorrect)
     setScore((prev) => ({
       correct: prev.correct + (isCorrect ? 1 : 0),
       total: prev.total + 1,
     }))
-  }, [blanks, problem, questionStart, signs])
+  }, [blanks, cubicInputs, problem, questionStart, signs])
 
   const handleNext = useCallback(() => {
     const nextSeen = new Set(seen)
@@ -120,17 +185,25 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
     setProblem(nextProblem)
     setBlanks(emptyBlanks(getBlankCount(nextProblem)))
     setSigns(emptySigns(getBinomialCount(nextProblem)))
+    setCubicInputs(getInitialCubicInputs())
     setChecked(false)
     setCorrect(null)
     resetTimer()
   }, [difficulty, problem.id, seen, resetTimer])
 
   const canCheck = useMemo(() => {
+    if (isCubic) {
+      return (
+        cubicInputs.linearBlanks[1].trim() !== '' &&
+        cubicInputs.quadBlanks[2].trim() !== ''
+      )
+    }
+
     for (let i = 0; i < binomialCount; i += 1) {
       if (blanks[i * 2 + 1].trim() === '') return false
     }
     return true
-  }, [blanks, binomialCount])
+  }, [binomialCount, blanks, cubicInputs, isCubic])
 
   const displayTimeMs = finalTimeMs ?? elapsedMs
   const inputsLocked = checked && correct === true
@@ -152,7 +225,9 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
 
       <div className="factoring-card">
         <div className="factoring-card-top">
-          <p className="factoring-prompt-label">Factor completely</p>
+          <p className="factoring-prompt-label">
+            {isCubic ? 'Factor by grouping' : 'Factor completely'}
+          </p>
           <span className={`factoring-stopwatch ${checked ? 'factoring-stopwatch-done' : ''}`}>
             ⏱ {formatElapsed(displayTimeMs)}
           </span>
@@ -160,49 +235,137 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
         <p className="factoring-prompt">
           <PolynomialDisplay coeffs={problem.coeffs} />
         </p>
-        {isCubic && (
-          <p className="factoring-hint">Enter three binomial factors.</p>
-        )}
 
         <div className="factoring-answer-row">
-          {Array.from({ length: binomialCount }, (_, binomialIndex) => {
-            const aIndex = binomialIndex * 2
-            const bIndex = aIndex + 1
-            return (
-              <span key={binomialIndex} className="factoring-binomial">
+          {isCubic ? (
+            <>
+              <span className="factoring-binomial">
                 (
                 <input
                   type="text"
                   inputMode="numeric"
                   className="factoring-blank"
-                  value={blanks[aIndex]}
-                  onChange={(e) => updateBlank(aIndex, e.target.value)}
-                  aria-label={`Coefficient of x in binomial ${binomialIndex + 1}`}
+                  value={cubicInputs.linearBlanks[0]}
+                  onChange={(e) => updateCubicBlank('linear', 0, e.target.value)}
+                  aria-label="Coefficient of x in first factor"
                   disabled={inputsLocked}
                 />
                 <span className="factoring-x">x</span>
                 <button
                   type="button"
                   className="factoring-sign-toggle"
-                  onClick={() => toggleSign(binomialIndex)}
+                  onClick={() => toggleCubicSign('linear', 0)}
                   disabled={inputsLocked}
-                  aria-label={`Toggle sign for constant in binomial ${binomialIndex + 1}`}
+                  aria-label="Toggle sign for constant in first factor"
                 >
-                  {signs[binomialIndex]}
+                  {cubicInputs.linearSign}
                 </button>
                 <input
                   type="text"
                   inputMode="numeric"
                   className="factoring-blank"
-                  value={blanks[bIndex]}
-                  onChange={(e) => updateBlank(bIndex, e.target.value)}
-                  aria-label={`Constant in binomial ${binomialIndex + 1}`}
+                  value={cubicInputs.linearBlanks[1]}
+                  onChange={(e) => updateCubicBlank('linear', 1, e.target.value)}
+                  aria-label="Constant in first factor"
                   disabled={inputsLocked}
                 />
                 )
               </span>
-            )
-          })}
+              <span className="factoring-binomial factoring-quadratic-factor">
+                (
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  className="factoring-blank"
+                  value={cubicInputs.quadBlanks[0]}
+                  onChange={(e) => updateCubicBlank('quad', 0, e.target.value)}
+                  aria-label="Coefficient of x squared in second factor"
+                  disabled={inputsLocked}
+                />
+                <span className="factoring-x">
+                  x<sup className="math-exp">2</sup>
+                </span>
+                <button
+                  type="button"
+                  className="factoring-sign-toggle"
+                  onClick={() => toggleCubicSign('quad', 0)}
+                  disabled={inputsLocked}
+                  aria-label="Toggle sign for x term in second factor"
+                >
+                  {cubicInputs.quadSigns[0]}
+                </button>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  className="factoring-blank factoring-blank-optional"
+                  value={cubicInputs.quadBlanks[1]}
+                  onChange={(e) => updateCubicBlank('quad', 1, e.target.value)}
+                  aria-label="Coefficient of x in second factor"
+                  disabled={inputsLocked}
+                  placeholder="0"
+                />
+                <span className="factoring-x">x</span>
+                <button
+                  type="button"
+                  className="factoring-sign-toggle"
+                  onClick={() => toggleCubicSign('quad', 1)}
+                  disabled={inputsLocked}
+                  aria-label="Toggle sign for constant in second factor"
+                >
+                  {cubicInputs.quadSigns[1]}
+                </button>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  className="factoring-blank"
+                  value={cubicInputs.quadBlanks[2]}
+                  onChange={(e) => updateCubicBlank('quad', 2, e.target.value)}
+                  aria-label="Constant in second factor"
+                  disabled={inputsLocked}
+                />
+                )
+              </span>
+            </>
+          ) : (
+            Array.from({ length: binomialCount }, (_, binomialIndex) => {
+              const aIndex = binomialIndex * 2
+              const bIndex = aIndex + 1
+              return (
+                <span key={binomialIndex} className="factoring-binomial">
+                  (
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    className="factoring-blank"
+                    value={blanks[aIndex]}
+                    onChange={(e) => updateBlank(aIndex, e.target.value)}
+                    aria-label={`Coefficient of x in binomial ${binomialIndex + 1}`}
+                    disabled={inputsLocked}
+                  />
+                  <span className="factoring-x">x</span>
+                  <button
+                    type="button"
+                    className="factoring-sign-toggle"
+                    onClick={() => toggleSign(binomialIndex)}
+                    disabled={inputsLocked}
+                    aria-label={`Toggle sign for constant in binomial ${binomialIndex + 1}`}
+                  >
+                    {signs[binomialIndex]}
+                  </button>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    className="factoring-blank"
+                    value={blanks[bIndex]}
+                    onChange={(e) => updateBlank(bIndex, e.target.value)}
+                    aria-label={`Constant in binomial ${binomialIndex + 1}`}
+                    disabled={inputsLocked}
+                  />
+                  )
+                </span>
+              )
+            })
+          )}
         </div>
 
         {checked && (
@@ -220,7 +383,11 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
             <p className="factoring-solution">
               Answer:{' '}
               <strong>
-                <FactoredAnswerDisplay factors={problem.factors} />
+                {problem.cubicFactors ? (
+                  <CubicFactoredAnswerDisplay cubicFactors={problem.cubicFactors} />
+                ) : (
+                  <FactoredAnswerDisplay factors={problem.factors} />
+                )}
               </strong>
             </p>
           </div>
