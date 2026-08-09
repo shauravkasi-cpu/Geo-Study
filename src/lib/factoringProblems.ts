@@ -106,11 +106,6 @@ function coeffsKey(coeffs: number[]): string {
   return coeffs.join(',')
 }
 
-function getAcProduct(coeffs: number[]): number {
-  if (coeffs.length < 3) return 0
-  return coeffs[0] * coeffs[coeffs.length - 1]
-}
-
 function addUniqueQuadratic(
   bank: Map<string, FactoringProblem>,
   factors: FactoringBinomial[],
@@ -157,11 +152,10 @@ function addUniqueCubic(
   })
 }
 
-const MAX_ABS_COEFF = 36
+const EASY_MAX_MIDDLE = 16
+const EASY_MAX_CONSTANT = 60
 const HARD_MAX_ABS_COEFF = 120
-const CUBIC_MAX_ABS_COEFF = 80
-const HARD_MIN_AC_PRODUCT = 101
-const HARD_MAX_AC_PRODUCT = 499
+const CUBIC_MAX_ABS_COEFF = 70
 const MAX_BANK_SIZE = 1000
 
 function nonzeroInts(min: number, max: number): number[] {
@@ -184,31 +178,19 @@ function buildEasyQuestionBank(): FactoringProblem[] {
   const bank = new Map<string, FactoringProblem>()
   const idCounter = { value: 0 }
 
-  const add = (factors: FactoringBinomial[]) =>
-    addUniqueQuadratic(bank, factors, idCounter, MAX_ABS_COEFF)
+  const add = (factors: FactoringBinomial[]) => {
+    const coeffs = multiplyBinomials(factors)
+    if (coeffs.length !== 3 || coeffs[0] !== 1) return
+    if (Math.abs(coeffs[1]) > EASY_MAX_MIDDLE) return
+    if (Math.abs(coeffs[2]) > EASY_MAX_CONSTANT) return
+    addUniqueQuadratic(bank, factors, idCounter, EASY_MAX_CONSTANT)
+  }
 
-  for (const b1 of nonzeroInts(-7, 7)) {
-    for (const b2 of nonzeroInts(-7, 7)) {
+  // Worksheet-style easy: x² + bx + c  →  (x + b)(x + c), small numbers
+  for (const b1 of nonzeroInts(-15, 15)) {
+    for (const b2 of nonzeroInts(-15, 15)) {
       add([
         { a: 1, b: b1 },
-        { a: 1, b: b2 },
-      ])
-    }
-  }
-
-  for (const b1 of nonzeroInts(-5, 5)) {
-    for (const b2 of nonzeroInts(-5, 5)) {
-      add([
-        { a: 2, b: b1 },
-        { a: 1, b: b2 },
-      ])
-    }
-  }
-
-  for (const b1 of nonzeroInts(-4, 4)) {
-    for (const b2 of nonzeroInts(-4, 4)) {
-      add([
-        { a: 3, b: b1 },
         { a: 1, b: b2 },
       ])
     }
@@ -226,15 +208,17 @@ function buildHardQuadraticBank(): FactoringProblem[] {
 
   const add = (factors: FactoringBinomial[]) => {
     const coeffs = multiplyBinomials(factors)
-    const acProduct = getAcProduct(coeffs)
-    if (acProduct < HARD_MIN_AC_PRODUCT || acProduct > HARD_MAX_AC_PRODUCT) return
+    if (coeffs.length !== 3) return
+    // Hard trinomials have leading coefficient ≥ 2 (worksheet #11–22)
+    if (coeffs[0] < 2) return
     addUniqueQuadratic(bank, factors, idCounter, HARD_MAX_ABS_COEFF)
   }
 
-  for (const a of nonzeroInts(2, 16)) {
-    for (const c of nonzeroInts(2, 16)) {
-      for (const b of nonzeroInts(-20, 20)) {
-        for (const d of nonzeroInts(-20, 20)) {
+  // Worksheet-style hard: ak² + bk + c  →  (a₁k + b₁)(a₂k + b₂), bigger numbers
+  for (const a of nonzeroInts(2, 12)) {
+    for (const c of nonzeroInts(2, 12)) {
+      for (const b of nonzeroInts(-25, 25)) {
+        for (const d of nonzeroInts(-25, 25)) {
           add([
             { a, b },
             { a: c, b: d },
@@ -244,9 +228,9 @@ function buildHardQuadraticBank(): FactoringProblem[] {
     }
   }
 
-  for (const a of nonzeroInts(4, 16)) {
-    for (const b of nonzeroInts(-20, 20)) {
-      for (const c of nonzeroInts(-20, 20)) {
+  for (const a of nonzeroInts(2, 12)) {
+    for (const b of nonzeroInts(-25, 25)) {
+      for (const c of nonzeroInts(-25, 25)) {
         add([
           { a, b },
           { a: 1, b: c },
@@ -265,12 +249,12 @@ function buildHardCubicBank(): FactoringProblem[] {
   const bank = new Map<string, FactoringProblem>()
   const idCounter = { value: 0 }
 
-  // Cubics from (ax + b)(cx² + dx + e) — factor by grouping, two parentheses
-  for (const la of nonzeroInts(1, 8)) {
-    for (const lb of nonzeroInts(-10, 10)) {
-      for (const qa of nonzeroInts(1, 8)) {
-        for (const qb of ints(-10, 10)) {
-          for (const qc of nonzeroInts(-10, 10)) {
+  // Worksheet-style 4-term cubics (#31–35): (ax + b)(cx² + dx + e)
+  for (const la of nonzeroInts(1, 10)) {
+    for (const lb of nonzeroInts(-12, 12)) {
+      for (const qa of nonzeroInts(1, 10)) {
+        for (const qb of ints(-12, 12)) {
+          for (const qc of nonzeroInts(-12, 12)) {
             addUniqueCubic(
               bank,
               { a: la, b: lb },
