@@ -145,8 +145,21 @@ const EASY_MAX_MIDDLE = 24
 const EASY_MAX_CONSTANT = 40
 const HARD_MAX_LEADING = 14
 const HARD_MAX_ABS_COEFF = 120
+/** Hard mode x-method: |leading × constant| must stay in this range. */
+const HARD_MIN_AC_PRODUCT = 101
+const HARD_MAX_AC_PRODUCT = 400
 const GROUPING_MAX_ABS_COEFF = 120
 const MAX_BANK_SIZE = 1000
+
+function acProduct(coeffs: number[]): number {
+  if (coeffs.length < 2) return 0
+  return Math.abs(coeffs[0] * coeffs[coeffs.length - 1])
+}
+
+function isHardAcProductAllowed(coeffs: number[]): boolean {
+  const product = acProduct(coeffs)
+  return product >= HARD_MIN_AC_PRODUCT && product <= HARD_MAX_AC_PRODUCT
+}
 
 function nonzeroInts(min: number, max: number): number[] {
   const values: number[] = []
@@ -207,6 +220,7 @@ function buildHardQuadraticBank(): FactoringProblem[] {
     const coeffs = multiplyBinomials(factors)
     if (coeffs.length !== 3) return
     if (coeffs[0] < 2 || coeffs[0] > HARD_MAX_LEADING) return
+    if (!isHardAcProductAllowed(coeffs)) return
     addUniqueProblem(bank, factors, idCounter, HARD_MAX_ABS_COEFF)
   }
 
@@ -268,6 +282,8 @@ function buildHardGroupingBank(): FactoringProblem[] {
           // Require all four terms nonzero — true grouping cubics like the worksheet.
           if (coeffs.some((value) => value === 0)) continue
           if (coeffs.some((value) => Math.abs(value) > GROUPING_MAX_ABS_COEFF)) continue
+          // Grouping cubics: only cap the product (no x-method minimum).
+          if (acProduct(coeffs) > HARD_MAX_AC_PRODUCT) continue
 
           addUniqueProblem(
             bank,
