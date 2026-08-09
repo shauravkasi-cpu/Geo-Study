@@ -119,10 +119,12 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
     resetTimer()
   }, [problem.id, seen, resetTimer])
 
-  const canCheck = useMemo(
-    () => blanks.every((b) => b.trim() !== ''),
-    [blanks],
-  )
+  const canCheck = useMemo(() => {
+    for (let i = 0; i < binomialCount; i += 1) {
+      if (blanks[i * 2 + 1].trim() === '') return false
+    }
+    return true
+  }, [blanks, binomialCount])
 
   const displayTimeMs = finalTimeMs ?? elapsedMs
   const inputsLocked = checked && correct === true

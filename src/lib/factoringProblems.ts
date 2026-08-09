@@ -169,18 +169,6 @@ function shuffle<T>(items: T[]): T[] {
   return copy
 }
 
-function permute<T>(items: T[]): T[][] {
-  if (items.length <= 1) return [items]
-  const result: T[][] = []
-  for (let i = 0; i < items.length; i += 1) {
-    const rest = [...items.slice(0, i), ...items.slice(i + 1)]
-    for (const p of permute(rest)) {
-      result.push([items[i], ...p])
-    }
-  }
-  return result
-}
-
 function flipSign(f: FactoringBinomial): FactoringBinomial {
   return { a: -f.a, b: -f.b }
 }
@@ -203,6 +191,34 @@ function parseBlank(value: string): number | null {
   return Number.isFinite(n) && Number.isInteger(n) ? n : null
 }
 
+/** Blank or 1 → coefficient 1 (x and 1x are the same) */
+function parseCoefBlank(value: string): number | null {
+  const trimmed = value.trim()
+  if (trimmed === '') return 1
+  const n = parseBlank(trimmed)
+  if (n === null || n === 0) return null
+  return n
+}
+
+function normalizeBinomial({ a, b }: FactoringBinomial): FactoringBinomial {
+  if (a < 0) return { a: -a, b: -b }
+  return { a, b }
+}
+
+function normalizeQuadraticCoeffs(coeffs: number[]): number[] {
+  while (coeffs.length > 1 && coeffs[0] === 0) {
+    coeffs = coeffs.slice(1)
+  }
+  return coeffs
+}
+
+function coeffsEqual(a: number[], b: number[]): boolean {
+  const left = normalizeQuadraticCoeffs([...a])
+  const right = normalizeQuadraticCoeffs([...b])
+  if (left.length !== right.length) return false
+  return left.every((value, index) => value === right[index])
+}
+
 export function parseBinomialInputs(
   values: string[],
   signs?: ('+' | '-')[],
@@ -211,10 +227,9 @@ export function parseBinomialInputs(
   const bins: FactoringBinomial[] = []
 
   for (let i = 0; i < values.length; i += 2) {
-    const a = parseBlank(values[i])
+    const a = parseCoefBlank(values[i])
     const bRaw = parseBlank(values[i + 1])
     if (a === null || bRaw === null) return null
-    if (a === 0) return null
     const sign = signs?.[i / 2] ?? '+'
     const b = sign === '-' ? -Math.abs(bRaw) : Math.abs(bRaw)
     bins.push({ a, b })
@@ -229,18 +244,27 @@ export function checkFactoringAnswer(
 ): boolean {
   if (userFactors.length !== problem.factors.length) return false
 
-  const target = problem.coeffs
-  const permutations = permute(userFactors)
+  const target = normalizeQuadraticCoeffs(problem.coeffs)
 
-  for (const order of permutations) {
-    for (const signed of withSignFlips(order)) {
-      const expanded = multiplyBinomials(signed)
-      if (
-        expanded.length === target.length &&
-        expanded.every((v, i) => v === target[i])
-      ) {
-        return true
-      }
+  const matchesTarget = (factors: FactoringBinomial[]) =>
+    coeffsEqual(
+      normalizeQuadraticCoeffs(multiplyBinomials(factors)),
+      target,
+    )
+
+  // Order does not matter — (x+2)(x+3) equals (x+3)(x+2)
+  if (matchesTarget(userFactors)) return true
+
+  // Allow equivalent sign forms, e.g. (-x-2)(-x-3) = (x+2)(x+3)
+  for (const signed of withSignFlips(userFactors)) {
+    if (matchesTarget(signed.map(normalizeBinomial))) return true
+  }
+
+  // Explicit swap for two-binomial answers
+  if (userFactors.length === 2) {
+    if (matchesTarget([userFactors[1], userFactors[0]])) return true
+    for (const signed of withSignFlips([userFactors[1], userFactors[0]])) {
+      if (matchesTarget(signed.map(normalizeBinomial))) return true
     }
   }
 
