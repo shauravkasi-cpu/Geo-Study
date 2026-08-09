@@ -75,8 +75,11 @@ function addUniqueProblem(
   bank: Map<string, FactoringProblem>,
   factors: FactoringBinomial[],
   idCounter: { value: number },
+  maxAbsCoeff: number,
 ): void {
   const coeffs = multiplyBinomials(factors)
+  if (coeffs.some((value) => Math.abs(value) > maxAbsCoeff)) return
+
   const kind = factors.length === 2 ? 'quadratic' : 'cubic'
   const key = `${kind}:${coeffsKey(coeffs)}`
   if (bank.has(key)) return
@@ -90,57 +93,74 @@ function addUniqueProblem(
   })
 }
 
+const MAX_ABS_COEFF = 36
+const MAX_BANK_SIZE = 1000
+
+function nonzeroInts(min: number, max: number): number[] {
+  const values: number[] = []
+  for (let n = min; n <= max; n += 1) {
+    if (n !== 0) values.push(n)
+  }
+  return values
+}
+
 function buildQuestionBank(): FactoringProblem[] {
   const bank = new Map<string, FactoringProblem>()
   const idCounter = { value: 0 }
 
-  // Quadratics (ax+b)(cx+d) — Algebra 1–2 integer coefficients
-  for (let a1 = 1; a1 <= 5; a1 += 1) {
-    for (let b1 = -12; b1 <= 12; b1 += 1) {
-      if (b1 === 0) continue
-      for (let a2 = 1; a2 <= 5; a2 += 1) {
-        for (let b2 = -12; b2 <= 12; b2 += 1) {
-          if (b2 === 0) continue
-          addUniqueProblem(
-            bank,
-            [
-              { a: a1, b: b1 },
-              { a: a2, b: b2 },
-            ],
-            idCounter,
-          )
-        }
+  const add = (factors: FactoringBinomial[]) =>
+    addUniqueProblem(bank, factors, idCounter, MAX_ABS_COEFF)
+
+  // Simple quadratics: (x + b)(x + c)
+  for (const b1 of nonzeroInts(-7, 7)) {
+    for (const b2 of nonzeroInts(-7, 7)) {
+      add([
+        { a: 1, b: b1 },
+        { a: 1, b: b2 },
+      ])
+    }
+  }
+
+  // Quadratics with leading 2: (2x + b)(x + c)
+  for (const b1 of nonzeroInts(-5, 5)) {
+    for (const b2 of nonzeroInts(-5, 5)) {
+      add([
+        { a: 2, b: b1 },
+        { a: 1, b: b2 },
+      ])
+    }
+  }
+
+  // Simple cubics: (x + a)(x + b)(x + c)
+  for (const b1 of nonzeroInts(-5, 5)) {
+    for (const b2 of nonzeroInts(-5, 5)) {
+      for (const b3 of nonzeroInts(-5, 5)) {
+        add([
+          { a: 1, b: b1 },
+          { a: 1, b: b2 },
+          { a: 1, b: b3 },
+        ])
       }
     }
   }
 
-  // Cubics (ax+b)(cx+d)(ex+f)
-  for (let a1 = 1; a1 <= 3; a1 += 1) {
-    for (let b1 = -9; b1 <= 9; b1 += 1) {
-      if (b1 === 0) continue
-      for (let a2 = 1; a2 <= 4; a2 += 1) {
-        for (let b2 = -9; b2 <= 9; b2 += 1) {
-          if (b2 === 0) continue
-          for (let a3 = 1; a3 <= 4; a3 += 1) {
-            for (let b3 = -9; b3 <= 9; b3 += 1) {
-              if (b3 === 0) continue
-              addUniqueProblem(
-                bank,
-                [
-                  { a: a1, b: b1 },
-                  { a: a2, b: b2 },
-                  { a: a3, b: b3 },
-                ],
-                idCounter,
-              )
-            }
-          }
-        }
+  // Cubics with one leading 2: (2x + a)(x + b)(x + c)
+  for (const b1 of nonzeroInts(-4, 4)) {
+    for (const b2 of nonzeroInts(-4, 4)) {
+      for (const b3 of nonzeroInts(-4, 4)) {
+        add([
+          { a: 2, b: b1 },
+          { a: 1, b: b2 },
+          { a: 1, b: b3 },
+        ])
       }
     }
   }
 
-  return Array.from(bank.values())
+  const problems = Array.from(bank.values())
+  return problems.length > MAX_BANK_SIZE
+    ? shuffle(problems).slice(0, MAX_BANK_SIZE)
+    : problems
 }
 
 let questionBankCache: FactoringProblem[] | null = null
