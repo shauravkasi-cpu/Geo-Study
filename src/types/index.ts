@@ -67,7 +67,7 @@ export type AppScreen =
   | { view: 'quiz'; session: QuizSession }
   | { view: 'results'; session: QuizSession }
   | { view: 'ap-human-reference' }
-  | { view: 'factoring' }
+  | { view: 'factoring'; difficulty: FactoringDifficulty }
 
 export interface MapClickResult {
   lngLat: [number, number]
@@ -80,6 +80,8 @@ export interface ValidationResult {
   unmatched: string[]
   suggestions: Record<string, string[]>
 }
+
+export type FactoringDifficulty = 'easy' | 'hard'
 
 export type Theme = 'light' | 'dark'
 

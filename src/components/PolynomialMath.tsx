@@ -55,6 +55,58 @@ export function PolynomialDisplay({ coeffs }: { coeffs: number[] }) {
   return <span className="math-polynomial">{nodes.length ? nodes : '0'}</span>
 }
 
+/** Render a 4-term polynomial for grouping practice (ax² + bx + cx + d) */
+export function GroupingPolynomialDisplay({
+  terms,
+}: {
+  terms: [number, number, number, number]
+}) {
+  const [ac, ad, bc, bd] = terms
+  const nodes: ReactNode[] = []
+  let first = true
+
+  const pushTerm = (coef: number, power: number, key: string) => {
+    if (coef === 0) return
+    const abs = Math.abs(coef)
+    const prefix = termSignPrefix(coef, first)
+
+    if (power === 0) {
+      nodes.push(
+        <span key={key}>
+          {prefix}
+          {abs}
+        </span>,
+      )
+    } else if (power === 1) {
+      const body = abs === 1 ? 'x' : `${abs}x`
+      nodes.push(
+        <span key={key}>
+          {prefix}
+          {body}
+        </span>,
+      )
+    } else {
+      const body = abs === 1 ? 'x' : `${abs}x`
+      nodes.push(
+        <span key={key}>
+          {prefix}
+          {body}
+          <sup className="math-exp">{power}</sup>
+        </span>,
+      )
+    }
+
+    first = false
+  }
+
+  pushTerm(ac, 2, 'ac')
+  pushTerm(ad, 1, 'ad')
+  pushTerm(bc, 1, 'bc')
+  pushTerm(bd, 0, 'bd')
+
+  return <span className="math-polynomial">{nodes.length ? nodes : '0'}</span>
+}
+
 export function FactoredAnswerDisplay({ factors }: { factors: FactoringBinomial[] }) {
   return (
     <span className="math-polynomial">

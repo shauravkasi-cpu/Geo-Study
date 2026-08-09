@@ -3,7 +3,7 @@ import { AP_HUMAN_QUIZ_1_NAME } from '../lib/apHumanQuiz1'
 import { CONTINENTS } from '../lib/countries'
 import { ThemeToggle } from '../lib/theme'
 import { deleteCustomQuiz, loadCustomQuizzes } from '../lib/storage'
-import type { Continent, CustomQuiz, PresetType, QuizFormat } from '../types'
+import type { Continent, CustomQuiz, FactoringDifficulty, PresetType, QuizFormat } from '../types'
 
 interface HomeScreenProps {
   onStartPreset: (preset: PresetType, format?: QuizFormat) => void
@@ -11,7 +11,7 @@ interface HomeScreenProps {
   onCreateCustom: () => void
   onEditCustom: (id: string) => void
   onViewApHumanReference: () => void
-  onStartFactoring: () => void
+  onStartFactoring: (difficulty: FactoringDifficulty) => void
 }
 
 const CONTINENT_ICONS: Partial<Record<Continent, string>> = {
@@ -197,8 +197,19 @@ export function HomeScreen({
             </div>
           </div>
           <div className="mode-buttons">
-            <button type="button" className="btn-primary btn-sm" onClick={onStartFactoring}>
-              Start Practice
+            <button
+              type="button"
+              className="btn-primary btn-sm"
+              onClick={() => onStartFactoring('easy')}
+            >
+              Easy Mode
+            </button>
+            <button
+              type="button"
+              className="btn-secondary btn-sm"
+              onClick={() => onStartFactoring('hard')}
+            >
+              Hard Mode
             </button>
           </div>
         </div>

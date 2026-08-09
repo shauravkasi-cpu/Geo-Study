@@ -3,17 +3,21 @@ import {
   checkFactoringAnswer,
   getBinomialCount,
   getBlankCount,
+  getFactoringDifficultyLabel,
   parseBinomialInputs,
   pickFactoringProblem,
+  type FactoringDifficulty,
   type FactoringProblem,
 } from '../lib/factoringProblems'
 import {
   FactoredAnswerDisplay,
   formatElapsed,
+  GroupingPolynomialDisplay,
   PolynomialDisplay,
 } from './PolynomialMath'
 
 interface FactoringPracticeProps {
+  difficulty: FactoringDifficulty
   onBack: () => void
 }
 
@@ -27,9 +31,9 @@ function emptySigns(count: number): BinomialSign[] {
   return Array.from({ length: count }, () => '+')
 }
 
-export function FactoringPractice({ onBack }: FactoringPracticeProps) {
+export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps) {
   const [problem, setProblem] = useState<FactoringProblem>(() =>
-    pickFactoringProblem(new Set()),
+    pickFactoringProblem(new Set(), difficulty),
   )
   const [blanks, setBlanks] = useState<string[]>(() =>
     emptyBlanks(getBlankCount(problem)),
@@ -46,6 +50,7 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
   const [finalTimeMs, setFinalTimeMs] = useState<number | null>(null)
 
   const binomialCount = getBinomialCount(problem)
+  const modeLabel = getFactoringDifficultyLabel(difficulty)
 
   useEffect(() => {
     if (checked) return undefined
@@ -108,7 +113,7 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
   const handleNext = useCallback(() => {
     const nextSeen = new Set(seen)
     nextSeen.add(problem.id)
-    const nextProblem = pickFactoringProblem(nextSeen)
+    const nextProblem = pickFactoringProblem(nextSeen, difficulty)
     nextSeen.add(nextProblem.id)
     setSeen(nextSeen)
     setProblem(nextProblem)
@@ -117,7 +122,7 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
     setChecked(false)
     setCorrect(null)
     resetTimer()
-  }, [problem.id, seen, resetTimer])
+  }, [difficulty, problem.id, seen, resetTimer])
 
   const canCheck = useMemo(() => {
     for (let i = 0; i < binomialCount; i += 1) {
@@ -137,6 +142,7 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
         </button>
         <div className="factoring-page-header-text">
           <h1>Factoring Practice</h1>
+          <p>{modeLabel}</p>
         </div>
         <span className="factoring-score">
           Score: {score.correct}/{score.total}
@@ -145,13 +151,19 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
 
       <div className="factoring-card">
         <div className="factoring-card-top">
-          <p className="factoring-prompt-label">Factor completely</p>
+          <p className="factoring-prompt-label">
+            {problem.kind === 'grouping' ? 'Factor by grouping' : 'Factor completely'}
+          </p>
           <span className={`factoring-stopwatch ${checked ? 'factoring-stopwatch-done' : ''}`}>
             ⏱ {formatElapsed(displayTimeMs)}
           </span>
         </div>
         <p className="factoring-prompt">
-          <PolynomialDisplay coeffs={problem.coeffs} />
+          {problem.kind === 'grouping' && problem.groupingTerms ? (
+            <GroupingPolynomialDisplay terms={problem.groupingTerms} />
+          ) : (
+            <PolynomialDisplay coeffs={problem.coeffs} />
+          )}
         </p>
 
         <div className="factoring-answer-row">

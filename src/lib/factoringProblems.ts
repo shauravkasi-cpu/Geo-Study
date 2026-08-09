@@ -5,13 +5,19 @@ export interface FactoringBinomial {
   b: number
 }
 
+export type FactoringDifficulty = 'easy' | 'hard'
+
+export type FactoringProblemKind = 'quadratic' | 'cubic' | 'grouping'
+
 export interface FactoringProblem {
   id: string
-  kind: 'quadratic' | 'cubic'
-  /** Coefficients high degree → constant */
+  kind: FactoringProblemKind
+  /** Coefficients high degree → constant (combined form for validation) */
   coeffs: number[]
   factors: FactoringBinomial[]
   prompt: string
+  /** Uncombined middle terms for 4-term grouping display */
+  groupingTerms?: [number, number, number, number]
 }
 
 /** Polynomial coeffs in descending degree order */
@@ -67,8 +73,23 @@ export function formatPolynomial(coeffs: number[]): string {
   return parts.join('') || '0'
 }
 
+function formatGroupingPolynomial(terms: [number, number, number, number]): string {
+  const [ac, ad, bc, bd] = terms
+  return (
+    formatTerm(ac, 2, true) +
+    formatTerm(ad, 1, false) +
+    formatTerm(bc, 1, false) +
+    formatTerm(bd, 0, false)
+  )
+}
+
 function coeffsKey(coeffs: number[]): string {
   return coeffs.join(',')
+}
+
+function getAcProduct(coeffs: number[]): number {
+  if (coeffs.length < 3) return 0
+  return coeffs[0] * coeffs[coeffs.length - 1]
 }
 
 function addUniqueProblem(
@@ -76,11 +97,12 @@ function addUniqueProblem(
   factors: FactoringBinomial[],
   idCounter: { value: number },
   maxAbsCoeff: number,
+  kind: FactoringProblemKind = 'quadratic',
+  groupingTerms?: [number, number, number, number],
 ): void {
   const coeffs = multiplyBinomials(factors)
   if (coeffs.some((value) => Math.abs(value) > maxAbsCoeff)) return
 
-  const kind = factors.length === 2 ? 'quadratic' : 'cubic'
   const key = `${kind}:${coeffsKey(coeffs)}`
   if (bank.has(key)) return
 
@@ -89,11 +111,18 @@ function addUniqueProblem(
     kind,
     coeffs,
     factors,
-    prompt: formatPolynomial(coeffs),
+    prompt:
+      kind === 'grouping' && groupingTerms
+        ? formatGroupingPolynomial(groupingTerms)
+        : formatPolynomial(coeffs),
+    groupingTerms,
   })
 }
 
 const MAX_ABS_COEFF = 36
+const HARD_MAX_ABS_COEFF = 80
+const HARD_MIN_AC_PRODUCT = 101
+const HARD_MAX_AC_PRODUCT = 499
 const MAX_BANK_SIZE = 1000
 
 function nonzeroInts(min: number, max: number): number[] {
@@ -104,7 +133,7 @@ function nonzeroInts(min: number, max: number): number[] {
   return values
 }
 
-function buildQuestionBank(): FactoringProblem[] {
+function buildEasyQuestionBank(): FactoringProblem[] {
   const bank = new Map<string, FactoringProblem>()
   const idCounter = { value: 0 }
 
@@ -147,17 +176,89 @@ function buildQuestionBank(): FactoringProblem[] {
     : problems
 }
 
-let questionBankCache: FactoringProblem[] | null = null
+function buildHardQuestionBank(): FactoringProblem[] {
+  const bank = new Map<string, FactoringProblem>()
+  const idCounter = { value: 0 }
 
-export function getFactoringQuestionBank(): FactoringProblem[] {
-  if (!questionBankCache) {
-    questionBankCache = buildQuestionBank()
+  const addQuadratic = (factors: FactoringBinomial[]) => {
+    const coeffs = multiplyBinomials(factors)
+    const acProduct = getAcProduct(coeffs)
+    if (acProduct < HARD_MIN_AC_PRODUCT || acProduct > HARD_MAX_AC_PRODUCT) return
+    addUniqueProblem(bank, factors, idCounter, HARD_MAX_ABS_COEFF, 'quadratic')
   }
-  return questionBankCache
+
+  const addGrouping = (factors: FactoringBinomial[]) => {
+    const [f1, f2] = factors
+    const ac = f1.a * f2.a
+    const ad = f1.a * f2.b
+    const bc = f1.b * f2.a
+    const bd = f1.b * f2.b
+    if (ad === 0 || bc === 0) return
+
+    const coeffs = [ac, ad + bc, bd]
+    const acProduct = getAcProduct(coeffs)
+    if (acProduct < HARD_MIN_AC_PRODUCT || acProduct > HARD_MAX_AC_PRODUCT) return
+
+    addUniqueProblem(
+      bank,
+      factors,
+      idCounter,
+      HARD_MAX_ABS_COEFF,
+      'grouping',
+      [ac, ad, bc, bd],
+    )
+  }
+
+  for (const a of nonzeroInts(2, 14)) {
+    for (const c of nonzeroInts(2, 14)) {
+      for (const b of nonzeroInts(-18, 18)) {
+        for (const d of nonzeroInts(-18, 18)) {
+          const factors: FactoringBinomial[] = [
+            { a, b },
+            { a: c, b: d },
+          ]
+          addQuadratic(factors)
+          addGrouping(factors)
+        }
+      }
+    }
+  }
+
+  for (const a of nonzeroInts(4, 16)) {
+    for (const b of nonzeroInts(-18, 18)) {
+      for (const c of nonzeroInts(-18, 18)) {
+        const factors: FactoringBinomial[] = [
+          { a, b },
+          { a: 1, b: c },
+        ]
+        addQuadratic(factors)
+        addGrouping(factors)
+      }
+    }
+  }
+
+  const problems = Array.from(bank.values())
+  return problems.length > MAX_BANK_SIZE
+    ? shuffle(problems).slice(0, MAX_BANK_SIZE)
+    : problems
 }
 
-export function getFactoringQuestionCount(): number {
-  return getFactoringQuestionBank().length
+const questionBankCache: Partial<Record<FactoringDifficulty, FactoringProblem[]>> = {}
+
+export function getFactoringQuestionBank(
+  difficulty: FactoringDifficulty = 'easy',
+): FactoringProblem[] {
+  if (!questionBankCache[difficulty]) {
+    questionBankCache[difficulty] =
+      difficulty === 'hard' ? buildHardQuestionBank() : buildEasyQuestionBank()
+  }
+  return questionBankCache[difficulty]!
+}
+
+export function getFactoringQuestionCount(
+  difficulty: FactoringDifficulty = 'easy',
+): number {
+  return getFactoringQuestionBank(difficulty).length
 }
 
 function shuffle<T>(items: T[]): T[] {
@@ -281,8 +382,11 @@ export function formatCorrectAnswer(problem: FactoringProblem): string {
     .join('')
 }
 
-export function pickFactoringProblem(seen: Set<string>): FactoringProblem {
-  const bank = getFactoringQuestionBank()
+export function pickFactoringProblem(
+  seen: Set<string>,
+  difficulty: FactoringDifficulty = 'easy',
+): FactoringProblem {
+  const bank = getFactoringQuestionBank(difficulty)
   const unseen = bank.filter((problem) => !seen.has(problem.id))
 
   if (unseen.length > 0) {
@@ -300,21 +404,26 @@ export function getBinomialCount(problem: FactoringProblem): number {
   return problem.factors.length
 }
 
-let questionStatsCache: {
-  total: number
-  quadratics: number
-} | null = null
+const questionStatsCache: Partial<
+  Record<FactoringDifficulty, { total: number; quadratics: number; grouping: number }>
+> = {}
 
-export function getFactoringQuestionStats(): {
+export function getFactoringQuestionStats(difficulty: FactoringDifficulty = 'easy'): {
   total: number
   quadratics: number
+  grouping: number
 } {
-  if (questionStatsCache) return questionStatsCache
+  if (questionStatsCache[difficulty]) return questionStatsCache[difficulty]!
 
-  const bank = getFactoringQuestionBank()
-  questionStatsCache = {
+  const bank = getFactoringQuestionBank(difficulty)
+  questionStatsCache[difficulty] = {
     total: bank.length,
-    quadratics: bank.length,
+    quadratics: bank.filter((problem) => problem.kind === 'quadratic').length,
+    grouping: bank.filter((problem) => problem.kind === 'grouping').length,
   }
-  return questionStatsCache
+  return questionStatsCache[difficulty]!
+}
+
+export function getFactoringDifficultyLabel(difficulty: FactoringDifficulty): string {
+  return difficulty === 'hard' ? 'Hard Mode' : 'Easy Mode'
 }

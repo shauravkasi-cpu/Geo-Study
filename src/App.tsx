@@ -201,7 +201,7 @@ function App() {
           onCreateCustom={() => setScreen({ view: 'custom-builder' })}
           onEditCustom={(id) => setScreen({ view: 'custom-builder', editId: id })}
           onViewApHumanReference={() => setScreen({ view: 'ap-human-reference' })}
-          onStartFactoring={() => setScreen({ view: 'factoring' })}
+          onStartFactoring={(difficulty) => setScreen({ view: 'factoring', difficulty })}
         />
       </SiteShell>
     )
@@ -214,7 +214,7 @@ function App() {
           <div className="page-theme-bar">
             <ThemeToggle />
           </div>
-          <FactoringPractice onBack={goHome} />
+          <FactoringPractice difficulty={screen.difficulty} onBack={goHome} />
         </div>
       </SiteShell>
     )
