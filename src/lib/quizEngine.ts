@@ -32,32 +32,6 @@ function shuffle<T>(array: T[]): T[] {
   return copy
 }
 
-/** Mix two pools so each remaining item has equal pick probability at every step. */
-function interleaveShuffle(a: string[], b: string[]): string[] {
-  const left = shuffle([...a])
-  const right = shuffle([...b])
-  const result: string[] = []
-  let li = 0
-  let ri = 0
-
-  while (li < left.length || ri < right.length) {
-    const remainingLeft = left.length - li
-    const remainingRight = right.length - ri
-
-    if (remainingRight === 0) {
-      result.push(left[li++])
-    } else if (remainingLeft === 0) {
-      result.push(right[ri++])
-    } else if (Math.random() < remainingRight / (remainingLeft + remainingRight)) {
-      result.push(right[ri++])
-    } else {
-      result.push(left[li++])
-    }
-  }
-
-  return result
-}
-
 function getFormatFromMode(mode: QuizMode): QuizFormat {
   return mode.format ?? 'locate'
 }
@@ -79,13 +53,12 @@ function buildQueueFromMode(mode: QuizMode): string[] {
   }
 
   if (mode.preset === 'ap-human-1') {
-    const countryItems = AP_HUMAN_QUIZ_1_COUNTRY_CODES.map((code) =>
-      makeItemId('country', code),
-    )
-    const featureItems = AP_HUMAN_QUIZ_1_FEATURE_IDS.map((id) =>
-      makeItemId('feature', id),
-    )
-    return interleaveShuffle(countryItems, featureItems)
+    const allItems = [
+      ...AP_HUMAN_QUIZ_1_COUNTRY_CODES.map((code) => makeItemId('country', code)),
+      ...AP_HUMAN_QUIZ_1_FEATURE_IDS.map((id) => makeItemId('feature', id)),
+    ]
+    // Uniform random order: each of the 70 items has a 1/70 chance at every position.
+    return shuffle(allItems)
   }
 
   return shuffle(
