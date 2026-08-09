@@ -9,11 +9,15 @@ import {
   type FactoringProblem,
 } from '../lib/factoringProblems'
 
+interface FactoringPracticeProps {
+  onBack: () => void
+}
+
 function emptyBlanks(count: number): string[] {
   return Array.from({ length: count }, () => '')
 }
 
-export function FactoringPractice() {
+export function FactoringPractice({ onBack }: FactoringPracticeProps) {
   const [problem, setProblem] = useState<FactoringProblem>(() =>
     pickFactoringProblem(new Set()),
   )
@@ -72,16 +76,19 @@ export function FactoringPractice() {
   )
 
   return (
-    <section className="home-section factoring-section">
-      <div className="section-header">
-        <h2>Factoring Practice</h2>
+    <div className="factoring-page">
+      <header className="factoring-page-header">
+        <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
+          ← Back
+        </button>
+        <div className="factoring-page-header-text">
+          <h1>Factoring Practice</h1>
+          <p>Algebra 1–2 — fill in the blanks using integers only</p>
+        </div>
         <span className="factoring-score">
           Score: {score.correct}/{score.total}
         </span>
-      </div>
-      <p className="section-desc">
-        Algebra 1–2 factoring — fill in the blanks to write the factored form using integers only.
-      </p>
+      </header>
 
       <div className="factoring-card">
         <p className="factoring-prompt-label">Factor completely</p>
@@ -154,6 +161,6 @@ export function FactoringPractice() {
           )}
         </div>
       </div>
-    </section>
+    </div>
   )
 }

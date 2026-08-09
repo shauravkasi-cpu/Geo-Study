@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { SiteShell } from './components/SiteShell'
 import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
 import { CustomQuizBuilder } from './components/CustomQuizBuilder'
+import { FactoringPractice } from './components/FactoringPractice'
 import { HomeScreen } from './components/HomeScreen'
 import { QuizPanel } from './components/QuizPanel'
 import { ResultsScreen } from './components/ResultsScreen'
@@ -200,7 +201,21 @@ function App() {
           onCreateCustom={() => setScreen({ view: 'custom-builder' })}
           onEditCustom={(id) => setScreen({ view: 'custom-builder', editId: id })}
           onViewApHumanReference={() => setScreen({ view: 'ap-human-reference' })}
+          onStartFactoring={() => setScreen({ view: 'factoring' })}
         />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'factoring') {
+    return (
+      <SiteShell>
+        <div className="page-with-theme">
+          <div className="page-theme-bar">
+            <ThemeToggle />
+          </div>
+          <FactoringPractice onBack={goHome} />
+        </div>
       </SiteShell>
     )
   }

@@ -992,10 +992,42 @@
 }
 
 /* Factoring practice */
-.factoring-section {
-  border-top: 1px solid var(--border);
-  padding-top: 2rem;
-  margin-top: 0.5rem;
+.factoring-home-card {
+  background: var(--gradient-hero);
+  border-color: var(--accent);
+}
+
+.factoring-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 2rem;
+  min-height: calc(100vh - 52px);
+}
+
+.factoring-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.factoring-page-header-text {
+  flex: 1;
+  min-width: 200px;
+}
+
+.factoring-page-header-text h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.factoring-page-header-text p {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
 }
 
 .factoring-score {

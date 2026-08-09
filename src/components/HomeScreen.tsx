@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { FactoringPractice } from './FactoringPractice'
 import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
 import { CONTINENTS } from '../lib/countries'
 import { ThemeToggle } from '../lib/theme'
@@ -12,6 +11,7 @@ interface HomeScreenProps {
   onCreateCustom: () => void
   onEditCustom: (id: string) => void
   onViewApHumanReference: () => void
+  onStartFactoring: () => void
 }
 
 const CONTINENT_ICONS: Partial<Record<Continent, string>> = {
@@ -29,6 +29,7 @@ export function HomeScreen({
   onCreateCustom,
   onEditCustom,
   onViewApHumanReference,
+  onStartFactoring,
 }: HomeScreenProps) {
   const [savedQuizzes, setSavedQuizzes] = useState<CustomQuiz[]>([])
 
@@ -199,7 +200,26 @@ export function HomeScreen({
         )}
       </section>
 
-      <FactoringPractice />
+      <section className="home-section">
+        <h2>Math Practice</h2>
+        <div className="ap-human-card factoring-home-card">
+          <div className="ap-human-card-main">
+            <span className="card-icon">✏️</span>
+            <div className="ap-human-card-content">
+              <span className="card-title">Factoring Practice</span>
+              <span className="card-desc">
+                Algebra 1–2 polynomials — factor into binomials with integer answers
+              </span>
+              <span className="card-badge">Quadratics & Cubics</span>
+            </div>
+          </div>
+          <div className="mode-buttons">
+            <button type="button" className="btn-primary btn-sm" onClick={onStartFactoring}>
+              Start Practice
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
