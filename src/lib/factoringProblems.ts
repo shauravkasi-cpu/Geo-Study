@@ -7,6 +7,8 @@ export interface FactoringBinomial {
 
 export type FactoringDifficulty = 'easy' | 'hard'
 
+export const GROUPING_QUESTION_CHANCE = 0.2
+
 export interface FactoringProblem {
   id: string
   kind: 'quadratic'
@@ -14,6 +16,8 @@ export interface FactoringProblem {
   coeffs: number[]
   factors: FactoringBinomial[]
   prompt: string
+  /** When set, show 4-term grouping form (acx² + adx + bcx + bd) */
+  groupingTerms?: [number, number, number, number]
 }
 
 /** Polynomial coeffs in descending degree order */
@@ -67,6 +71,38 @@ export function formatPolynomial(coeffs: number[]): string {
   }
 
   return parts.join('') || '0'
+}
+
+function formatGroupingPolynomial(terms: [number, number, number, number]): string {
+  const [ac, ad, bc, bd] = terms
+  return (
+    formatTerm(ac, 2, true) +
+    formatTerm(ad, 1, false) +
+    formatTerm(bc, 1, false) +
+    formatTerm(bd, 0, false)
+  )
+}
+
+function getGroupingTerms(factors: FactoringBinomial[]): [number, number, number, number] | null {
+  if (factors.length !== 2) return null
+  const [f1, f2] = factors
+  const ac = f1.a * f2.a
+  const ad = f1.a * f2.b
+  const bc = f1.b * f2.a
+  const bd = f1.b * f2.b
+  if (ad === 0 || bc === 0) return null
+  return [ac, ad, bc, bd]
+}
+
+function applyGroupingDisplay(problem: FactoringProblem): FactoringProblem {
+  const groupingTerms = getGroupingTerms(problem.factors)
+  if (!groupingTerms) return problem
+
+  return {
+    ...problem,
+    groupingTerms,
+    prompt: formatGroupingPolynomial(groupingTerms),
+  }
 }
 
 function coeffsKey(coeffs: number[]): string {
@@ -340,12 +376,27 @@ export function pickFactoringProblem(
 ): FactoringProblem {
   const bank = getFactoringQuestionBank(difficulty)
   const unseen = bank.filter((problem) => !seen.has(problem.id))
+  const pickFrom = unseen.length > 0 ? unseen : bank
 
-  if (unseen.length > 0) {
-    return unseen[Math.floor(Math.random() * unseen.length)]
+  const wantGrouping =
+    difficulty === 'hard' && Math.random() < GROUPING_QUESTION_CHANCE
+
+  if (wantGrouping) {
+    const groupable = pickFrom.filter(
+      (problem) => getGroupingTerms(problem.factors) !== null,
+    )
+    if (groupable.length > 0) {
+      const base = groupable[Math.floor(Math.random() * groupable.length)]
+      return applyGroupingDisplay(base)
+    }
   }
 
-  return bank[Math.floor(Math.random() * bank.length)]
+  const base = pickFrom[Math.floor(Math.random() * pickFrom.length)]
+  return base
+}
+
+export function isGroupingProblem(problem: FactoringProblem): boolean {
+  return problem.groupingTerms !== undefined
 }
 
 export function getBlankCount(problem: FactoringProblem): number {
