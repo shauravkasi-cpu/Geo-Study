@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
+import { getFactoringQuestionStats } from '../lib/factoringProblems'
 import { CONTINENTS } from '../lib/countries'
 import { ThemeToggle } from '../lib/theme'
 import { deleteCustomQuiz, loadCustomQuizzes } from '../lib/storage'
@@ -208,7 +209,7 @@ export function HomeScreen({
             <div className="ap-human-card-content">
               <span className="card-title">Factoring Practice</span>
               <span className="card-desc">
-                Algebra 1–2 polynomials — factor into binomials with integer answers
+                Algebra 1–2 polynomials — {getFactoringQuestionStats().total.toLocaleString()} unique factoring questions
               </span>
               <span className="card-badge">Quadratics & Cubics</span>
             </div>

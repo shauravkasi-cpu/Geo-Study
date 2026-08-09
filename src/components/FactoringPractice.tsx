@@ -4,6 +4,7 @@ import {
   formatCorrectAnswer,
   getBinomialCount,
   getBlankCount,
+  getFactoringQuestionStats,
   parseBinomialInputs,
   pickFactoringProblem,
   type FactoringProblem,
@@ -30,6 +31,7 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
   const [seen, setSeen] = useState<Set<string>>(() => new Set([problem.id]))
 
   const binomialCount = getBinomialCount(problem)
+  const questionStats = useMemo(() => getFactoringQuestionStats(), [])
 
   const updateBlank = useCallback((index: number, value: string) => {
     if (!/^-?\d*$/.test(value)) return
@@ -83,7 +85,10 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
         </button>
         <div className="factoring-page-header-text">
           <h1>Factoring Practice</h1>
-          <p>Algebra 1–2 — fill in the blanks using integers only</p>
+          <p>
+            Algebra 1–2 — fill in the blanks using integers only ·{' '}
+            {questionStats.total.toLocaleString()} unique questions
+          </p>
         </div>
         <span className="factoring-score">
           Score: {score.correct}/{score.total}
