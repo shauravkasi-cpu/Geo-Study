@@ -1,7 +1,6 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   checkFactoringAnswer,
-  formatCorrectAnswer,
   getBinomialCount,
   getBlankCount,
   getFactoringQuestionStats,
@@ -9,6 +8,11 @@ import {
   pickFactoringProblem,
   type FactoringProblem,
 } from '../lib/factoringProblems'
+import {
+  FactoredAnswerDisplay,
+  formatElapsed,
+  PolynomialDisplay,
+} from './PolynomialMath'
 
 interface FactoringPracticeProps {
   onBack: () => void
@@ -29,9 +33,27 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
   const [correct, setCorrect] = useState<boolean | null>(null)
   const [score, setScore] = useState({ correct: 0, total: 0 })
   const [seen, setSeen] = useState<Set<string>>(() => new Set([problem.id]))
+  const [questionStart, setQuestionStart] = useState(() => Date.now())
+  const [elapsedMs, setElapsedMs] = useState(0)
+  const [finalTimeMs, setFinalTimeMs] = useState<number | null>(null)
 
   const binomialCount = getBinomialCount(problem)
   const questionStats = useMemo(() => getFactoringQuestionStats(), [])
+
+  useEffect(() => {
+    if (checked) return undefined
+
+    const tick = () => setElapsedMs(Date.now() - questionStart)
+    tick()
+    const id = window.setInterval(tick, 100)
+    return () => window.clearInterval(id)
+  }, [checked, questionStart])
+
+  const resetTimer = useCallback(() => {
+    setQuestionStart(Date.now())
+    setElapsedMs(0)
+    setFinalTimeMs(null)
+  }, [])
 
   const updateBlank = useCallback((index: number, value: string) => {
     if (!/^-?\d*$/.test(value)) return
@@ -42,9 +64,14 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
     })
     setChecked(false)
     setCorrect(null)
+    setFinalTimeMs(null)
   }, [])
 
   const handleCheck = useCallback(() => {
+    const timeMs = Date.now() - questionStart
+    setFinalTimeMs(timeMs)
+    setElapsedMs(timeMs)
+
     const parsed = parseBinomialInputs(blanks)
     if (!parsed) {
       setChecked(true)
@@ -58,7 +85,7 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
       correct: prev.correct + (isCorrect ? 1 : 0),
       total: prev.total + 1,
     }))
-  }, [blanks, problem])
+  }, [blanks, problem, questionStart])
 
   const handleNext = useCallback(() => {
     const nextSeen = new Set(seen)
@@ -70,12 +97,15 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
     setBlanks(emptyBlanks(getBlankCount(nextProblem)))
     setChecked(false)
     setCorrect(null)
-  }, [problem.id, seen])
+    resetTimer()
+  }, [problem.id, seen, resetTimer])
 
   const canCheck = useMemo(
     () => blanks.every((b) => b.trim() !== '' && b.trim() !== '-' && b.trim() !== '+'),
     [blanks],
   )
+
+  const displayTimeMs = finalTimeMs ?? elapsedMs
 
   return (
     <div className="factoring-page">
@@ -96,8 +126,15 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
       </header>
 
       <div className="factoring-card">
-        <p className="factoring-prompt-label">Factor completely</p>
-        <p className="factoring-prompt">{problem.prompt}</p>
+        <div className="factoring-card-top">
+          <p className="factoring-prompt-label">Factor completely</p>
+          <span className={`factoring-stopwatch ${checked ? 'factoring-stopwatch-done' : ''}`}>
+            ⏱ {formatElapsed(displayTimeMs)}
+          </span>
+        </div>
+        <p className="factoring-prompt">
+          <PolynomialDisplay coeffs={problem.coeffs} />
+        </p>
 
         <div className="factoring-answer-row">
           {Array.from({ length: binomialCount }, (_, binomialIndex) => {
@@ -132,6 +169,12 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
           })}
         </div>
 
+        {checked && (
+          <p className="factoring-time-result">
+            Time: <strong>{formatElapsed(displayTimeMs)}</strong>
+          </p>
+        )}
+
         {checked && correct === true && (
           <p className="factoring-feedback factoring-feedback-correct">Correct!</p>
         )}
@@ -139,7 +182,10 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
           <div className="factoring-feedback factoring-feedback-wrong">
             <p>Not quite — try again or see the answer below.</p>
             <p className="factoring-solution">
-              Answer: <strong>{formatCorrectAnswer(problem)}</strong>
+              Answer:{' '}
+              <strong>
+                <FactoredAnswerDisplay factors={problem.factors} />
+              </strong>
             </p>
           </div>
         )}

@@ -1044,8 +1044,51 @@
   box-shadow: 0 4px 16px var(--shadow);
 }
 
+.factoring-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.35rem;
+}
+
+.factoring-stopwatch {
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  background: var(--accent-subtle);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  white-space: nowrap;
+}
+
+.factoring-stopwatch-done {
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+}
+
+.factoring-time-result {
+  margin: 0 0 0.75rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.math-polynomial {
+  font-family: 'Cambria Math', 'Times New Roman', serif;
+}
+
+.math-exp {
+  font-size: 0.58em;
+  line-height: 0;
+  vertical-align: super;
+  font-weight: 700;
+  margin-left: 0.02em;
+}
+
 .factoring-prompt-label {
-  margin: 0 0 0.35rem;
+  margin: 0;
   font-size: 0.82rem;
   font-weight: 600;
   text-transform: uppercase;
