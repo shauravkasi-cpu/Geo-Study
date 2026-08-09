@@ -3,7 +3,6 @@ import {
   checkFactoringAnswer,
   getBinomialCount,
   getBlankCount,
-  getFactoringQuestionStats,
   parseBinomialInputs,
   pickFactoringProblem,
   type FactoringProblem,
@@ -18,8 +17,14 @@ interface FactoringPracticeProps {
   onBack: () => void
 }
 
+type BinomialSign = '+' | '-'
+
 function emptyBlanks(count: number): string[] {
   return Array.from({ length: count }, () => '')
+}
+
+function emptySigns(count: number): BinomialSign[] {
+  return Array.from({ length: count }, () => '+')
 }
 
 export function FactoringPractice({ onBack }: FactoringPracticeProps) {
@@ -28,6 +33,9 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
   )
   const [blanks, setBlanks] = useState<string[]>(() =>
     emptyBlanks(getBlankCount(problem)),
+  )
+  const [signs, setSigns] = useState<BinomialSign[]>(() =>
+    emptySigns(getBinomialCount(problem)),
   )
   const [checked, setChecked] = useState(false)
   const [correct, setCorrect] = useState<boolean | null>(null)
@@ -38,7 +46,6 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
   const [finalTimeMs, setFinalTimeMs] = useState<number | null>(null)
 
   const binomialCount = getBinomialCount(problem)
-  const questionStats = useMemo(() => getFactoringQuestionStats(), [])
 
   useEffect(() => {
     if (checked) return undefined
@@ -56,10 +63,21 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
   }, [])
 
   const updateBlank = useCallback((index: number, value: string) => {
-    if (!/^-?\d*$/.test(value)) return
+    if (!/^\d*$/.test(value)) return
     setBlanks((prev) => {
       const next = [...prev]
       next[index] = value
+      return next
+    })
+    setChecked(false)
+    setCorrect(null)
+    setFinalTimeMs(null)
+  }, [])
+
+  const toggleSign = useCallback((binomialIndex: number) => {
+    setSigns((prev) => {
+      const next = [...prev]
+      next[binomialIndex] = next[binomialIndex] === '+' ? '-' : '+'
       return next
     })
     setChecked(false)
@@ -72,7 +90,7 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
     setFinalTimeMs(timeMs)
     setElapsedMs(timeMs)
 
-    const parsed = parseBinomialInputs(blanks)
+    const parsed = parseBinomialInputs(blanks, signs)
     if (!parsed) {
       setChecked(true)
       setCorrect(false)
@@ -85,7 +103,7 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
       correct: prev.correct + (isCorrect ? 1 : 0),
       total: prev.total + 1,
     }))
-  }, [blanks, problem, questionStart])
+  }, [blanks, problem, questionStart, signs])
 
   const handleNext = useCallback(() => {
     const nextSeen = new Set(seen)
@@ -95,17 +113,19 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
     setSeen(nextSeen)
     setProblem(nextProblem)
     setBlanks(emptyBlanks(getBlankCount(nextProblem)))
+    setSigns(emptySigns(getBinomialCount(nextProblem)))
     setChecked(false)
     setCorrect(null)
     resetTimer()
   }, [problem.id, seen, resetTimer])
 
   const canCheck = useMemo(
-    () => blanks.every((b) => b.trim() !== '' && b.trim() !== '-' && b.trim() !== '+'),
+    () => blanks.every((b) => b.trim() !== ''),
     [blanks],
   )
 
   const displayTimeMs = finalTimeMs ?? elapsedMs
+  const inputsLocked = checked && correct === true
 
   return (
     <div className="factoring-page">
@@ -115,10 +135,6 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
         </button>
         <div className="factoring-page-header-text">
           <h1>Factoring Practice</h1>
-          <p>
-            Algebra 1–2 — fill in the blanks using integers only ·{' '}
-            {questionStats.total.toLocaleString()} unique questions
-          </p>
         </div>
         <span className="factoring-score">
           Score: {score.correct}/{score.total}
@@ -150,10 +166,18 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
                   value={blanks[aIndex]}
                   onChange={(e) => updateBlank(aIndex, e.target.value)}
                   aria-label={`Coefficient of x in binomial ${binomialIndex + 1}`}
-                  disabled={checked && correct === true}
+                  disabled={inputsLocked}
                 />
                 <span className="factoring-x">x</span>
-                <span className="factoring-plus">+</span>
+                <button
+                  type="button"
+                  className="factoring-sign-toggle"
+                  onClick={() => toggleSign(binomialIndex)}
+                  disabled={inputsLocked}
+                  aria-label={`Toggle sign for constant in binomial ${binomialIndex + 1}`}
+                >
+                  {signs[binomialIndex]}
+                </button>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -161,7 +185,7 @@ export function FactoringPractice({ onBack }: FactoringPracticeProps) {
                   value={blanks[bIndex]}
                   onChange={(e) => updateBlank(bIndex, e.target.value)}
                   aria-label={`Constant in binomial ${binomialIndex + 1}`}
-                  disabled={checked && correct === true}
+                  disabled={inputsLocked}
                 />
                 )
               </span>

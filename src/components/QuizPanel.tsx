@@ -85,7 +85,6 @@ export function QuizPanel({
               ? 'What physical feature is marked on the map?'
               : 'Which country is highlighted?'}
           </p>
-          <p className="prompt-hint">Pick the correct name below</p>
           <div className="mc-options">
             {session.mcOptions.map((key) => {
               const name = getMcOptionLabel(itemType ?? 'country', key)
@@ -108,11 +107,6 @@ export function QuizPanel({
         <div className="prompt-card">
           <p className="prompt-label">{itemType === 'feature' ? 'Locate' : 'Where is'}</p>
           <h2 className="prompt-country">{currentItemName}?</h2>
-          <p className="prompt-hint">
-            {itemType === 'feature'
-              ? 'Click the spot on the map'
-              : 'Click the country on the map'}
-          </p>
         </div>
       )}
       {awaitingNext && lastAnswer && (

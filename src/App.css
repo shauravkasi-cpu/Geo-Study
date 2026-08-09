@@ -1149,6 +1149,33 @@
   margin: 0 0.05rem;
 }
 
+.factoring-sign-toggle {
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--bg-subtle);
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: 'Cambria Math', 'Times New Roman', serif;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.factoring-sign-toggle:hover:not(:disabled) {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.factoring-sign-toggle:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .factoring-feedback {
   margin: 0 0 0.85rem;
   font-size: 0.92rem;

@@ -221,15 +221,18 @@ function parseBlank(value: string): number | null {
 
 export function parseBinomialInputs(
   values: string[],
+  signs?: ('+' | '-')[],
 ): FactoringBinomial[] | null {
   if (values.length % 2 !== 0) return null
   const bins: FactoringBinomial[] = []
 
   for (let i = 0; i < values.length; i += 2) {
     const a = parseBlank(values[i])
-    const b = parseBlank(values[i + 1])
-    if (a === null || b === null) return null
+    const bRaw = parseBlank(values[i + 1])
+    if (a === null || bRaw === null) return null
     if (a === 0) return null
+    const sign = signs?.[i / 2] ?? '+'
+    const b = sign === '-' ? -Math.abs(bRaw) : Math.abs(bRaw)
     bins.push({ a, b })
   }
 

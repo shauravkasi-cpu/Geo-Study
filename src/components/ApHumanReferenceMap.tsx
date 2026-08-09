@@ -97,10 +97,6 @@ export function ApHumanReferenceMap({ onBack }: ApHumanReferenceMapProps) {
         </button>
         <div className="reference-map-header-text">
           <h1>{AP_HUMAN_QUIZ_1_NAME} — Study Map</h1>
-          <p>
-            All {AP_HUMAN_QUIZ_1_COUNTRY_CODES.length} countries and{' '}
-            {AP_HUMAN_QUIZ_1_FEATURE_IDS.length} physical features on one map
-          </p>
         </div>
         <div className="reference-map-legend">
           <span className="legend-item">

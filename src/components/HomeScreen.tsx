@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
-import { getFactoringQuestionStats } from '../lib/factoringProblems'
+import { AP_HUMAN_QUIZ_1_NAME } from '../lib/apHumanQuiz1'
 import { CONTINENTS } from '../lib/countries'
 import { ThemeToggle } from '../lib/theme'
 import { deleteCustomQuiz, loadCustomQuizzes } from '../lib/storage'
@@ -47,12 +46,7 @@ export function HomeScreen({
     <div className="home-screen">
       <header className="home-header">
         <div className="home-header-top">
-          <div>
-            <h1>Geo Study</h1>
-            <p className="home-tagline">
-              Master your map quizzes — countries & physical features
-            </p>
-          </div>
+          <h1>Geo Study</h1>
           <ThemeToggle />
         </div>
       </header>
@@ -64,10 +58,6 @@ export function HomeScreen({
             <span className="card-icon">📚</span>
             <div className="ap-human-card-content">
               <span className="card-title">{AP_HUMAN_QUIZ_1_NAME}</span>
-              <span className="card-desc">
-                {AP_HUMAN_QUIZ_1_STATS.countries} countries + {AP_HUMAN_QUIZ_1_STATS.features} physical features
-              </span>
-              <span className="card-badge">Unit 1 Map Practice</span>
             </div>
           </div>
           <div className="mode-buttons">
@@ -94,7 +84,6 @@ export function HomeScreen({
           >
             <span className="card-icon">🌐</span>
             <span className="card-title">All Countries</span>
-            <span className="card-desc">Every country in the world</span>
           </button>
 
           {CONTINENTS.map((continent) => (
@@ -113,9 +102,6 @@ export function HomeScreen({
 
       <section className="home-section">
         <h2>Multiple Choice Mode</h2>
-        <p className="section-desc">
-          Countries are highlighted or physical features are marked on the map — pick the correct name from 4 options.
-        </p>
         <div className="card-grid">
           <button
             type="button"
@@ -208,10 +194,6 @@ export function HomeScreen({
             <span className="card-icon">✏️</span>
             <div className="ap-human-card-content">
               <span className="card-title">Factoring Practice</span>
-              <span className="card-desc">
-                Algebra 1–2 polynomials — {getFactoringQuestionStats().total.toLocaleString()} unique factoring questions
-              </span>
-              <span className="card-badge">Quadratics & Cubics</span>
             </div>
           </div>
           <div className="mode-buttons">
