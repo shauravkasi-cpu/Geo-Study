@@ -34,17 +34,21 @@ interface RawGeoProperties {
   name: string
 }
 
-/** Small precise dots for physical feature locations (map coords, not screen px). */
+/** Pin-sized dot; radius is divided by zoom so it stays tiny on screen. */
 function FeatureLocationDot({
   fill,
   stroke = '#fff',
-  r = 3,
+  mapZoom,
+  screenRadius = 2.5,
 }: {
   fill: string
   stroke?: string
-  r?: number
+  mapZoom: number
+  screenRadius?: number
 }) {
-  return <circle r={r} fill={fill} stroke={stroke} strokeWidth={0.9} />
+  const r = screenRadius / mapZoom
+  const strokeWidth = 0.55 / mapZoom
+  return <circle r={r} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
 }
 
 function resolveGeoIso(
@@ -251,19 +255,19 @@ export function WorldMap({
 
           {mcFeaturePoint && (
             <Marker coordinates={mcFeaturePoint}>
-              <FeatureLocationDot fill="#3b82f6" />
+              <FeatureLocationDot fill="#3b82f6" mapZoom={mapZoom} />
             </Marker>
           )}
 
           {highlightPoint && (
             <Marker coordinates={highlightPoint}>
-              <FeatureLocationDot fill="#22c55e" />
+              <FeatureLocationDot fill="#22c55e" mapZoom={mapZoom} />
             </Marker>
           )}
 
           {clickPoint && (
             <Marker coordinates={clickPoint}>
-              <FeatureLocationDot fill="#ef4444" />
+              <FeatureLocationDot fill="#ef4444" mapZoom={mapZoom} />
             </Marker>
           )}
         </ZoomableGroup>
