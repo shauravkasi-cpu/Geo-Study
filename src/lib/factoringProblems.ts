@@ -131,29 +131,13 @@ function buildQuestionBank(): FactoringProblem[] {
     }
   }
 
-  // Simple cubics: (x + a)(x + b)(x + c)
-  for (const b1 of nonzeroInts(-5, 5)) {
-    for (const b2 of nonzeroInts(-5, 5)) {
-      for (const b3 of nonzeroInts(-5, 5)) {
-        add([
-          { a: 1, b: b1 },
-          { a: 1, b: b2 },
-          { a: 1, b: b3 },
-        ])
-      }
-    }
-  }
-
-  // Cubics with one leading 2: (2x + a)(x + b)(x + c)
+  // Quadratics with leading 3: (3x + b)(x + c)
   for (const b1 of nonzeroInts(-4, 4)) {
     for (const b2 of nonzeroInts(-4, 4)) {
-      for (const b3 of nonzeroInts(-4, 4)) {
-        add([
-          { a: 2, b: b1 },
-          { a: 1, b: b2 },
-          { a: 1, b: b3 },
-        ])
-      }
+      add([
+        { a: 3, b: b1 },
+        { a: 1, b: b2 },
+      ])
     }
   }
 
@@ -295,22 +279,18 @@ export function getBinomialCount(problem: FactoringProblem): number {
 let questionStatsCache: {
   total: number
   quadratics: number
-  cubics: number
 } | null = null
 
 export function getFactoringQuestionStats(): {
   total: number
   quadratics: number
-  cubics: number
 } {
   if (questionStatsCache) return questionStatsCache
 
   const bank = getFactoringQuestionBank()
-  const quadratics = bank.filter((p) => p.kind === 'quadratic').length
   questionStatsCache = {
     total: bank.length,
-    quadratics,
-    cubics: bank.length - quadratics,
+    quadratics: bank.length,
   }
   return questionStatsCache
 }
