@@ -34,6 +34,19 @@ interface RawGeoProperties {
   name: string
 }
 
+/** Small precise dots for physical feature locations (map coords, not screen px). */
+function FeatureLocationDot({
+  fill,
+  stroke = '#fff',
+  r = 3,
+}: {
+  fill: string
+  stroke?: string
+  r?: number
+}) {
+  return <circle r={r} fill={fill} stroke={stroke} strokeWidth={0.9} />
+}
+
 function resolveGeoIso(
   geoName: string,
   geoId: string | number | undefined,
@@ -238,21 +251,19 @@ export function WorldMap({
 
           {mcFeaturePoint && (
             <Marker coordinates={mcFeaturePoint}>
-              <circle r={9} fill="#3b82f6" stroke="#fff" strokeWidth={2.5} />
-              <circle r={16} fill="none" stroke="#3b82f6" strokeWidth={2} opacity={0.45} />
+              <FeatureLocationDot fill="#3b82f6" />
             </Marker>
           )}
 
           {highlightPoint && (
             <Marker coordinates={highlightPoint}>
-              <circle r={8} fill="#22c55e" stroke="#fff" strokeWidth={2.5} />
-              <circle r={14} fill="none" stroke="#22c55e" strokeWidth={1.5} opacity={0.5} />
+              <FeatureLocationDot fill="#22c55e" />
             </Marker>
           )}
 
           {clickPoint && (
             <Marker coordinates={clickPoint}>
-              <circle r={8} fill="#ef4444" stroke="#fff" strokeWidth={2.5} />
+              <FeatureLocationDot fill="#ef4444" />
             </Marker>
           )}
         </ZoomableGroup>
