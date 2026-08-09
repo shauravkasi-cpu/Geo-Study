@@ -1,0 +1,118 @@
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f0f4f8;
+  --bg-elevated: #ffffff;
+  --bg-subtle: #f8fafc;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-subtle: #eff6ff;
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+  --success-border: #bbf7d0;
+  --error: #dc2626;
+  --error-bg: #fef2f2;
+  --error-border: #fecaca;
+  --shadow: rgba(15, 23, 42, 0.08);
+  --shadow-lg: rgba(15, 23, 42, 0.12);
+  --map-bg: #dbeafe;
+  --map-fill: #e2e8f0;
+  --map-fill-hover: #cbd5e1;
+  --map-fill-pressed: #94a3b8;
+  --map-fill-dimmed: #d1d5db;
+  --map-stroke: #94a3b8;
+  --map-stroke-hover: #64748b;
+  --map-highlight: #22c55e;
+  --map-highlight-stroke: #15803d;
+  --map-wrong: #ef4444;
+  --map-wrong-stroke: #b91c1c;
+  --map-mc-highlight: #3b82f6;
+  --map-mc-stroke: #1d4ed8;
+  --map-hint: #ddd6fe;
+  --map-hint-stroke: #7c3aed;
+  --gradient-hero: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+  --gradient-ap: linear-gradient(135deg, #fef3c7 0%, #fff7ed 50%, #ffffff 100%);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #0b1120;
+  --bg-elevated: #151e32;
+  --bg-subtle: #1a2440;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+  --border: #243049;
+  --border-strong: #334155;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-subtle: #1e2a45;
+  --success: #4ade80;
+  --success-bg: #14281f;
+  --success-border: #166534;
+  --error: #f87171;
+  --error-bg: #2a1515;
+  --error-border: #991b1b;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --shadow-lg: rgba(0, 0, 0, 0.5);
+  --map-bg: #0f1729;
+  --map-fill: #243049;
+  --map-fill-hover: #334155;
+  --map-fill-pressed: #475569;
+  --map-fill-dimmed: #141c2e;
+  --map-stroke: #475569;
+  --map-stroke-hover: #64748b;
+  --map-highlight: #22c55e;
+  --map-highlight-stroke: #15803d;
+  --map-wrong: #f87171;
+  --map-wrong-stroke: #dc2626;
+  --map-mc-highlight: #60a5fa;
+  --map-mc-stroke: #3b82f6;
+  --map-hint: #a78bfa;
+  --map-hint-stroke: #8b5cf6;
+  --gradient-hero: linear-gradient(135deg, #1a2440 0%, #151e32 100%);
+  --gradient-ap: linear-gradient(135deg, #2a2010 0%, #1a2440 50%, #151e32 100%);
+}
+
+:root {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text);
+  background-color: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.2s, color 0.2s;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
