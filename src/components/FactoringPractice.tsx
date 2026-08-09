@@ -4,7 +4,7 @@ import {
   getBinomialCount,
   getBlankCount,
   getFactoringDifficultyLabel,
-  isGroupingProblem,
+  isCubicProblem,
   parseBinomialInputs,
   pickFactoringProblem,
   type FactoringDifficulty,
@@ -13,7 +13,6 @@ import {
 import {
   FactoredAnswerDisplay,
   formatElapsed,
-  GroupingPolynomialDisplay,
   PolynomialDisplay,
 } from './PolynomialMath'
 
@@ -52,7 +51,7 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
 
   const binomialCount = getBinomialCount(problem)
   const modeLabel = getFactoringDifficultyLabel(difficulty)
-  const isGrouping = isGroupingProblem(problem)
+  const isCubic = isCubicProblem(problem)
 
   useEffect(() => {
     if (checked) return undefined
@@ -153,20 +152,17 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
 
       <div className="factoring-card">
         <div className="factoring-card-top">
-          <p className="factoring-prompt-label">
-            {isGrouping ? 'Factor by grouping' : 'Factor completely'}
-          </p>
+          <p className="factoring-prompt-label">Factor completely</p>
           <span className={`factoring-stopwatch ${checked ? 'factoring-stopwatch-done' : ''}`}>
             ⏱ {formatElapsed(displayTimeMs)}
           </span>
         </div>
         <p className="factoring-prompt">
-          {isGrouping && problem.groupingTerms ? (
-            <GroupingPolynomialDisplay terms={problem.groupingTerms} />
-          ) : (
-            <PolynomialDisplay coeffs={problem.coeffs} />
-          )}
+          <PolynomialDisplay coeffs={problem.coeffs} />
         </p>
+        {isCubic && (
+          <p className="factoring-hint">Enter three binomial factors.</p>
+        )}
 
         <div className="factoring-answer-row">
           {Array.from({ length: binomialCount }, (_, binomialIndex) => {
