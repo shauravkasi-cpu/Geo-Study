@@ -10,7 +10,7 @@ import {
   getCountryDisplayName,
 } from './countries'
 import { getCountryCentroid } from './hints'
-import { PHYSICAL_FEATURES } from './physicalFeatures'
+import { getPhysicalFeature, haversineDistanceKm, isFeatureClickCorrect } from './physicalFeatures'
 import {
   makeItemId,
   parseItemId,
