@@ -1,10 +1,10 @@
-import { getCountryDisplayName } from '../lib/countries'
 import { formatLngLat } from '../lib/mapCoords'
 import { getPhysicalFeature } from '../lib/physicalFeatures'
 import {
   getProgress,
   getSessionTitle,
   getCurrentItemType,
+  getMcOptionLabel,
 } from '../lib/quizEngine'
 import { parseItemId, type QuizAnswer, type QuizSession } from '../types'
 interface QuizPanelProps {
@@ -80,17 +80,21 @@ export function QuizPanel({
 
       {!awaitingNext && isMc && session.mcOptions && (
         <div className="prompt-card">
-          <p className="prompt-label">Which country is highlighted?</p>
+          <p className="prompt-label">
+            {itemType === 'feature'
+              ? 'What physical feature is marked on the map?'
+              : 'Which country is highlighted?'}
+          </p>
           <p className="prompt-hint">Pick the correct name below</p>
           <div className="mc-options">
-            {session.mcOptions.map((code) => {
-              const name = getCountryDisplayName(code)
+            {session.mcOptions.map((key) => {
+              const name = getMcOptionLabel(itemType ?? 'country', key)
               return (
                 <button
-                  key={code}
+                  key={key}
                   type="button"
                   className="mc-option"
-                  onClick={() => onMcSelect?.(code)}
+                  onClick={() => onMcSelect?.(key)}
                 >
                   {name}
                 </button>
@@ -149,6 +153,11 @@ export function QuizPanel({
                 </>
               )}
               {lastAnswer.targetType === 'country' && (
+                <p className="feedback-sub">
+                  Correct answer: <strong>{lastAnswer.targetName}</strong>
+                </p>
+              )}
+              {lastAnswer.targetType === 'feature' && isMc && (
                 <p className="feedback-sub">
                   Correct answer: <strong>{lastAnswer.targetName}</strong>
                 </p>

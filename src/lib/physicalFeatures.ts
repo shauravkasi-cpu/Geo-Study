@@ -65,4 +65,5 @@ export function isFeatureClickCorrect(
   if (!feature) return { correct: false, distanceKm: Infinity }
 
   const distanceKm = haversineDistanceKm(clickLngLat, feature.coordinates)
-  return { correct: distanceKm <= FEATURE_TOLERANCE_KM, distanceKm }}
+  return { correct: distanceKm <= FEATURE_TOLERANCE_KM, distanceKm }
+}

@@ -10,7 +10,7 @@ import {
   getCountryDisplayName,
 } from './countries'
 import { getCountryCentroid } from './hints'
-import { getPhysicalFeature, haversineDistanceKm, isFeatureClickCorrect } from './physicalFeatures'
+import { PHYSICAL_FEATURES } from './physicalFeatures'
 import {
   makeItemId,
   parseItemId,
@@ -39,9 +39,6 @@ function getFormatFromMode(mode: QuizMode): QuizFormat {
 function buildQueueFromMode(mode: QuizMode): string[] {
   if (mode.type === 'retry') {
     const queue = [...mode.itemIds]
-    if (getFormatFromMode(mode) === 'multiple-choice') {
-      return shuffle(queue.filter((id) => parseItemId(id).type === 'country'))
-    }
     return shuffle(queue)
   }
 
@@ -61,7 +58,10 @@ function buildQueueFromMode(mode: QuizMode): string[] {
       makeItemId('country', code),
     )
     if (format === 'multiple-choice') {
-      return shuffle(countryItems)
+      const featureItems = AP_HUMAN_QUIZ_1_FEATURE_IDS.map((id) =>
+        makeItemId('feature', id),
+      )
+      return shuffle([...countryItems, ...featureItems])
     }
     const featureItems = AP_HUMAN_QUIZ_1_FEATURE_IDS.map((id) =>
       makeItemId('feature', id),
@@ -115,13 +115,62 @@ export function generateMcOptions(correctCode: string, poolCodes: string[]): str
   return shuffle([correctCode, ...wrong.slice(0, 3)])
 }
 
+function getPoolFeatureIds(session: QuizSession): string[] {
+  return session.queue
+    .filter((id) => parseItemId(id).type === 'feature')
+    .map((id) => parseItemId(id).key)
+}
+
+export function generateMcFeatureOptions(correctId: string, poolIds: string[]): string[] {
+  const others = poolIds.filter((id) => id !== correctId)
+  if (others.length === 0) return [correctId]
+
+  const correctFeature = getPhysicalFeature(correctId)
+  const correctCoords = correctFeature?.coordinates
+
+  let wrong: string[]
+
+  if (correctCoords) {
+    wrong = others
+      .map((id) => {
+        const coords = getPhysicalFeature(id)?.coordinates
+        return {
+          id,
+          distance: coords ? haversineDistanceKm(correctCoords, coords) : Infinity,
+        }
+      })
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 3)
+      .map((entry) => entry.id)
+  } else {
+    wrong = shuffle(others).slice(0, 3)
+  }
+
+  if (wrong.length < 3) {
+    const used = new Set([correctId, ...wrong])
+    const extra = shuffle(others.filter((id) => !used.has(id))).slice(0, 3 - wrong.length)
+    wrong = [...wrong, ...extra]
+  }
+
+  return shuffle([correctId, ...wrong.slice(0, 3)])
+}
+
+export function getMcOptionLabel(itemType: QuizItemType, key: string): string {
+  if (itemType === 'country') {
+    return getCountryDisplayName(key)
+  }
+  return getPhysicalFeature(key)?.name ?? key
+}
+
 function buildMcOptions(session: QuizSession): string[] | null {
   if (session.format !== 'multiple-choice') return null
   const itemId = session.queue[session.currentIndex]
   if (!itemId) return null
   const { type, key } = parseItemId(itemId)
-  if (type !== 'country') return null
-  return generateMcOptions(key, getPoolCodes(session))
+  if (type === 'country') {
+    return generateMcOptions(key, getPoolCodes(session))
+  }
+  return generateMcFeatureOptions(key, getPoolFeatureIds(session))
 }
 
 export function createQuizSession(mode: QuizMode): QuizSession {
@@ -218,15 +267,15 @@ export function submitMcAnswer(
   const targetId = getCurrentItemId(session)
   if (!targetId || session.status === 'complete') return session
 
-  const { key } = parseItemId(targetId)
+  const { type, key } = parseItemId(targetId)
   const correct = selectedCode === key
-  const selectedName = getCountryDisplayName(selectedCode)
+  const selectedName = getMcOptionLabel(type, selectedCode)
 
   return advanceSession(session, {
     targetId,
     targetName: getItemName(targetId),
-    targetType: 'country',
-    clickedCode: selectedCode,
+    targetType: type,
+    clickedCode: type === 'country' ? selectedCode : null,
     clickedName: selectedName,
     clickedLngLat: null,
     distanceKm: null,
@@ -345,7 +394,19 @@ export function getWrongClickCountryCode(lastAnswer: QuizAnswer | null): string 
 
 export function getMcHighlightCode(session: QuizSession): string | null {
   if (session.format !== 'multiple-choice') return null
-  return getCurrentCountryCode(session)
+  const id = getCurrentItemId(session)
+  if (!id) return null
+  const { type, key } = parseItemId(id)
+  return type === 'country' ? key : null
+}
+
+export function getMcFeatureMarker(session: QuizSession): [number, number] | null {
+  if (session.format !== 'multiple-choice') return null
+  const id = getCurrentItemId(session)
+  if (!id) return null
+  const { type, key } = parseItemId(id)
+  if (type !== 'feature') return null
+  return getPhysicalFeature(key)?.coordinates ?? null
 }
 
 export function getHighlightFeatureCoords(lastAnswer: QuizAnswer | null): [number, number] | null {

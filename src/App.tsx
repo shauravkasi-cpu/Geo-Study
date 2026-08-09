@@ -15,6 +15,7 @@ import {
   getCurrentItemType,
   getHighlightCountryCode,
   getHighlightFeatureCoords,
+  getMcFeatureMarker,
   getMcHighlightCode,
   getWrongClickCountryCode,
   skipQuestion,
@@ -224,6 +225,7 @@ function App() {
     const highlightCode = getHighlightCountryCode(lastAnswer)
     const wrongHighlightCode = getWrongClickCountryCode(lastAnswer)
     const mcHighlightCode = !awaitingNext ? getMcHighlightCode(session) : null
+    const mcFeaturePoint = !awaitingNext ? getMcFeatureMarker(session) : null
     const highlightPoint = getHighlightFeatureCoords(lastAnswer)
     const clickPoint = getClickMarkerCoords(lastAnswer)
     const clickMode = getCurrentItemType(session) ?? 'country'
@@ -239,6 +241,7 @@ function App() {
             highlightCode={awaitingNext ? highlightCode : null}
             wrongHighlightCode={awaitingNext ? wrongHighlightCode : null}
             mcHighlightCode={mcHighlightCode}
+            mcFeaturePoint={mcFeaturePoint}
             highlightPoint={awaitingNext ? highlightPoint : null}
             clickPoint={awaitingNext ? clickPoint : null}
             hintView={hintView}

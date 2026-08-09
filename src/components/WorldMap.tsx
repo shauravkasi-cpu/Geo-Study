@@ -22,6 +22,7 @@ interface WorldMapProps {
   highlightCode?: string | null
   wrongHighlightCode?: string | null
   mcHighlightCode?: string | null
+  mcFeaturePoint?: [number, number] | null
   highlightPoint?: [number, number] | null
   clickPoint?: [number, number] | null
   hintView?: HintView | null
@@ -93,6 +94,7 @@ export function WorldMap({
   highlightCode,
   wrongHighlightCode,
   mcHighlightCode,
+  mcFeaturePoint,
   highlightPoint,
   clickPoint,
   hintView,
@@ -112,8 +114,14 @@ export function WorldMap({
     if (hintView) {
       setMapCenter(hintView.center)
       setMapZoom(hintView.zoom)
+    } else if (mcFeaturePoint) {
+      setMapCenter(mcFeaturePoint)
+      setMapZoom(2.5)
+    } else if (mcHighlightCode) {
+      setMapCenter([20, 20])
+      setMapZoom(1)
     }
-  }, [hintView])
+  }, [hintView, mcFeaturePoint, mcHighlightCode])
 
   const getRole = (geoName: string, geoId: string | number | undefined): 'default' | 'correct' | 'wrong' | 'mc' | 'hint' | 'dimmed' => {
     const iso = resolveGeoIso(geoName, geoId)
@@ -227,6 +235,13 @@ export function WorldMap({
               </>
             )}
           </Geographies>
+
+          {mcFeaturePoint && (
+            <Marker coordinates={mcFeaturePoint}>
+              <circle r={9} fill="#3b82f6" stroke="#fff" strokeWidth={2.5} />
+              <circle r={16} fill="none" stroke="#3b82f6" strokeWidth={2} opacity={0.45} />
+            </Marker>
+          )}
 
           {highlightPoint && (
             <Marker coordinates={highlightPoint}>

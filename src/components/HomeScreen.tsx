@@ -105,7 +105,9 @@ export function HomeScreen({
 
       <section className="home-section">
         <h2>Multiple Choice Mode</h2>
-        <p className="section-desc">A country is highlighted on the map — pick its name from 4 options.</p>
+        <p className="section-desc">
+          Countries are highlighted or physical features are marked on the map — pick the correct name from 4 options.
+        </p>
         <div className="card-grid">
           <button
             type="button"
