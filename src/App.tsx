@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { SiteShell } from './components/SiteShell'
 import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
 import { CustomQuizBuilder } from './components/CustomQuizBuilder'
 import { HomeScreen } from './components/HomeScreen'
@@ -171,66 +172,78 @@ function App() {
 
   if (loading) {
     return (
-      <div className="loading-screen">
-        <div className="loading-spinner" />
-        <p>Loading world map...</p>
-      </div>
+      <SiteShell>
+        <div className="loading-screen">
+          <div className="loading-spinner" />
+          <p>Loading world map...</p>
+        </div>
+      </SiteShell>
     )
   }
 
   if (error) {
     return (
-      <div className="loading-screen">
-        <p className="error-text">{error}</p>
-      </div>
+      <SiteShell>
+        <div className="loading-screen">
+          <p className="error-text">{error}</p>
+        </div>
+      </SiteShell>
     )
   }
 
   if (screen.view === 'home') {
     return (
-      <HomeScreen
-        onStartPreset={startPreset}
-        onStartCustom={startCustom}
-        onCreateCustom={() => setScreen({ view: 'custom-builder' })}
-        onEditCustom={(id) => setScreen({ view: 'custom-builder', editId: id })}
-        onViewApHumanReference={() => setScreen({ view: 'ap-human-reference' })}
-      />
+      <SiteShell>
+        <HomeScreen
+          onStartPreset={startPreset}
+          onStartCustom={startCustom}
+          onCreateCustom={() => setScreen({ view: 'custom-builder' })}
+          onEditCustom={(id) => setScreen({ view: 'custom-builder', editId: id })}
+          onViewApHumanReference={() => setScreen({ view: 'ap-human-reference' })}
+        />
+      </SiteShell>
     )
   }
 
   if (screen.view === 'ap-human-reference') {
     return (
-      <div className="page-with-theme">
-        <div className="page-theme-bar">
-          <ThemeToggle />
+      <SiteShell>
+        <div className="page-with-theme">
+          <div className="page-theme-bar">
+            <ThemeToggle />
+          </div>
+          <ApHumanReferenceMap onBack={goHome} />
         </div>
-        <ApHumanReferenceMap onBack={goHome} />
-      </div>
+      </SiteShell>
     )
   }
 
   if (screen.view === 'custom-builder') {
     return (
-      <CustomQuizBuilder
-        editId={screen.editId}
-        onStart={(codes, name) => startCustom(codes, name)}
-        onCancel={goHome}
-      />
+      <SiteShell>
+        <CustomQuizBuilder
+          editId={screen.editId}
+          onStart={(codes, name) => startCustom(codes, name)}
+          onCancel={goHome}
+        />
+      </SiteShell>
     )
   }
 
   if (screen.view === 'results' && session) {
     return (
-      <div className="page-with-theme">
-        <div className="page-theme-bar">
-          <ThemeToggle />
+      <SiteShell>
+        <div className="page-with-theme">
+          <div className="page-theme-bar">
+            <ThemeToggle />
+          </div>
+          <ResultsScreen
+            session={session}
+            onRetryMissed={handleRetryMissed}
+            onHome={goHome}
+          />
         </div>
-        <ResultsScreen
-          session={session}
-          onRetryMissed={handleRetryMissed}
-          onHome={goHome}
-        />
-      </div>
+      </SiteShell>
     )
   }
 
@@ -244,37 +257,39 @@ function App() {
     const clickMode = getCurrentItemType(session) ?? 'country'
 
     return (
-      <div className="quiz-layout">
-        <div className="quiz-map">
-          <div className="quiz-map-toolbar">
-            <ThemeToggle />
+      <SiteShell>
+        <div className="quiz-layout">
+          <div className="quiz-map">
+            <div className="quiz-map-toolbar">
+              <ThemeToggle />
+            </div>
+            <WorldMap
+              onMapClick={handleMapClick}
+              highlightCode={awaitingNext ? highlightCode : null}
+              wrongHighlightCode={awaitingNext ? wrongHighlightCode : null}
+              mcHighlightCode={mcHighlightCode}
+              mcFeaturePoint={mcFeaturePoint}
+              highlightPoint={awaitingNext ? highlightPoint : null}
+              clickPoint={awaitingNext ? clickPoint : null}
+              hintView={hintView}
+              clickMode={clickMode}
+              disabled={awaitingNext}
+            />
           </div>
-          <WorldMap
-            onMapClick={handleMapClick}
-            highlightCode={awaitingNext ? highlightCode : null}
-            wrongHighlightCode={awaitingNext ? wrongHighlightCode : null}
-            mcHighlightCode={mcHighlightCode}
-            mcFeaturePoint={mcFeaturePoint}
-            highlightPoint={awaitingNext ? highlightPoint : null}
-            clickPoint={awaitingNext ? clickPoint : null}
-            hintView={hintView}
-            clickMode={clickMode}
-            disabled={awaitingNext}
+          <QuizPanel
+            session={session}
+            currentItemName={getCurrentItemName(session)}
+            lastAnswer={lastAnswer}
+            awaitingNext={awaitingNext}
+            hintActive={hintUsed}
+            onHint={handleHint}
+            onSkip={handleSkip}
+            onNext={handleNext}
+            onQuit={goHome}
+            onMcSelect={handleMcSelect}
           />
         </div>
-        <QuizPanel
-          session={session}
-          currentItemName={getCurrentItemName(session)}
-          lastAnswer={lastAnswer}
-          awaitingNext={awaitingNext}
-          hintActive={hintUsed}
-          onHint={handleHint}
-          onSkip={handleSkip}
-          onNext={handleNext}
-          onQuit={goHome}
-          onMcSelect={handleMcSelect}
-        />
-      </div>
+      </SiteShell>
     )
   }
 
