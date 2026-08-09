@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
 import { CustomQuizBuilder } from './components/CustomQuizBuilder'
 import { HomeScreen } from './components/HomeScreen'
 import { QuizPanel } from './components/QuizPanel'
@@ -192,7 +193,19 @@ function App() {
         onStartCustom={startCustom}
         onCreateCustom={() => setScreen({ view: 'custom-builder' })}
         onEditCustom={(id) => setScreen({ view: 'custom-builder', editId: id })}
+        onViewApHumanReference={() => setScreen({ view: 'ap-human-reference' })}
       />
+    )
+  }
+
+  if (screen.view === 'ap-human-reference') {
+    return (
+      <div className="page-with-theme">
+        <div className="page-theme-bar">
+          <ThemeToggle />
+        </div>
+        <ApHumanReferenceMap onBack={goHome} />
+      </div>
     )
   }
 

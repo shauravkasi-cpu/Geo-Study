@@ -66,6 +66,7 @@ export type AppScreen =
   | { view: 'custom-builder'; editId?: string }
   | { view: 'quiz'; session: QuizSession }
   | { view: 'results'; session: QuizSession }
+  | { view: 'ap-human-reference' }
 
 export interface MapClickResult {
   lngLat: [number, number]

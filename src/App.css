@@ -848,3 +848,121 @@
     width: 100%;
   }
 }
+
+/* AP Human reference study map */
+.reference-map-page {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 52px);
+  padding: 1rem 1.25rem 1.5rem;
+  gap: 0.75rem;
+}
+
+.reference-map-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+.reference-map-header-text {
+  flex: 1;
+  min-width: 220px;
+}
+
+.reference-map-header-text h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
+}
+
+.reference-map-header-text p {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.reference-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.legend-swatch-country {
+  background: var(--map-ref-country);
+  border: 1px solid var(--map-ref-country-stroke);
+}
+
+.legend-swatch-feature {
+  background: var(--map-ref-feature-dot);
+  border-radius: 50%;
+  border: 1px solid var(--map-ref-feature-line);
+}
+
+.reference-map-container {
+  flex: 1;
+  background: var(--map-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px var(--shadow);
+}
+
+.map-ref-label {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-weight: 600;
+  pointer-events: none;
+  paint-order: stroke fill;
+}
+
+.map-ref-label-country {
+  fill: var(--text);
+  stroke: var(--bg-elevated);
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
+}
+
+.map-ref-label-feature {
+  fill: #92400e;
+  stroke: var(--bg-elevated);
+  stroke-width: 2px;
+  stroke-linejoin: round;
+}
+
+[data-theme='dark'] .map-ref-label-feature {
+  fill: #fcd34d;
+}
+
+.reference-map-hint {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-faint);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .reference-map-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reference-map-legend {
+    width: 100%;
+  }
+}

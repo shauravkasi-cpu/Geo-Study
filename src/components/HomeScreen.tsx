@@ -10,6 +10,7 @@ interface HomeScreenProps {
   onStartCustom: (countryCodes: string[], name: string, quizId?: string, format?: QuizFormat) => void
   onCreateCustom: () => void
   onEditCustom: (id: string) => void
+  onViewApHumanReference: () => void
 }
 
 const CONTINENT_ICONS: Partial<Record<Continent, string>> = {
@@ -26,6 +27,7 @@ export function HomeScreen({
   onStartCustom,
   onCreateCustom,
   onEditCustom,
+  onViewApHumanReference,
 }: HomeScreenProps) {
   const [savedQuizzes, setSavedQuizzes] = useState<CustomQuiz[]>([])
 
@@ -71,6 +73,9 @@ export function HomeScreen({
             </button>
             <button type="button" className="btn-secondary btn-sm" onClick={() => onStartPreset('ap-human-1', 'multiple-choice')}>
               Multiple Choice
+            </button>
+            <button type="button" className="btn-secondary btn-sm" onClick={onViewApHumanReference}>
+              View Study Map
             </button>
           </div>
         </div>

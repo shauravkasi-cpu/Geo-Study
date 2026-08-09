@@ -36,6 +36,10 @@
   --map-mc-stroke: #1d4ed8;
   --map-hint: #ddd6fe;
   --map-hint-stroke: #7c3aed;
+  --map-ref-country: #60a5fa;
+  --map-ref-country-stroke: #2563eb;
+  --map-ref-feature-dot: #f59e0b;
+  --map-ref-feature-line: #d97706;
   --gradient-hero: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
   --gradient-ap: linear-gradient(135deg, #fef3c7 0%, #fff7ed 50%, #ffffff 100%);
 }
@@ -77,6 +81,10 @@
   --map-mc-stroke: #3b82f6;
   --map-hint: #a78bfa;
   --map-hint-stroke: #8b5cf6;
+  --map-ref-country: #3b82f6;
+  --map-ref-country-stroke: #60a5fa;
+  --map-ref-feature-dot: #fbbf24;
+  --map-ref-feature-line: #f59e0b;
   --gradient-hero: linear-gradient(135deg, #1a2440 0%, #151e32 100%);
   --gradient-ap: linear-gradient(135deg, #2a2010 0%, #1a2440 50%, #151e32 100%);
 }
