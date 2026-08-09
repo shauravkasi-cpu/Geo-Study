@@ -68,6 +68,7 @@ export type AppScreen =
   | { view: 'results'; session: QuizSession }
   | { view: 'ap-human-reference' }
   | { view: 'factoring'; difficulty: FactoringDifficulty }
+  | { view: 'factoring-quiz' }
 
 export interface MapClickResult {
   lngLat: [number, number]

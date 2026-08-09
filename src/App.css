@@ -1226,3 +1226,95 @@
     font-size: 1rem;
   }
 }
+
+/* Factoring quiz mode */
+.factoring-quiz-page {
+  max-width: 760px;
+}
+
+.factoring-quiz-timer-urgent {
+  color: var(--error);
+  background: color-mix(in srgb, var(--error) 12%, var(--bg-elevated));
+  border-color: color-mix(in srgb, var(--error) 35%, var(--border));
+}
+
+.factoring-quiz-score {
+  margin: -0.35rem 0 1rem;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.factoring-quiz-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.factoring-quiz-card {
+  margin: 0;
+}
+
+.factoring-quiz-card .factoring-prompt {
+  margin-bottom: 0.85rem;
+}
+
+.factoring-quiz-card .factoring-answer-row {
+  margin-bottom: 0.35rem;
+}
+
+.factoring-quiz-card-correct {
+  border-color: color-mix(in srgb, var(--success) 55%, var(--border-strong));
+}
+
+.factoring-quiz-card-wrong {
+  border-color: color-mix(in srgb, var(--error) 55%, var(--border-strong));
+}
+
+.factoring-quiz-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+  padding-bottom: 1rem;
+}
+
+.factoring-quiz-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: color-mix(in srgb, #000 45%, transparent);
+}
+
+.factoring-quiz-modal {
+  width: min(100%, 380px);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  padding: 1.35rem 1.4rem;
+  box-shadow: 0 12px 40px var(--shadow);
+}
+
+.factoring-quiz-modal h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.factoring-quiz-modal p {
+  margin: 0 0 1.15rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.factoring-quiz-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  justify-content: flex-end;
+}

@@ -12,6 +12,7 @@ interface HomeScreenProps {
   onEditCustom: (id: string) => void
   onViewApHumanReference: () => void
   onStartFactoring: (difficulty: FactoringDifficulty) => void
+  onStartFactoringQuiz: () => void
 }
 
 const CONTINENT_ICONS: Partial<Record<Continent, string>> = {
@@ -30,6 +31,7 @@ export function HomeScreen({
   onEditCustom,
   onViewApHumanReference,
   onStartFactoring,
+  onStartFactoringQuiz,
 }: HomeScreenProps) {
   const [savedQuizzes, setSavedQuizzes] = useState<CustomQuiz[]>([])
 
@@ -210,6 +212,13 @@ export function HomeScreen({
               onClick={() => onStartFactoring('hard')}
             >
               Hard Mode
+            </button>
+            <button
+              type="button"
+              className="btn-secondary btn-sm"
+              onClick={onStartFactoringQuiz}
+            >
+              Quiz Mode
             </button>
           </div>
         </div>

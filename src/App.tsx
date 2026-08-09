@@ -3,6 +3,7 @@ import { SiteShell } from './components/SiteShell'
 import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
 import { CustomQuizBuilder } from './components/CustomQuizBuilder'
 import { FactoringPractice } from './components/FactoringPractice'
+import { FactoringQuiz } from './components/FactoringQuiz'
 import { HomeScreen } from './components/HomeScreen'
 import { QuizPanel } from './components/QuizPanel'
 import { ResultsScreen } from './components/ResultsScreen'
@@ -202,6 +203,7 @@ function App() {
           onEditCustom={(id) => setScreen({ view: 'custom-builder', editId: id })}
           onViewApHumanReference={() => setScreen({ view: 'ap-human-reference' })}
           onStartFactoring={(difficulty) => setScreen({ view: 'factoring', difficulty })}
+          onStartFactoringQuiz={() => setScreen({ view: 'factoring-quiz' })}
         />
       </SiteShell>
     )
@@ -215,6 +217,19 @@ function App() {
             <ThemeToggle />
           </div>
           <FactoringPractice difficulty={screen.difficulty} onBack={goHome} />
+        </div>
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'factoring-quiz') {
+    return (
+      <SiteShell>
+        <div className="page-with-theme">
+          <div className="page-theme-bar">
+            <ThemeToggle />
+          </div>
+          <FactoringQuiz onBack={goHome} />
         </div>
       </SiteShell>
     )

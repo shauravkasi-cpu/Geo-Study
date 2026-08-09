@@ -469,6 +469,30 @@ export function pickFactoringProblem(
   return pickFromBank(getFactoringQuestionBank(difficulty), seen)
 }
 
+/** Timed quiz: 3 easy + 1 hard, all shown together. */
+export const FACTORING_QUIZ_EASY_COUNT = 3
+export const FACTORING_QUIZ_HARD_COUNT = 1
+export const FACTORING_QUIZ_DURATION_MS = 4 * 60 * 1000
+
+export function createFactoringQuiz(): FactoringProblem[] {
+  const seen = new Set<string>()
+  const problems: FactoringProblem[] = []
+
+  for (let i = 0; i < FACTORING_QUIZ_EASY_COUNT; i += 1) {
+    const problem = pickFactoringProblem(seen, 'easy')
+    seen.add(problem.id)
+    problems.push(problem)
+  }
+
+  for (let i = 0; i < FACTORING_QUIZ_HARD_COUNT; i += 1) {
+    const problem = pickFactoringProblem(seen, 'hard')
+    seen.add(problem.id)
+    problems.push(problem)
+  }
+
+  return problems
+}
+
 export function isGroupingProblem(problem: FactoringProblem): boolean {
   return problem.kind === 'grouping'
 }
