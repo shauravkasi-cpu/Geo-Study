@@ -8,13 +8,11 @@ import {
   ZoomableGroup,
 } from 'react-simple-maps'
 import topoData from 'world-atlas/countries-110m.json'
-import { NE_NAME_TO_ISO } from '../lib/countryNames'
 import {
   getCountryDisplayName,
   getCountryFeatures,
-  getIsoCodeForGeoName,
-  getIsoCodeForNeId,
 } from '../lib/countries'
+import { resolveMapGeoIso } from '../lib/mapGeoIndex'
 import { countryAtPoint } from '../lib/geoUtils'
 import { getLngLatFromClick } from '../lib/mapCoords'
 import type { HintView, MapClickResult, QuizItemType } from '../types'
@@ -38,15 +36,8 @@ interface RawGeoProperties {
 function resolveGeoIso(
   geoName: string,
   geoId: string | number | undefined,
-  geoNameToIso: Map<string, string>,
 ): string | null {
-  return (
-    geoNameToIso.get(geoName) ??
-    getIsoCodeForGeoName(geoName) ??
-    getIsoCodeForNeId(geoId) ??
-    NE_NAME_TO_ISO[geoName] ??
-    null
-  )
+  return resolveMapGeoIso(geoName, geoId)
 }
 
 function geoStyle(
@@ -112,17 +103,6 @@ export function WorldMap({
   const [mapZoom, setMapZoom] = useState(1)
   const features = useMemo(() => getCountryFeatures(), [])
 
-  const geoNameToIso = useMemo(() => {
-    const map = new Map<string, string>()
-    for (const f of features) {
-      map.set(f.properties.name, f.properties.isoCode)
-    }
-    for (const [neName, iso] of Object.entries(NE_NAME_TO_ISO)) {
-      map.set(neName, iso)
-    }
-    return map
-  }, [features])
-
   const hintCountrySet = useMemo(
     () => new Set(hintView?.highlightCountryCodes ?? []),
     [hintView],
@@ -136,7 +116,7 @@ export function WorldMap({
   }, [hintView])
 
   const getRole = (geoName: string, geoId: string | number | undefined): 'default' | 'correct' | 'wrong' | 'mc' | 'hint' | 'dimmed' => {
-    const iso = resolveGeoIso(geoName, geoId, geoNameToIso)
+    const iso = resolveGeoIso(geoName, geoId)
 
     if (iso && mcHighlightCode && iso === mcHighlightCode) return 'mc'
     if (iso && highlightCode && iso === highlightCode) return 'correct'
@@ -156,7 +136,7 @@ export function WorldMap({
       event.preventDefault()
       if (!isInteractive || !onMapClick || clickMode !== 'country') return
 
-      const isoCode = resolveGeoIso(geoName, geoId, geoNameToIso)
+      const isoCode = resolveGeoIso(geoName, geoId)
       if (!isoCode) return
 
       onMapClick({
@@ -165,7 +145,7 @@ export function WorldMap({
         countryName: getCountryDisplayName(isoCode),
       })
     },
-    [isInteractive, onMapClick, clickMode, geoNameToIso],
+    [isInteractive, onMapClick, clickMode],
   )
 
   const handleFeatureClick = useCallback(
@@ -215,7 +195,7 @@ export function WorldMap({
                   const props = geo.properties as RawGeoProperties
                   const geoId = geo.id as string | number | undefined
                   const role = getRole(props.name, geoId)
-                  const iso = resolveGeoIso(props.name, geoId, geoNameToIso)
+                  const iso = resolveGeoIso(props.name, geoId)
                   const isCountryInteractive =
                     isInteractive && clickMode === 'country' && !!iso
 

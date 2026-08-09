@@ -91,6 +91,7 @@ const NE_ID_TO_ISO: Record<string, string> = {
   '798': 'TUV', '800': 'UGA', '804': 'UKR', '807': 'MKD', '826': 'GBR',
   '834': 'TZA', '840': 'USA', '854': 'BFA', '858': 'URY', '860': 'UZB',
   '862': 'VEN', '882': 'WSM', '887': 'YEM', '894': 'ZMB', '-99': 'SOL',
+  '260': 'ATA', '630': 'PRI', '818': 'EGY',
 }
 
 const ALIASES: Record<string, string> = {
