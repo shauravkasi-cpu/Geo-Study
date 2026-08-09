@@ -5,31 +5,14 @@ export interface FactoringBinomial {
   b: number
 }
 
-export interface FactoringQuadraticFactor {
-  /** Coefficient of x² */
-  a: number
-  /** Coefficient of x */
-  b: number
-  /** Constant term */
-  c: number
-}
-
 export type FactoringDifficulty = 'easy' | 'hard'
-
-export type FactoringProblemKind = 'quadratic' | 'cubic'
 
 export interface FactoringProblem {
   id: string
-  kind: FactoringProblemKind
+  kind: 'quadratic'
   /** Coefficients high degree → constant */
   coeffs: number[]
-  /** Two-binomial quadratics */
   factors: FactoringBinomial[]
-  /** Cubics that factor as (linear)(quadratic) */
-  cubicFactors?: {
-    linear: FactoringBinomial
-    quadratic: FactoringQuadraticFactor
-  }
   prompt: string
 }
 
@@ -47,20 +30,6 @@ function multiplyBinomials(factors: FactoringBinomial[]): number[] {
     poly = next
   }
   return poly
-}
-
-function multiplyLinearQuadratic(
-  linear: FactoringBinomial,
-  quadratic: FactoringQuadraticFactor,
-): number[] {
-  const { a: la, b: lb } = linear
-  const { a: qa, b: qb, c: qc } = quadratic
-  return [
-    la * qa,
-    la * qb + lb * qa,
-    la * qc + lb * qb,
-    lb * qc,
-  ]
 }
 
 function formatTerm(coef: number, power: number, first: boolean): string {
@@ -109,7 +78,7 @@ function getAcProduct(coeffs: number[]): number {
   return coeffs[0] * coeffs[coeffs.length - 1]
 }
 
-function addUniqueQuadratic(
+function addUniqueProblem(
   bank: Map<string, FactoringProblem>,
   factors: FactoringBinomial[],
   idCounter: { value: number },
@@ -118,7 +87,7 @@ function addUniqueQuadratic(
   const coeffs = multiplyBinomials(factors)
   if (coeffs.some((value) => Math.abs(value) > maxAbsCoeff)) return
 
-  const key = `quadratic:${coeffsKey(coeffs)}`
+  const key = coeffsKey(coeffs)
   if (bank.has(key)) return
 
   bank.set(key, {
@@ -130,32 +99,8 @@ function addUniqueQuadratic(
   })
 }
 
-function addUniqueCubic(
-  bank: Map<string, FactoringProblem>,
-  linear: FactoringBinomial,
-  quadratic: FactoringQuadraticFactor,
-  idCounter: { value: number },
-  maxAbsCoeff: number,
-): void {
-  const coeffs = multiplyLinearQuadratic(linear, quadratic)
-  if (coeffs.some((value) => Math.abs(value) > maxAbsCoeff)) return
-  if (coeffs.some((value) => value === 0)) return
-
-  const key = `cubic:${coeffsKey(coeffs)}`
-  if (bank.has(key)) return
-
-  bank.set(key, {
-    id: `f-${idCounter.value++}`,
-    kind: 'cubic',
-    coeffs,
-    factors: [],
-    cubicFactors: { linear, quadratic },
-    prompt: formatPolynomial(coeffs),
-  })
-}
-
 const MAX_ABS_COEFF = 36
-const HARD_MAX_ABS_COEFF = 80
+const HARD_MAX_ABS_COEFF = 120
 const HARD_MIN_AC_PRODUCT = 101
 const HARD_MAX_AC_PRODUCT = 499
 const MAX_BANK_SIZE = 1000
@@ -173,7 +118,7 @@ function buildEasyQuestionBank(): FactoringProblem[] {
   const idCounter = { value: 0 }
 
   const add = (factors: FactoringBinomial[]) =>
-    addUniqueQuadratic(bank, factors, idCounter, MAX_ABS_COEFF)
+    addUniqueProblem(bank, factors, idCounter, MAX_ABS_COEFF)
 
   // Simple quadratics: (x + b)(x + c)
   for (const b1 of nonzeroInts(-7, 7)) {
@@ -215,18 +160,19 @@ function buildHardQuestionBank(): FactoringProblem[] {
   const bank = new Map<string, FactoringProblem>()
   const idCounter = { value: 0 }
 
-  const addQuadratic = (factors: FactoringBinomial[]) => {
+  const add = (factors: FactoringBinomial[]) => {
     const coeffs = multiplyBinomials(factors)
     const acProduct = getAcProduct(coeffs)
     if (acProduct < HARD_MIN_AC_PRODUCT || acProduct > HARD_MAX_AC_PRODUCT) return
-    addUniqueQuadratic(bank, factors, idCounter, HARD_MAX_ABS_COEFF)
+    addUniqueProblem(bank, factors, idCounter, HARD_MAX_ABS_COEFF)
   }
 
-  for (const a of nonzeroInts(2, 14)) {
-    for (const c of nonzeroInts(2, 14)) {
-      for (const b of nonzeroInts(-18, 18)) {
-        for (const d of nonzeroInts(-18, 18)) {
-          addQuadratic([
+  // Hard quadratics like (5x + 9)(6x + 7) — two binomial factors, bigger numbers
+  for (const a of nonzeroInts(2, 16)) {
+    for (const c of nonzeroInts(2, 16)) {
+      for (const b of nonzeroInts(-20, 20)) {
+        for (const d of nonzeroInts(-20, 20)) {
+          add([
             { a, b },
             { a: c, b: d },
           ])
@@ -236,9 +182,9 @@ function buildHardQuestionBank(): FactoringProblem[] {
   }
 
   for (const a of nonzeroInts(4, 16)) {
-    for (const b of nonzeroInts(-18, 18)) {
-      for (const c of nonzeroInts(-18, 18)) {
-        addQuadratic([
+    for (const b of nonzeroInts(-20, 20)) {
+      for (const c of nonzeroInts(-20, 20)) {
+        add([
           { a, b },
           { a: 1, b: c },
         ])
@@ -246,40 +192,10 @@ function buildHardQuestionBank(): FactoringProblem[] {
     }
   }
 
-  for (const la of nonzeroInts(2, 12)) {
-    for (const lb of nonzeroInts(-14, 14)) {
-      for (const qa of nonzeroInts(2, 12)) {
-        for (const qb of ints(-14, 14)) {
-          for (const qc of nonzeroInts(-14, 14)) {
-            addUniqueCubic(
-              bank,
-              { a: la, b: lb },
-              { a: qa, b: qb, c: qc },
-              idCounter,
-              HARD_MAX_ABS_COEFF,
-            )
-          }
-        }
-      }
-    }
-  }
-
-  const quadProblems = Array.from(bank.values()).filter((p) => p.kind === 'quadratic')
-  const cubicProblems = Array.from(bank.values()).filter((p) => p.kind === 'cubic')
-
-  const maxPerKind = Math.floor(MAX_BANK_SIZE / 2)
-  return shuffle([
-    ...shuffle(quadProblems).slice(0, maxPerKind),
-    ...shuffle(cubicProblems).slice(0, maxPerKind),
-  ])
-}
-
-function ints(min: number, max: number): number[] {
-  const values: number[] = []
-  for (let n = min; n <= max; n += 1) {
-    values.push(n)
-  }
-  return values
+  const problems = Array.from(bank.values())
+  return problems.length > MAX_BANK_SIZE
+    ? shuffle(problems).slice(0, MAX_BANK_SIZE)
+    : problems
 }
 
 const questionBankCache: Partial<Record<FactoringDifficulty, FactoringProblem[]>> = {}
@@ -313,10 +229,6 @@ function flipSign(f: FactoringBinomial): FactoringBinomial {
   return { a: -f.a, b: -f.b }
 }
 
-function flipQuadraticSign(f: FactoringQuadraticFactor): FactoringQuadraticFactor {
-  return { a: -f.a, b: -f.b, c: -f.c }
-}
-
 function withSignFlips(factors: FactoringBinomial[]): FactoringBinomial[][] {
   const variants: FactoringBinomial[][] = [factors]
   const n = factors.length
@@ -344,22 +256,9 @@ function parseCoefBlank(value: string): number | null {
   return n
 }
 
-/** Blank → coefficient 0 for optional middle terms */
-function parseOptionalCoefBlank(value: string): number {
-  const trimmed = value.trim()
-  if (trimmed === '') return 0
-  const n = parseBlank(trimmed)
-  return n ?? 0
-}
-
 function normalizeBinomial({ a, b }: FactoringBinomial): FactoringBinomial {
   if (a < 0) return { a: -a, b: -b }
   return { a, b }
-}
-
-function normalizeQuadratic({ a, b, c }: FactoringQuadraticFactor): FactoringQuadraticFactor {
-  if (a < 0) return { a: -a, b: -b, c: -c }
-  return { a, b, c }
 }
 
 function normalizePolyCoeffs(coeffs: number[]): number[] {
@@ -395,50 +294,10 @@ export function parseBinomialInputs(
   return bins
 }
 
-export function parseCubicFactoringInputs(
-  linearValues: string[],
-  linearSign: '+' | '-',
-  quadValues: string[],
-  quadSigns: ('+' | '-')[],
-): { linear: FactoringBinomial; quadratic: FactoringQuadraticFactor } | null {
-  if (linearValues.length !== 2 || quadValues.length !== 3) return null
-
-  const la = parseCoefBlank(linearValues[0])
-  const lbRaw = parseBlank(linearValues[1])
-  if (la === null || lbRaw === null) return null
-
-  const qa = parseCoefBlank(quadValues[0])
-  const qbRaw = parseOptionalCoefBlank(quadValues[1])
-  const qcRaw = parseBlank(quadValues[2])
-  if (qa === null || qcRaw === null) return null
-
-  const linear: FactoringBinomial = {
-    a: la,
-    b: linearSign === '-' ? -Math.abs(lbRaw) : Math.abs(lbRaw),
-  }
-
-  const quadratic: FactoringQuadraticFactor = {
-    a: qa,
-    b: quadSigns[0] === '-' ? -Math.abs(qbRaw) : Math.abs(qbRaw),
-    c: quadSigns[1] === '-' ? -Math.abs(qcRaw) : Math.abs(qcRaw),
-  }
-
-  return { linear, quadratic }
-}
-
-function matchesCubicTarget(
-  linear: FactoringBinomial,
-  quadratic: FactoringQuadraticFactor,
-  target: number[],
-): boolean {
-  return coeffsEqual(normalizePolyCoeffs(multiplyLinearQuadratic(linear, quadratic)), target)
-}
-
 export function checkFactoringAnswer(
   problem: FactoringProblem,
   userFactors: FactoringBinomial[],
 ): boolean {
-  if (problem.kind === 'cubic' && problem.cubicFactors) return false
   if (userFactors.length !== problem.factors.length) return false
 
   const target = normalizePolyCoeffs(problem.coeffs)
@@ -465,32 +324,7 @@ export function checkFactoringAnswer(
   return false
 }
 
-export function checkCubicFactoringAnswer(
-  problem: FactoringProblem,
-  linear: FactoringBinomial,
-  quadratic: FactoringQuadraticFactor,
-): boolean {
-  if (!problem.cubicFactors) return false
-
-  const target = normalizePolyCoeffs(problem.coeffs)
-  const candidates: { linear: FactoringBinomial; quadratic: FactoringQuadraticFactor }[] = [
-    { linear, quadratic },
-    { linear: flipSign(linear), quadratic },
-    { linear, quadratic: flipQuadraticSign(quadratic) },
-    { linear: flipSign(linear), quadratic: flipQuadraticSign(quadratic) },
-    { linear: normalizeBinomial(linear), quadratic: normalizeQuadratic(quadratic) },
-  ]
-
-  return candidates.some(({ linear: l, quadratic: q }) =>
-    matchesCubicTarget(l, q, target),
-  )
-}
-
 export function formatCorrectAnswer(problem: FactoringProblem): string {
-  if (problem.cubicFactors) {
-    return formatCubicFactors(problem.cubicFactors.linear, problem.cubicFactors.quadratic)
-  }
-
   return problem.factors
     .map(({ a, b }) => {
       const xPart = a === 1 ? 'x' : a === -1 ? '−x' : `${a}x`
@@ -498,38 +332,6 @@ export function formatCorrectAnswer(problem: FactoringProblem): string {
       return `(${xPart}${constPart})`
     })
     .join('')
-}
-
-export function formatCubicFactors(
-  linear: FactoringBinomial,
-  quadratic: FactoringQuadraticFactor,
-): string {
-  const linearPart = formatLinearFactor(linear)
-  const quadraticPart = formatQuadraticFactor(quadratic)
-  return `${linearPart}${quadraticPart}`
-}
-
-function formatLinearFactor({ a, b }: FactoringBinomial): string {
-  const xPart = a === 1 ? 'x' : a === -1 ? '−x' : `${a}x`
-  const constPart = b >= 0 ? ` + ${b}` : ` − ${Math.abs(b)}`
-  return `(${xPart}${constPart})`
-}
-
-function formatQuadraticFactor({ a, b, c }: FactoringQuadraticFactor): string {
-  let result = '('
-  const x2Part = a === 1 ? 'x²' : a === -1 ? '−x²' : `${a}x²`
-  result += x2Part
-
-  if (b !== 0) {
-    result += b >= 0 ? ` + ${b === 1 ? 'x' : `${b}x`}` : ` − ${Math.abs(b) === 1 ? 'x' : `${Math.abs(b)}x`}`
-  }
-
-  if (c !== 0) {
-    result += c >= 0 ? ` + ${c}` : ` − ${Math.abs(c)}`
-  }
-
-  result += ')'
-  return result
 }
 
 export function pickFactoringProblem(
@@ -546,38 +348,12 @@ export function pickFactoringProblem(
   return bank[Math.floor(Math.random() * bank.length)]
 }
 
-export function isCubicGroupingProblem(problem: FactoringProblem): boolean {
-  return problem.kind === 'cubic' && problem.cubicFactors !== undefined
-}
-
 export function getBlankCount(problem: FactoringProblem): number {
-  if (isCubicGroupingProblem(problem)) return 5
   return problem.factors.length * 2
 }
 
 export function getBinomialCount(problem: FactoringProblem): number {
-  if (isCubicGroupingProblem(problem)) return 1
   return problem.factors.length
-}
-
-const questionStatsCache: Partial<
-  Record<FactoringDifficulty, { total: number; quadratics: number; cubics: number }>
-> = {}
-
-export function getFactoringQuestionStats(difficulty: FactoringDifficulty = 'easy'): {
-  total: number
-  quadratics: number
-  cubics: number
-} {
-  if (questionStatsCache[difficulty]) return questionStatsCache[difficulty]!
-
-  const bank = getFactoringQuestionBank(difficulty)
-  questionStatsCache[difficulty] = {
-    total: bank.length,
-    quadratics: bank.filter((problem) => problem.kind === 'quadratic').length,
-    cubics: bank.filter((problem) => problem.kind === 'cubic').length,
-  }
-  return questionStatsCache[difficulty]!
 }
 
 export function getFactoringDifficultyLabel(difficulty: FactoringDifficulty): string {
