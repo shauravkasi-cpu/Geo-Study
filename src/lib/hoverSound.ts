@@ -1,4 +1,5 @@
-const HOVER_SOUND_SRC = '/sounds/tf2-button-click-hover.mp3'
+import { playSfx } from './audio'
+
 const HOVER_SELECTOR = [
   'button',
   'a[href]',
@@ -13,48 +14,14 @@ const HOVER_SELECTOR = [
   '.mode-buttons button',
 ].join(', ')
 
-let audio: HTMLAudioElement | null = null
-let unlocked = false
 let lastTarget: EventTarget | null = null
 let lastPlayedAt = 0
-
-function getAudio() {
-  if (!audio) {
-    audio = new Audio(HOVER_SOUND_SRC)
-    audio.preload = 'auto'
-    audio.volume = 0.45
-  }
-  return audio
-}
-
-function unlockAudio() {
-  if (unlocked) return
-  const el = getAudio()
-  const prev = el.volume
-  el.volume = 0
-  el
-    .play()
-    .then(() => {
-      el.pause()
-      el.currentTime = 0
-      el.volume = prev
-      unlocked = true
-    })
-    .catch(() => {
-      el.volume = prev
-    })
-}
 
 function playHoverSound() {
   const now = performance.now()
   if (now - lastPlayedAt < 40) return
   lastPlayedAt = now
-
-  const el = getAudio()
-  el.currentTime = 0
-  void el.play().catch(() => {
-    // Browsers may block until a user gesture unlocks audio.
-  })
+  playSfx('hover')
 }
 
 function isHoverable(target: EventTarget | null): target is Element {
@@ -65,9 +32,6 @@ export function initHoverSounds() {
   if (typeof window === 'undefined') return
   if ((window as Window & { __geoHoverSounds?: boolean }).__geoHoverSounds) return
   ;(window as Window & { __geoHoverSounds?: boolean }).__geoHoverSounds = true
-
-  window.addEventListener('pointerdown', unlockAudio, { once: true, capture: true })
-  window.addEventListener('keydown', unlockAudio, { once: true, capture: true })
 
   document.addEventListener(
     'pointerover',
