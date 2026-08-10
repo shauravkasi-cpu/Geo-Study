@@ -8,8 +8,8 @@ const SFX_SRC: Record<SfxName, string> = {
 
 const BACKGROUND_SRC = '/sounds/background-ambient.wav'
 const SFX_VOLUME = 0.55
-const HOVER_VOLUME = 0.4
-const MUSIC_VOLUME = 0.1
+const HOVER_VOLUME = 0.08
+const MUSIC_VOLUME = 0.24
 
 let ctx: AudioContext | null = null
 let masterGain: GainNode | null = null
@@ -144,6 +144,10 @@ export function playSfx(name: SfxName) {
 
 export function playAnswerSound(correct: boolean) {
   playSfx(correct ? 'correct' : 'wrong')
+}
+
+export function playHoverSfx() {
+  playSfx('hover')
 }
 
 export function initAppAudio() {

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { geoEqualEarth } from 'd3-geo'
 import {
   Annotation,
@@ -17,6 +17,7 @@ import {
 import { getCountryDisplayName } from '../lib/countries'
 import { getCountryCentroid } from '../lib/hints'
 import { getLabelAnchor, placeMapLabels } from '../lib/labelPlacement'
+import { playHoverSfx } from '../lib/audio'
 import { resolveMapGeoIso } from '../lib/mapGeoIndex'
 import { getPhysicalFeature } from '../lib/physicalFeatures'
 
@@ -33,6 +34,7 @@ const MAP_HEIGHT = 520
 const LABEL_FONT_SIZE = 8.5
 
 export function ApHumanReferenceMap({ onBack }: ApHumanReferenceMapProps) {
+  const hoveredCountryKeyRef = useRef<string | null>(null)
   const quizCountrySet = useMemo(
     () => new Set(AP_HUMAN_QUIZ_1_COUNTRY_CODES),
     [],
@@ -127,10 +129,22 @@ export function ApHumanReferenceMap({ onBack }: ApHumanReferenceMapProps) {
                   const iso = resolveMapGeoIso(props.name, geoId)
                   const isQuizCountry = iso ? quizCountrySet.has(iso) : false
 
+                  const countryKey = (geo.rsmKey as string) || iso || props.name
+
                   return (
                     <Geography
                       key={geo.rsmKey as string}
                       geography={geo}
+                      onMouseEnter={() => {
+                        if (hoveredCountryKeyRef.current === countryKey) return
+                        hoveredCountryKeyRef.current = countryKey
+                        playHoverSfx()
+                      }}
+                      onMouseLeave={() => {
+                        if (hoveredCountryKeyRef.current === countryKey) {
+                          hoveredCountryKeyRef.current = null
+                        }
+                      }}
                       style={{
                         default: {
                           fill: isQuizCountry ? 'var(--map-ref-country)' : 'var(--map-fill-dimmed)',

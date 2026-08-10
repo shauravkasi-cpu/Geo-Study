@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { GeoProjection } from 'd3-geo'
 import {
   ComposableMap,
@@ -14,6 +14,7 @@ import {
 } from '../lib/countries'
 import { resolveMapGeoIso } from '../lib/mapGeoIndex'
 import { countryAtPoint } from '../lib/geoUtils'
+import { playHoverSfx } from '../lib/audio'
 import { getLngLatFromClick } from '../lib/mapCoords'
 import type { HintView, MapClickResult, QuizItemType } from '../types'
 
@@ -120,6 +121,7 @@ export function WorldMap({
 }: WorldMapProps) {
   const [mapCenter, setMapCenter] = useState<[number, number]>([20, 20])
   const [mapZoom, setMapZoom] = useState(1)
+  const hoveredCountryKeyRef = useRef<string | null>(null)
   const features = useMemo(() => getCountryFeatures(), [])
 
   const hintCountrySet = useMemo(
@@ -224,6 +226,8 @@ export function WorldMap({
                   const isCountryInteractive =
                     isInteractive && clickMode === 'country' && !!iso
 
+                  const countryKey = (geo.rsmKey as string) || iso || props.name
+
                   return (
                     <Geography
                       key={geo.rsmKey as string}
@@ -231,6 +235,16 @@ export function WorldMap({
                       onClick={(e) => {
                         if (clickMode === 'country' && iso) {
                           handleCountryClick(props.name, geoId, e)
+                        }
+                      }}
+                      onMouseEnter={() => {
+                        if (hoveredCountryKeyRef.current === countryKey) return
+                        hoveredCountryKeyRef.current = countryKey
+                        playHoverSfx()
+                      }}
+                      onMouseLeave={() => {
+                        if (hoveredCountryKeyRef.current === countryKey) {
+                          hoveredCountryKeyRef.current = null
                         }
                       }}
                       style={geoStyle(role, isCountryInteractive)}
