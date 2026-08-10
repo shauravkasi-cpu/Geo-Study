@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { playAnswerSound } from '../lib/answerSounds'
 import {
   checkFactoringAnswer,
   getBinomialCount,
@@ -100,11 +101,13 @@ export function FactoringPractice({ difficulty, onBack }: FactoringPracticeProps
 
     const parsed = parseBinomialInputs(blanks, signs, getFactorPowers(problem))
     if (!parsed) {
+      playAnswerSound(false)
       setChecked(true)
       setCorrect(false)
       return
     }
     const isCorrect = checkFactoringAnswer(problem, parsed)
+    playAnswerSound(isCorrect)
     setChecked(true)
     setCorrect(isCorrect)
     setScore((prev) => ({

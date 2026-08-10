@@ -8,6 +8,7 @@ import { HomeScreen } from './components/HomeScreen'
 import { QuizPanel } from './components/QuizPanel'
 import { ResultsScreen } from './components/ResultsScreen'
 import { WorldMap } from './components/WorldMap'
+import { playAnswerSound } from './lib/answerSounds'
 import { loadCountryData } from './lib/countries'
 import { getHintView } from './lib/hints'
 import {
@@ -104,6 +105,7 @@ function App() {
       if (!updated) return
 
       const answer = updated.answers[updated.answers.length - 1]
+      playAnswerSound(answer.correct)
       setSession(updated)
       setLastAnswer(answer)
       setAwaitingNext(true)
@@ -118,6 +120,7 @@ function App() {
 
       const updated = submitMcAnswer(session, code)
       const answer = updated.answers[updated.answers.length - 1]
+      playAnswerSound(answer.correct)
       setSession(updated)
       setLastAnswer(answer)
       setAwaitingNext(true)
@@ -158,6 +161,7 @@ function App() {
 
     const updated = skipQuestion(session)
     const answer = updated.answers[updated.answers.length - 1]
+    playAnswerSound(answer.correct)
     setSession(updated)
     setLastAnswer(answer)
     setAwaitingNext(true)

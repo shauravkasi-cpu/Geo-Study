@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { playAnswerSound } from '../lib/answerSounds'
 import {
   FACTORING_QUIZ_DURATION_MS,
   checkFactoringAnswer,
@@ -116,26 +117,27 @@ export function FactoringQuiz({ onBack }: FactoringQuizProps) {
 
   const gradeQuiz = useCallback(() => {
     submittedRef.current = true
-    setAnswers((prev) =>
-      prev.map((answer, index) => {
-        const problem = problems[index]
-        const parsed = parseBinomialInputs(
-          answer.blanks,
-          answer.signs,
-          getFactorPowers(problem),
-        )
-        if (!parsed) {
-          return { ...answer, correct: false }
-        }
-        return {
-          ...answer,
-          correct: checkFactoringAnswer(problem, parsed),
-        }
-      }),
-    )
+    const graded = answers.map((answer, index) => {
+      const problem = problems[index]
+      const parsed = parseBinomialInputs(
+        answer.blanks,
+        answer.signs,
+        getFactorPowers(problem),
+      )
+      if (!parsed) {
+        return { ...answer, correct: false }
+      }
+      return {
+        ...answer,
+        correct: checkFactoringAnswer(problem, parsed),
+      }
+    })
+    const allCorrect = graded.every((answer) => answer.correct)
+    playAnswerSound(allCorrect)
+    setAnswers(graded)
     setSubmitted(true)
     setTimeUpPopup(false)
-  }, [problems])
+  }, [answers, problems])
 
   const handleContinueTrying = useCallback(() => {
     continuedRef.current = true
