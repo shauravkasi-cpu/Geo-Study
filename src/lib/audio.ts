@@ -6,21 +6,29 @@ const SFX_SRC: Record<SfxName, string> = {
   wrong: '/sounds/duolingo-wrong.mp3',
 }
 
-const BACKGROUND_SRC = '/sounds/background-ambient.wav'
+const SFX_ENABLED_KEY = 'geo-study-sfx-enabled'
 const SFX_VOLUME = 0.55
 const HOVER_VOLUME = 0.08
-const MUSIC_VOLUME = 0.24
 
 let ctx: AudioContext | null = null
 let masterGain: GainNode | null = null
-let musicGain: GainNode | null = null
-let musicSource: AudioBufferSourceNode | null = null
-let musicBuffer: AudioBuffer | null = null
 let unlocked = false
-let musicStarted = false
 let ready: Promise<void> | null = null
+let sfxEnabled = readSfxEnabled()
 
 const buffers = new Map<SfxName, AudioBuffer>()
+const listeners = new Set<(enabled: boolean) => void>()
+
+function readSfxEnabled(): boolean {
+  try {
+    const stored = localStorage.getItem(SFX_ENABLED_KEY)
+    if (stored === 'false') return false
+    if (stored === 'true') return true
+  } catch {
+    // ignore
+  }
+  return true
+}
 
 function getContext() {
   if (!ctx) {
@@ -32,10 +40,6 @@ function getContext() {
     masterGain = ctx.createGain()
     masterGain.gain.value = 1
     masterGain.connect(ctx.destination)
-
-    musicGain = ctx.createGain()
-    musicGain.gain.value = MUSIC_VOLUME
-    musicGain.connect(masterGain)
   }
   return ctx
 }
@@ -81,12 +85,6 @@ async function ensureReady() {
         }),
       )
       for (const [name, buffer] of entries) buffers.set(name, buffer)
-
-      try {
-        musicBuffer = await decodeSrc(BACKGROUND_SRC)
-      } catch {
-        musicBuffer = null
-      }
     })().catch(() => {
       // Keep app usable if audio assets fail to load.
     })
@@ -108,32 +106,42 @@ function playBuffer(buffer: AudioBuffer, volume: number) {
   source.start(0)
 }
 
-function startMusic() {
-  if (musicStarted || !musicBuffer || !musicGain) return
-  const audioCtx = getContext()
-  if (audioCtx.state === 'suspended') void audioCtx.resume()
-
-  musicSource = audioCtx.createBufferSource()
-  musicSource.buffer = musicBuffer
-  musicSource.loop = true
-  musicSource.connect(musicGain)
-  musicSource.start(0)
-  musicStarted = true
-}
-
 async function unlockAudio() {
   if (unlocked) return
   unlocked = true
   await ensureReady()
   const audioCtx = getContext()
   if (audioCtx.state === 'suspended') await audioCtx.resume()
-  startMusic()
+}
+
+export function isSfxEnabled() {
+  return sfxEnabled
+}
+
+export function setSfxEnabled(enabled: boolean) {
+  sfxEnabled = enabled
+  try {
+    localStorage.setItem(SFX_ENABLED_KEY, enabled ? 'true' : 'false')
+  } catch {
+    // ignore
+  }
+  for (const listener of listeners) listener(enabled)
+}
+
+export function subscribeSfxEnabled(listener: (enabled: boolean) => void) {
+  listeners.add(listener)
+  return () => {
+    listeners.delete(listener)
+  }
 }
 
 export function playSfx(name: SfxName) {
+  if (!sfxEnabled) return
+
   const buffer = buffers.get(name)
   if (!buffer) {
     void ensureReady().then(() => {
+      if (!sfxEnabled) return
       const readyBuffer = buffers.get(name)
       if (readyBuffer) playBuffer(readyBuffer, name === 'hover' ? HOVER_VOLUME : SFX_VOLUME)
     })

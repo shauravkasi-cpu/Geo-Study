@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AP_HUMAN_QUIZ_1_NAME } from '../lib/apHumanQuiz1'
 import { CONTINENTS } from '../lib/countries'
-import { ThemeToggle } from '../lib/theme'
+import { AppToggles } from '../lib/soundToggle'
 import { deleteCustomQuiz, loadCustomQuizzes } from '../lib/storage'
 import type { Continent, CustomQuiz, FactoringDifficulty, PresetType, QuizFormat } from '../types'
 
@@ -49,7 +49,7 @@ export function HomeScreen({
       <header className="home-header">
         <div className="home-header-top">
           <h1>Geo Study</h1>
-          <ThemeToggle />
+          <AppToggles />
         </div>
       </header>
 

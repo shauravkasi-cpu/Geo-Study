@@ -1,4 +1,10 @@
-/* Theme toggle */
+/* Theme / sound toggles */
+.app-toggles {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .theme-toggle {
   background: var(--bg-subtle);
   border: 1px solid var(--border);

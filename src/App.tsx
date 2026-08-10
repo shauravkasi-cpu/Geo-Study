@@ -28,7 +28,7 @@ import {
   submitMcAnswer,
 } from './lib/quizEngine'
 import { saveQuizScore } from './lib/storage'
-import { ThemeToggle } from './lib/theme'
+import { AppToggles } from './lib/soundToggle'
 import type {
   AppScreen,
   HintView,
@@ -218,7 +218,7 @@ function App() {
       <SiteShell>
         <div className="page-with-theme">
           <div className="page-theme-bar">
-            <ThemeToggle />
+            <AppToggles />
           </div>
           <FactoringPractice difficulty={screen.difficulty} onBack={goHome} />
         </div>
@@ -231,7 +231,7 @@ function App() {
       <SiteShell>
         <div className="page-with-theme">
           <div className="page-theme-bar">
-            <ThemeToggle />
+            <AppToggles />
           </div>
           <FactoringQuiz onBack={goHome} />
         </div>
@@ -244,7 +244,7 @@ function App() {
       <SiteShell>
         <div className="page-with-theme">
           <div className="page-theme-bar">
-            <ThemeToggle />
+            <AppToggles />
           </div>
           <ApHumanReferenceMap onBack={goHome} />
         </div>
@@ -269,7 +269,7 @@ function App() {
       <SiteShell>
         <div className="page-with-theme">
           <div className="page-theme-bar">
-            <ThemeToggle />
+            <AppToggles />
           </div>
           <ResultsScreen
             session={session}
@@ -295,7 +295,7 @@ function App() {
         <div className="quiz-layout">
           <div className="quiz-map">
             <div className="quiz-map-toolbar">
-              <ThemeToggle />
+              <AppToggles />
             </div>
             <WorldMap
               onMapClick={handleMapClick}

@@ -5,7 +5,7 @@ import {
   loadCustomQuizzes,
   updateCustomQuiz,
 } from '../lib/storage'
-import { ThemeToggle } from '../lib/theme'
+import { AppToggles } from '../lib/soundToggle'
 
 interface CustomQuizBuilderProps {
   editId?: string
@@ -59,7 +59,7 @@ export function CustomQuizBuilder({ editId, onStart, onCancel }: CustomQuizBuild
         <div className="builder-header">
           <h1>{editId ? 'Edit Custom Quiz' : 'Create Custom Quiz'}</h1>
           <div className="builder-header-actions">
-            <ThemeToggle />
+            <AppToggles />
             <button type="button" className="btn-text" onClick={onCancel}>
               ← Back
             </button>
