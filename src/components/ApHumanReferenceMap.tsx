@@ -62,6 +62,21 @@ export function ApHumanReferenceMap({ onBack }: ApHumanReferenceMapProps) {
       }
     }).filter((label): label is NonNullable<typeof label> => label !== null)
 
+    // Ensure tiny/extra countries always keep a study-map label.
+    for (const geo of getExtraMapGeographies()) {
+      if (!quizCountrySet.has(geo.isoCode)) continue
+      if (countryLabels.some((label) => label.id === `country-${geo.isoCode}`)) continue
+      const centroid = getCountryCentroid(geo.isoCode)
+      if (!centroid) continue
+      countryLabels.push({
+        id: `country-${geo.isoCode}`,
+        lng: centroid[0],
+        lat: centroid[1],
+        text: getCountryDisplayName(geo.isoCode),
+        kind: 'country' as const,
+      })
+    }
+
     const featureLabels = AP_HUMAN_QUIZ_1_FEATURE_IDS.map((id) => {
       const feature = getPhysicalFeature(id)
       if (!feature) return null
@@ -82,7 +97,7 @@ export function ApHumanReferenceMap({ onBack }: ApHumanReferenceMapProps) {
       },
       { fontSize: LABEL_FONT_SIZE, padding: 2 },
     )
-  }, [projection])
+  }, [projection, quizCountrySet])
 
   const featurePoints = useMemo(
     () =>
@@ -231,6 +246,26 @@ export function ApHumanReferenceMap({ onBack }: ApHumanReferenceMapProps) {
                 </>
               )}
             </Geographies>
+
+            {quizExtraGeographies.map((geo) => {
+              const centroid = getCountryCentroid(geo.isoCode)
+              if (!centroid) return null
+              return (
+                <Marker key={`marker-${geo.isoCode}`} coordinates={centroid}>
+                  <circle
+                    r={4.5}
+                    fill="var(--map-ref-country)"
+                    stroke="var(--map-ref-country-stroke)"
+                    strokeWidth={1.4}
+                    onMouseEnter={() => {
+                      if (hoveredCountryKeyRef.current === geo.rsmKey) return
+                      hoveredCountryKeyRef.current = geo.rsmKey
+                      playHoverSfx()
+                    }}
+                  />
+                </Marker>
+              )
+            })}
 
             {featurePoints.map((feature) => (
               <Marker key={feature.id} coordinates={feature.coordinates}>

@@ -92,6 +92,27 @@ export function getExtraMapGeographies() {
   }))
 }
 
+export function getExtraCountryCentroid(isoCode: string): [number, number] | null {
+  const extra = EXTRA_MAP_COUNTRIES.find((entry) => entry.isoCode === isoCode)
+  if (!extra) return null
+
+  const ring = extra.geometry.coordinates[0]
+  if (!ring.length) return null
+
+  let sumLng = 0
+  let sumLat = 0
+  const count = Math.max(1, ring.length - 1)
+  for (let i = 0; i < count; i++) {
+    sumLng += ring[i][0]
+    sumLat += ring[i][1]
+  }
+  return [sumLng / count, sumLat / count]
+}
+
+export function getExtraMapCountry(isoCode: string): ExtraMapCountry | undefined {
+  return EXTRA_MAP_COUNTRIES.find((entry) => entry.isoCode === isoCode)
+}
+
 export function mergeExtraCountries(
   countries: Country[],
   features: Feature<Geometry, CountryFeatureProperties>[],

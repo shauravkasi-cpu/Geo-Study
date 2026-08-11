@@ -1,5 +1,6 @@
 import type { Feature, Geometry, Position } from 'geojson'
 import { getCountries, getCountryByCode, getCountryFeatures } from './countries'
+import { getExtraCountryCentroid } from './extraMapCountries'
 import { getPhysicalFeature, haversineDistanceKm } from './physicalFeatures'
 import type { HintView } from '../types'
 import { parseItemId } from '../types'
@@ -38,8 +39,11 @@ function geometryCentroid(geometry: Geometry): [number, number] | null {
 export function getCountryCentroid(isoCode: string): [number, number] | null {
   const features = getCountryFeatures()
   const feature = features.find((f) => f.properties.isoCode === isoCode)
-  if (!feature) return null
-  return geometryCentroid(feature.geometry)
+  if (feature) {
+    const centroid = geometryCentroid(feature.geometry)
+    if (centroid) return centroid
+  }
+  return getExtraCountryCentroid(isoCode)
 }
 
 function pickHintCountryCount(): number {
