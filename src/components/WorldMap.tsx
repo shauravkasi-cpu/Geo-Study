@@ -334,6 +334,12 @@ export function WorldMap({
             if (!centroid) return null
 
             const role = getRole(geo.properties.name, geo.id)
+            const canClick = isInteractive && clickMode === 'country'
+            // Only show the tiny-country marker when it's active (highlighted) or clickable in locate.
+            const isActiveRole =
+              role === 'correct' || role === 'wrong' || role === 'mc' || role === 'hint'
+            if (!canClick && !isActiveRole) return null
+
             const fill =
               role === 'correct'
                 ? 'var(--map-highlight)'
@@ -344,7 +350,6 @@ export function WorldMap({
                     : role === 'hint'
                       ? 'var(--map-hint)'
                       : 'var(--map-fill-hover)'
-            const canClick = isInteractive && clickMode === 'country'
 
             return (
               <Marker key={`marker-${geo.isoCode}`} coordinates={centroid}>
