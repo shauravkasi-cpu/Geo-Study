@@ -1,6 +1,7 @@
 import type { Feature, FeatureCollection, Geometry } from 'geojson'
 import type { Continent, Country, CountryFeatureProperties } from '../types'
 import { getFullCountryName, NE_NAME_TO_ISO } from './countryNames'
+import { mergeExtraCountries } from './extraMapCountries'
 
 // ISO 3166-1 alpha-3 to continent mapping (Natural Earth aligned)
 const ISO_TO_CONTINENT: Record<string, Continent> = {
@@ -121,7 +122,6 @@ const ALIASES: Record<string, string> = {
   congo: 'COG',
   'republic of the congo': 'COG',
   singapore: 'SGP',
-  'republic of the congo': 'COG',
   'ivory coast': 'CIV',
   "cote d'ivoire": 'CIV',
   'czech republic': 'CZE',
@@ -324,18 +324,18 @@ export async function loadCountryData(): Promise<{
     })
   }
 
-  countries.sort((a, b) => a.name.localeCompare(b.name))
-  countriesCache = countries
-  featuresCache = features
+  const merged = mergeExtraCountries(countries, features)
+  countriesCache = merged.countries
+  featuresCache = merged.features
   nameToCodeCache.clear()
-  for (const f of features) {
+  for (const f of featuresCache) {
     nameToCodeCache.set(f.properties.name, f.properties.isoCode)
   }
   for (const [neName, iso] of Object.entries(NE_NAME_TO_ISO)) {
     nameToCodeCache.set(neName, iso)
   }
 
-  return { countries, features }
+  return { countries: countriesCache, features: featuresCache }
 }
 
 export const CONTINENTS: Continent[] = [

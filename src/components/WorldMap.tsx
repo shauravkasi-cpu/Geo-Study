@@ -15,6 +15,7 @@ import {
 import { resolveMapGeoIso } from '../lib/mapGeoIndex'
 import { countryAtPoint } from '../lib/geoUtils'
 import { playHoverSfx } from '../lib/audio'
+import { getExtraMapGeographies } from '../lib/extraMapCountries'
 import { getLngLatFromClick } from '../lib/mapCoords'
 import type { HintView, MapClickResult, QuizItemType } from '../types'
 
@@ -123,6 +124,7 @@ export function WorldMap({
   const [mapZoom, setMapZoom] = useState(1)
   const hoveredCountryKeyRef = useRef<string | null>(null)
   const features = useMemo(() => getCountryFeatures(), [])
+  const extraGeographies = useMemo(() => getExtraMapGeographies(), [])
 
   const hintCountrySet = useMemo(
     () => new Set(hintView?.highlightCountryCodes ?? []),
@@ -235,6 +237,36 @@ export function WorldMap({
                       onClick={(e) => {
                         if (clickMode === 'country' && iso) {
                           handleCountryClick(props.name, geoId, e)
+                        }
+                      }}
+                      onMouseEnter={() => {
+                        if (hoveredCountryKeyRef.current === countryKey) return
+                        hoveredCountryKeyRef.current = countryKey
+                        playHoverSfx()
+                      }}
+                      onMouseLeave={() => {
+                        if (hoveredCountryKeyRef.current === countryKey) {
+                          hoveredCountryKeyRef.current = null
+                        }
+                      }}
+                      style={geoStyle(role, isCountryInteractive)}
+                    />
+                  )
+                })}
+
+                {extraGeographies.map((geo) => {
+                  const role = getRole(geo.properties.name, geo.id)
+                  const isCountryInteractive =
+                    isInteractive && clickMode === 'country'
+                  const countryKey = geo.rsmKey
+
+                  return (
+                    <Geography
+                      key={geo.rsmKey}
+                      geography={geo}
+                      onClick={(e) => {
+                        if (clickMode === 'country') {
+                          handleCountryClick(geo.properties.name, geo.id, e)
                         }
                       }}
                       onMouseEnter={() => {

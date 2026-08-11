@@ -18,6 +18,7 @@ import { getCountryDisplayName } from '../lib/countries'
 import { getCountryCentroid } from '../lib/hints'
 import { getLabelAnchor, placeMapLabels } from '../lib/labelPlacement'
 import { playHoverSfx } from '../lib/audio'
+import { getExtraMapGeographies } from '../lib/extraMapCountries'
 import { resolveMapGeoIso } from '../lib/mapGeoIndex'
 import { getPhysicalFeature } from '../lib/physicalFeatures'
 
@@ -91,6 +92,12 @@ export function ApHumanReferenceMap({ onBack }: ApHumanReferenceMapProps) {
     [],
   )
 
+  const extraGeographies = useMemo(() => getExtraMapGeographies(), [])
+  const quizExtraGeographies = useMemo(
+    () => extraGeographies.filter((geo) => quizCountrySet.has(geo.isoCode)),
+    [extraGeographies, quizCountrySet],
+  )
+
   return (
     <div className="reference-map-page">
       <header className="reference-map-header">
@@ -122,62 +129,107 @@ export function ApHumanReferenceMap({ onBack }: ApHumanReferenceMapProps) {
         >
           <ZoomableGroup center={[20, 10]} zoom={1} minZoom={0.8} maxZoom={6}>
             <Geographies geography={topoData}>
-              {({ geographies }) =>
-                geographies.map((geo) => {
-                  const props = geo.properties as RawGeoProperties
-                  const geoId = geo.id as string | number | undefined
-                  const iso = resolveMapGeoIso(props.name, geoId)
-                  const isQuizCountry = iso ? quizCountrySet.has(iso) : false
+              {({ geographies }) => (
+                <>
+                  {geographies.map((geo) => {
+                    const props = geo.properties as RawGeoProperties
+                    const geoId = geo.id as string | number | undefined
+                    const iso = resolveMapGeoIso(props.name, geoId)
+                    const isQuizCountry = iso ? quizCountrySet.has(iso) : false
 
-                  const countryKey = (geo.rsmKey as string) || iso || props.name
+                    const countryKey = (geo.rsmKey as string) || iso || props.name
 
-                  return (
-                    <Geography
-                      key={geo.rsmKey as string}
-                      geography={geo}
-                      onMouseEnter={() => {
-                        if (hoveredCountryKeyRef.current === countryKey) return
-                        hoveredCountryKeyRef.current = countryKey
-                        playHoverSfx()
-                      }}
-                      onMouseLeave={() => {
-                        if (hoveredCountryKeyRef.current === countryKey) {
-                          hoveredCountryKeyRef.current = null
-                        }
-                      }}
-                      style={{
-                        default: {
-                          fill: isQuizCountry ? 'var(--map-ref-country)' : 'var(--map-fill-dimmed)',
-                          stroke: isQuizCountry
-                            ? 'var(--map-ref-country-stroke)'
-                            : 'var(--map-stroke)',
-                          strokeWidth: isQuizCountry ? 0.6 : 0.35,
-                          outline: 'none',
-                          opacity: isQuizCountry ? 1 : 0.45,
-                        },
-                        hover: {
-                          fill: isQuizCountry ? 'var(--map-ref-country)' : 'var(--map-fill-dimmed)',
-                          stroke: isQuizCountry
-                            ? 'var(--map-ref-country-stroke)'
-                            : 'var(--map-stroke)',
-                          strokeWidth: isQuizCountry ? 0.6 : 0.35,
-                          outline: 'none',
-                          opacity: isQuizCountry ? 1 : 0.45,
-                        },
-                        pressed: {
-                          fill: isQuizCountry ? 'var(--map-ref-country)' : 'var(--map-fill-dimmed)',
-                          stroke: isQuizCountry
-                            ? 'var(--map-ref-country-stroke)'
-                            : 'var(--map-stroke)',
-                          strokeWidth: isQuizCountry ? 0.6 : 0.35,
-                          outline: 'none',
-                          opacity: isQuizCountry ? 1 : 0.45,
-                        },
-                      }}
-                    />
-                  )
-                })
-              }
+                    return (
+                      <Geography
+                        key={geo.rsmKey as string}
+                        geography={geo}
+                        onMouseEnter={() => {
+                          if (hoveredCountryKeyRef.current === countryKey) return
+                          hoveredCountryKeyRef.current = countryKey
+                          playHoverSfx()
+                        }}
+                        onMouseLeave={() => {
+                          if (hoveredCountryKeyRef.current === countryKey) {
+                            hoveredCountryKeyRef.current = null
+                          }
+                        }}
+                        style={{
+                          default: {
+                            fill: isQuizCountry ? 'var(--map-ref-country)' : 'var(--map-fill-dimmed)',
+                            stroke: isQuizCountry
+                              ? 'var(--map-ref-country-stroke)'
+                              : 'var(--map-stroke)',
+                            strokeWidth: isQuizCountry ? 0.6 : 0.35,
+                            outline: 'none',
+                            opacity: isQuizCountry ? 1 : 0.45,
+                          },
+                          hover: {
+                            fill: isQuizCountry ? 'var(--map-ref-country)' : 'var(--map-fill-dimmed)',
+                            stroke: isQuizCountry
+                              ? 'var(--map-ref-country-stroke)'
+                              : 'var(--map-stroke)',
+                            strokeWidth: isQuizCountry ? 0.6 : 0.35,
+                            outline: 'none',
+                            opacity: isQuizCountry ? 1 : 0.45,
+                          },
+                          pressed: {
+                            fill: isQuizCountry ? 'var(--map-ref-country)' : 'var(--map-fill-dimmed)',
+                            stroke: isQuizCountry
+                              ? 'var(--map-ref-country-stroke)'
+                              : 'var(--map-stroke)',
+                            strokeWidth: isQuizCountry ? 0.6 : 0.35,
+                            outline: 'none',
+                            opacity: isQuizCountry ? 1 : 0.45,
+                          },
+                        }}
+                      />
+                    )
+                  })}
+
+                  {quizExtraGeographies.map((geo) => {
+                    const countryKey = geo.rsmKey
+                    return (
+                      <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        onMouseEnter={() => {
+                          if (hoveredCountryKeyRef.current === countryKey) return
+                          hoveredCountryKeyRef.current = countryKey
+                          playHoverSfx()
+                        }}
+                        onMouseLeave={() => {
+                          if (hoveredCountryKeyRef.current === countryKey) {
+                            hoveredCountryKeyRef.current = null
+                          }
+                        }}
+                        style={{
+                          default: {
+                            fill: 'var(--map-ref-country)',
+                            stroke: 'var(--map-ref-country-stroke)',
+                            strokeWidth: 0.6,
+                            outline: 'none',
+                            opacity: 1,
+                          },
+                          hover: {
+                            fill: 'var(--map-ref-country)',
+                            stroke: 'var(--map-ref-country-stroke)',
+                            strokeWidth: 0.6,
+                            outline: 'none',
+                            opacity: 1,
+                          },
+                          pressed: {
+                            fill: 'var(--map-ref-country)',
+                            stroke: 'var(--map-ref-country-stroke)',
+                            strokeWidth: 0.6,
+                            outline: 'none',
+                            opacity: 1,
+                          },
+                        }}
+                      />
+                    )
+                  })}
+                </>
+              )}
             </Geographies>
 
             {featurePoints.map((feature) => (

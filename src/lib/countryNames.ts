@@ -222,6 +222,7 @@ export const NE_NAME_TO_ISO: Record<string, string> = {
   'United States of America': 'USA',
   'Egypt': 'EGY',
   'Cape Verde': 'CPV',
+  Singapore: 'SGP',
   'Czech Rep.': 'CZE',
   'Czechia': 'CZE',
   'Bosnia and Herz.': 'BIH',
