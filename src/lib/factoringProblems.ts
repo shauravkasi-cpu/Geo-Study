@@ -169,6 +169,10 @@ function nonzeroInts(min: number, max: number): number[] {
   return values
 }
 
+function isMonicQuadratic(problem: FactoringProblem): boolean {
+  return problem.coeffs.length === 3 && problem.coeffs[0] === 1
+}
+
 function buildEasyQuestionBank(): FactoringProblem[] {
   const bank = new Map<string, FactoringProblem>()
   const idCounter = { value: 0 }
@@ -176,10 +180,20 @@ function buildEasyQuestionBank(): FactoringProblem[] {
   const add = (factors: FactoringBinomial[]) => {
     const coeffs = multiplyBinomials(factors)
     if (coeffs.length !== 3) return
-    if (coeffs[0] < 2 || coeffs[0] > EASY_MAX_LEADING) return
+    if (coeffs[0] < 1 || coeffs[0] > EASY_MAX_LEADING) return
     if (Math.abs(coeffs[1]) > EASY_MAX_MIDDLE) return
     if (Math.abs(coeffs[2]) > EASY_MAX_CONSTANT) return
     addUniqueProblem(bank, factors, idCounter, EASY_MAX_CONSTANT)
+  }
+
+  // Leading coefficient 1: (x + p)(x + q)
+  for (const b of nonzeroInts(-12, 12)) {
+    for (const c of nonzeroInts(-12, 12)) {
+      add([
+        { a: 1, b },
+        { a: 1, b: c },
+      ])
+    }
   }
 
   for (const a of nonzeroInts(2, EASY_MAX_LEADING)) {
@@ -455,10 +469,35 @@ function pickFromBank(bank: FactoringProblem[], seen: Set<string>): FactoringPro
   return pickFrom[Math.floor(Math.random() * pickFrom.length)]
 }
 
+function pickEasyProblem(
+  seen: Set<string>,
+  preferMonic: boolean | null = null,
+): FactoringProblem {
+  const bank = getFactoringQuestionBank('easy')
+  const monic = bank.filter(isMonicQuadratic)
+  const nonMonic = bank.filter((problem) => !isMonicQuadratic(problem))
+
+  const wantMonic =
+    preferMonic === null ? Math.random() < 0.5 : preferMonic
+
+  if (wantMonic && monic.length > 0) {
+    return pickFromBank(monic, seen)
+  }
+  if (!wantMonic && nonMonic.length > 0) {
+    return pickFromBank(nonMonic, seen)
+  }
+  return pickFromBank(bank, seen)
+}
+
 export function pickFactoringProblem(
   seen: Set<string>,
   difficulty: FactoringDifficulty = 'easy',
 ): FactoringProblem {
+  if (difficulty === 'easy') {
+    // About half of easy practice questions are monic (x² coefficient 1).
+    return pickEasyProblem(seen, null)
+  }
+
   if (difficulty === 'hard' && Math.random() < GROUPING_QUESTION_CHANCE) {
     const groupingBank = getHardGroupingQuestionBank()
     if (groupingBank.length > 0) {
@@ -472,17 +511,27 @@ export function pickFactoringProblem(
 /** Timed quiz: 3 easy + 1 hard, all shown together. */
 export const FACTORING_QUIZ_EASY_COUNT = 3
 export const FACTORING_QUIZ_HARD_COUNT = 1
+/** How many of the easy quiz questions use leading coefficient 1. */
+export const FACTORING_QUIZ_MONIC_EASY_COUNT = 2
 export const FACTORING_QUIZ_DURATION_MS = 4 * 60 * 1000
 
 export function createFactoringQuiz(): FactoringProblem[] {
   const seen = new Set<string>()
-  const problems: FactoringProblem[] = []
+  const easyProblems: FactoringProblem[] = []
 
-  for (let i = 0; i < FACTORING_QUIZ_EASY_COUNT; i += 1) {
-    const problem = pickFactoringProblem(seen, 'easy')
+  for (let i = 0; i < FACTORING_QUIZ_MONIC_EASY_COUNT; i += 1) {
+    const problem = pickEasyProblem(seen, true)
     seen.add(problem.id)
-    problems.push(problem)
+    easyProblems.push(problem)
   }
+
+  for (let i = FACTORING_QUIZ_MONIC_EASY_COUNT; i < FACTORING_QUIZ_EASY_COUNT; i += 1) {
+    const problem = pickEasyProblem(seen, false)
+    seen.add(problem.id)
+    easyProblems.push(problem)
+  }
+
+  const problems = shuffle(easyProblems)
 
   for (let i = 0; i < FACTORING_QUIZ_HARD_COUNT; i += 1) {
     const problem = pickFactoringProblem(seen, 'hard')
