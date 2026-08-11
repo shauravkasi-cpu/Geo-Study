@@ -11,6 +11,7 @@ import { WorldMap } from './components/WorldMap'
 import { playAnswerSound } from './lib/answerSounds'
 import { loadCountryData } from './lib/countries'
 import { getHintView } from './lib/hints'
+import { getItemFocusView } from './lib/mapFocus'
 import {
   createQuizSession,
   createRetrySession,
@@ -26,6 +27,7 @@ import {
   skipQuestion,
   submitAnswer,
   submitMcAnswer,
+  submitTypedAnswer,
 } from './lib/quizEngine'
 import { saveQuizScore } from './lib/storage'
 import { AppToggles } from './lib/soundToggle'
@@ -99,7 +101,7 @@ function App() {
   const handleMapClick = useCallback(
     (result: MapClickResult) => {
       if (!session || awaitingNext || session.status === 'complete') return
-      if (session.format === 'multiple-choice') return
+      if (session.format === 'multiple-choice' || session.format === 'name-it') return
 
       const updated = submitAnswer(session, result)
       if (!updated) return
@@ -124,6 +126,23 @@ function App() {
       setSession(updated)
       setLastAnswer(answer)
       setAwaitingNext(true)
+    },
+    [session, awaitingNext],
+  )
+
+  const handleTypedSubmit = useCallback(
+    (value: string) => {
+      if (!session || awaitingNext || session.status === 'complete') return
+
+      const updated = submitTypedAnswer(session, value)
+      if (!updated) return
+
+      const answer = updated.answers[updated.answers.length - 1]
+      playAnswerSound(answer.correct)
+      setSession(updated)
+      setLastAnswer(answer)
+      setAwaitingNext(true)
+      setHintView(null)
     },
     [session, awaitingNext],
   )
@@ -284,11 +303,16 @@ function App() {
   if (screen.view === 'quiz' && session) {
     const highlightCode = getHighlightCountryCode(lastAnswer)
     const wrongHighlightCode = getWrongClickCountryCode(lastAnswer)
-    const mcHighlightCode = !awaitingNext ? getMcHighlightCode(session) : null
-    const mcFeaturePoint = !awaitingNext ? getMcFeatureMarker(session) : null
+    const revealHighlightCode = !awaitingNext ? getMcHighlightCode(session) : null
+    const revealFeaturePoint = !awaitingNext ? getMcFeatureMarker(session) : null
     const highlightPoint = getHighlightFeatureCoords(lastAnswer)
     const clickPoint = getClickMarkerCoords(lastAnswer)
     const clickMode = getCurrentItemType(session) ?? 'country'
+    const focusItemId = awaitingNext
+      ? (lastAnswer?.targetId ?? null)
+      : getCurrentItemId(session)
+    const focusView =
+      session.format === 'name-it' ? getItemFocusView(focusItemId) : null
 
     return (
       <SiteShell>
@@ -301,13 +325,15 @@ function App() {
               onMapClick={handleMapClick}
               highlightCode={awaitingNext ? highlightCode : null}
               wrongHighlightCode={awaitingNext ? wrongHighlightCode : null}
-              mcHighlightCode={mcHighlightCode}
-              mcFeaturePoint={mcFeaturePoint}
+              mcHighlightCode={revealHighlightCode}
+              mcFeaturePoint={revealFeaturePoint}
               highlightPoint={awaitingNext ? highlightPoint : null}
               clickPoint={awaitingNext ? clickPoint : null}
               hintView={hintView}
+              focusView={focusView}
+              focusKey={focusItemId}
               clickMode={clickMode}
-              disabled={awaitingNext}
+              disabled={awaitingNext || session.format === 'name-it'}
             />
           </div>
           <QuizPanel
@@ -321,6 +347,7 @@ function App() {
             onNext={handleNext}
             onQuit={goHome}
             onMcSelect={handleMcSelect}
+            onTypedSubmit={handleTypedSubmit}
           />
         </div>
       </SiteShell>

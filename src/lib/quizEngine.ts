@@ -276,6 +276,39 @@ export function submitMcAnswer(
   })
 }
 
+/** Case-insensitive, spelling-sensitive compare for Name It answers. */
+export function normalizeTypedAnswer(value: string): string {
+  return value.trim().toLowerCase().replace(/\s+/g, ' ')
+}
+
+export function submitTypedAnswer(
+  session: QuizSession,
+  typedValue: string,
+): QuizSession | null {
+  const targetId = getCurrentItemId(session)
+  if (!targetId || session.status === 'complete') return null
+  if (session.format !== 'name-it') return null
+
+  const typed = typedValue.trim()
+  if (!typed) return null
+
+  const { type } = parseItemId(targetId)
+  const targetName = getItemName(targetId)
+  const correct = normalizeTypedAnswer(typed) === normalizeTypedAnswer(targetName)
+
+  return advanceSession(session, {
+    targetId,
+    targetName,
+    targetType: type,
+    clickedCode: null,
+    clickedName: typed,
+    clickedLngLat: null,
+    distanceKm: null,
+    correct,
+    selectedOption: typed,
+  })
+}
+
 function advanceSession(session: QuizSession, answer: QuizAnswer): QuizSession {
   const answers = [...session.answers, answer]
   const score = answer.correct ? session.score + 1 : session.score
@@ -354,6 +387,9 @@ export function getSessionTitle(session: QuizSession): string {
   if (session.format === 'multiple-choice') {
     return `${base} — Multiple Choice`
   }
+  if (session.format === 'name-it') {
+    return `${base} — Name It`
+  }
   return base
 }
 
@@ -369,7 +405,7 @@ export const getCurrentCountryCode = (session: QuizSession): string | null => {
 export function getHighlightCountryCode(lastAnswer: QuizAnswer | null): string | null {
   if (!lastAnswer || lastAnswer.targetType !== 'country') return null
   if (lastAnswer.correct) {
-    return lastAnswer.clickedCode
+    return lastAnswer.clickedCode ?? parseItemId(lastAnswer.targetId).key
   }
   return parseItemId(lastAnswer.targetId).key
 }
@@ -384,8 +420,12 @@ export function getWrongClickCountryCode(lastAnswer: QuizAnswer | null): string 
   return null
 }
 
+function isRevealFormat(format: QuizFormat): boolean {
+  return format === 'multiple-choice' || format === 'name-it'
+}
+
 export function getMcHighlightCode(session: QuizSession): string | null {
-  if (session.format !== 'multiple-choice') return null
+  if (!isRevealFormat(session.format)) return null
   const id = getCurrentItemId(session)
   if (!id) return null
   const { type, key } = parseItemId(id)
@@ -393,7 +433,7 @@ export function getMcHighlightCode(session: QuizSession): string | null {
 }
 
 export function getMcFeatureMarker(session: QuizSession): [number, number] | null {
-  if (session.format !== 'multiple-choice') return null
+  if (!isRevealFormat(session.format)) return null
   const id = getCurrentItemId(session)
   if (!id) return null
   const { type, key } = parseItemId(id)

@@ -19,6 +19,7 @@ import {
   getExtraCountryCentroid,
   getExtraMapGeographies,
 } from '../lib/extraMapCountries'
+import type { MapFocusView } from '../lib/mapFocus'
 import { getLngLatFromClick } from '../lib/mapCoords'
 import type { HintView, MapClickResult, QuizItemType } from '../types'
 
@@ -31,6 +32,8 @@ interface WorldMapProps {
   highlightPoint?: [number, number] | null
   clickPoint?: [number, number] | null
   hintView?: HintView | null
+  focusView?: MapFocusView | null
+  focusKey?: string | null
   clickMode?: QuizItemType
   disabled?: boolean
 }
@@ -120,6 +123,8 @@ export function WorldMap({
   highlightPoint,
   clickPoint,
   hintView,
+  focusView = null,
+  focusKey = null,
   clickMode = 'country',
   disabled = false,
 }: WorldMapProps) {
@@ -135,6 +140,11 @@ export function WorldMap({
   )
 
   useEffect(() => {
+    if (focusView) {
+      setMapCenter(focusView.center)
+      setMapZoom(focusView.zoom)
+      return
+    }
     if (hintView) {
       setMapCenter(hintView.center)
       setMapZoom(hintView.zoom)
@@ -145,7 +155,8 @@ export function WorldMap({
       setMapCenter([20, 20])
       setMapZoom(1)
     }
-  }, [hintView, mcFeaturePoint, mcHighlightCode])
+    // focusKey intentionally drives re-zoom per question; avoid resetting when parent re-renders.
+  }, [focusKey, hintView, mcFeaturePoint, mcHighlightCode])
 
   const getRole = (geoName: string, geoId: string | number | undefined): 'default' | 'correct' | 'wrong' | 'mc' | 'hint' | 'dimmed' => {
     const iso = resolveGeoIso(geoName, geoId)

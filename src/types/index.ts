@@ -11,7 +11,7 @@ export type PresetType = 'all' | Continent | 'ap-human-1'
 
 export type QuizItemType = 'country' | 'feature'
 
-export type QuizFormat = 'locate' | 'multiple-choice'
+export type QuizFormat = 'locate' | 'multiple-choice' | 'name-it'
 
 export interface Country {
   isoCode: string

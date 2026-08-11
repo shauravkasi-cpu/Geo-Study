@@ -69,6 +69,9 @@ export function HomeScreen({
             <button type="button" className="btn-secondary btn-sm" onClick={() => onStartPreset('ap-human-1', 'multiple-choice')}>
               Multiple Choice
             </button>
+            <button type="button" className="btn-secondary btn-sm" onClick={() => onStartPreset('ap-human-1', 'name-it')}>
+              Name It
+            </button>
             <button type="button" className="btn-secondary btn-sm" onClick={onViewApHumanReference}>
               View Study Map
             </button>

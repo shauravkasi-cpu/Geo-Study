@@ -566,6 +566,36 @@
   margin: 0;
 }
 
+.name-it-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  margin: 1rem 0 0.75rem;
+}
+
+.name-it-input {
+  width: 100%;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-subtle);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0.8rem 0.95rem;
+  font-size: 1rem;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.name-it-input:focus {
+  border-color: var(--accent);
+  background: var(--bg-elevated);
+}
+
+.name-it-form .btn-primary {
+  width: 100%;
+}
+
 .feedback-card {
   border-radius: 14px;
   padding: 1.25rem;
