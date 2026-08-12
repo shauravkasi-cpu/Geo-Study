@@ -1,6 +1,6 @@
 import type { Geometry, Position } from 'geojson'
 import { getCountryFeatures } from './countries'
-import { getExtraCountryCentroid } from './extraMapCountries'
+import { getExtraCountryCentroid, getExtraMapCountry } from './extraMapCountries'
 import { getPhysicalFeature } from './physicalFeatures'
 import { parseItemId } from '../types'
 
@@ -76,6 +76,13 @@ function viewportFromBounds(
 }
 
 function focusForCountry(isoCode: string): MapFocusView | null {
+  // Prefer enlarged display shape for tiny overlay countries so Name It zooms sensibly.
+  const extra = getExtraMapCountry(isoCode)
+  if (extra) {
+    const bounds = geometryBounds(extra.displayGeometry)
+    if (bounds) return viewportFromBounds(...bounds)
+  }
+
   const feature = getCountryFeatures().find((entry) => entry.properties.isoCode === isoCode)
   if (feature) {
     const bounds = geometryBounds(feature.geometry)

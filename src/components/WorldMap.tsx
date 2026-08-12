@@ -15,10 +15,7 @@ import {
 import { resolveMapGeoIso } from '../lib/mapGeoIndex'
 import { countryAtPoint } from '../lib/geoUtils'
 import { playHoverSfx } from '../lib/audio'
-import {
-  getExtraCountryCentroid,
-  getExtraMapGeographies,
-} from '../lib/extraMapCountries'
+import { getExtraMapGeographies } from '../lib/extraMapCountries'
 import type { MapFocusView } from '../lib/mapFocus'
 import { getLngLatFromClick } from '../lib/mapCoords'
 import type { HintView, MapClickResult, QuizItemType } from '../types'
@@ -191,22 +188,6 @@ export function WorldMap({
     [isInteractive, onMapClick, clickMode],
   )
 
-  const handleExtraCountryClick = useCallback(
-    (isoCode: string, event: React.MouseEvent) => {
-      event.stopPropagation()
-      event.preventDefault()
-      if (!isInteractive || !onMapClick || clickMode !== 'country') return
-
-      const centroid = getExtraCountryCentroid(isoCode)
-      onMapClick({
-        lngLat: centroid ?? [0, 0],
-        countryCode: isoCode,
-        countryName: getCountryDisplayName(isoCode),
-      })
-    },
-    [isInteractive, onMapClick, clickMode],
-  )
-
   const handleFeatureClick = useCallback(
     (event: React.MouseEvent, projection: GeoProjection) => {
       event.stopPropagation()
@@ -328,55 +309,6 @@ export function WorldMap({
               </>
             )}
           </Geographies>
-
-          {extraGeographies.map((geo) => {
-            const centroid = getExtraCountryCentroid(geo.isoCode)
-            if (!centroid) return null
-
-            const role = getRole(geo.properties.name, geo.id)
-            const canClick = isInteractive && clickMode === 'country'
-            // Only show the tiny-country marker when it's active (highlighted) or clickable in locate.
-            const isActiveRole =
-              role === 'correct' || role === 'wrong' || role === 'mc' || role === 'hint'
-            if (!canClick && !isActiveRole) return null
-
-            const fill =
-              role === 'correct'
-                ? 'var(--map-highlight)'
-                : role === 'wrong'
-                  ? 'var(--map-wrong)'
-                  : role === 'mc'
-                    ? 'var(--map-mc-highlight)'
-                    : role === 'hint'
-                      ? 'var(--map-hint)'
-                      : 'var(--map-fill-hover)'
-
-            return (
-              <Marker key={`marker-${geo.isoCode}`} coordinates={centroid}>
-                <circle
-                  r={5.5 / mapZoom}
-                  fill={fill}
-                  stroke="var(--map-stroke-hover)"
-                  strokeWidth={1.2 / mapZoom}
-                  style={{
-                    cursor: canClick ? 'crosshair' : 'default',
-                    pointerEvents: canClick ? 'all' : 'none',
-                  }}
-                  onClick={(e) => handleExtraCountryClick(geo.isoCode, e)}
-                  onMouseEnter={() => {
-                    if (hoveredCountryKeyRef.current === geo.rsmKey) return
-                    hoveredCountryKeyRef.current = geo.rsmKey
-                    playHoverSfx()
-                  }}
-                  onMouseLeave={() => {
-                    if (hoveredCountryKeyRef.current === geo.rsmKey) {
-                      hoveredCountryKeyRef.current = null
-                    }
-                  }}
-                />
-              </Marker>
-            )
-          })}
 
           {mcFeaturePoint && (
             <Marker coordinates={mcFeaturePoint}>

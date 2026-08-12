@@ -8,13 +8,14 @@ export interface ExtraMapCountry {
   continent: Continent
   /** Accurate geometry for centroids / hit-testing */
   geometry: Polygon
-  /** Slightly enlarged geometry so it stays clickable on the world map */
+  /** Enlarged island-shaped geometry so it reads as a normal country on the world map */
   displayGeometry: Polygon
 }
 
 /**
  * Tiny countries omitted from world-atlas countries-110m.
- * Geometry sourced from countries-50m.
+ * Accurate geometry sourced from countries-50m; display geometry is enlarged
+ * so the country fill looks like other small states (not a pinpoint).
  */
 export const EXTRA_MAP_COUNTRIES: ExtraMapCountry[] = [
   {
@@ -38,19 +39,24 @@ export const EXTRA_MAP_COUNTRIES: ExtraMapCountry[] = [
         ],
       ],
     },
+    // East-west island silhouette near the Malay Peninsula tip, sized like a small country.
     displayGeometry: {
       type: 'Polygon',
       coordinates: [
         [
-          [104.55584555845553, 1.1379263172124041],
-          [103.64863648636481, 0.7421175297495637],
-          [102.6334263342635, 1.096262234321543],
-          [102.95742957429593, 1.6899754155158888],
-          [103.64863648636481, 1.8253836849111025],
-          [104.18864188641874, 1.6378953119023123],
-          [104.49104491044898, 1.502487042507184],
-          [104.70704707047082, 1.3358307109438243],
-          [104.55584555845553, 1.1379263172124041],
+          [103.35, 1.55],
+          [103.55, 1.78],
+          [103.85, 1.92],
+          [104.15, 1.88],
+          [104.45, 1.68],
+          [104.62, 1.42],
+          [104.55, 1.15],
+          [104.3, 0.92],
+          [103.95, 0.82],
+          [103.6, 0.88],
+          [103.35, 1.1],
+          [103.25, 1.32],
+          [103.35, 1.55],
         ],
       ],
     },
