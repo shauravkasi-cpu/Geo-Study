@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 import { playAnswerSound } from '../lib/answerSounds'
-import { BIO_UNIT_1_LESSON, getBioQuestionCount } from '../lib/bioUnit1Lesson'
+import { BIO_UNIT_1_CHAPTER_COUNT, BIO_UNIT_1_LESSON, BIO_UNIT_1_PROGRESS_KEY, getBioQuestionCount } from '../lib/bioUnit1Lesson'
 import { getBiologyUnit } from '../lib/biologyUnits'
 import type { BiologyUnitId } from '../types'
 import { BioVisual } from './BioVisuals'
 
-const PROGRESS_KEY = 'bio-unit-1-study-progress'
+const PROGRESS_KEY = BIO_UNIT_1_PROGRESS_KEY
 
 interface BioStudyProps {
   unitId: BiologyUnitId
@@ -164,7 +164,7 @@ export function BioStudy({ unitId, onBack }: BioStudyProps) {
         </button>
         <div className="bio-study-header-text">
           <p className="bio-study-kicker">
-            Unit {unit.number} · Part {step.chapterNum} of 4 · {step.chapter}
+            Unit {unit.number} · Part {step.chapterNum} of {BIO_UNIT_1_CHAPTER_COUNT} · {step.chapter}
           </p>
           <h1>{step.type === 'teach' ? step.title : 'Check yourself'}</h1>
         </div>

@@ -13,10 +13,8 @@ export const BIOLOGY_UNITS: BiologyUnit[] = [
     id: 'unit-1',
     number: 1,
     title: 'Biochemistry',
-    subtitle: 'What makes something alive, how experiments work, why water matters, and the molecules that build you.',
+    subtitle: 'Why water matters, and the molecules that build you.',
     topics: [
-      'Characteristics of Life',
-      'Graphing, Measurements & Experimental Design',
       'Properties of Water',
       'Reactions & Biomolecules',
     ],

@@ -1,5 +1,6 @@
 import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
 import { BIOLOGY_UNITS, getBiologyUnit } from '../lib/biologyUnits'
+import { BIO_UNIT_1_PROGRESS_KEY } from '../lib/bioUnit1Lesson'
 import { AppToggles } from '../lib/soundToggle'
 import type { BiologyUnitId, FactoringDifficulty, QuizFormat, SubjectId } from '../types'
 
@@ -226,7 +227,7 @@ export function BiologyUnitPage({ unitId, onBack, onStartStudy }: BiologyUnitPag
   const unit = getBiologyUnit(unitId)
   const hasSavedStudy = (() => {
     try {
-      return Boolean(localStorage.getItem('bio-unit-1-study-progress'))
+      return Boolean(localStorage.getItem(BIO_UNIT_1_PROGRESS_KEY))
     } catch {
       return false
     }
