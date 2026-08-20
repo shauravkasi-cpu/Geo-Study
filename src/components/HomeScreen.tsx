@@ -1,6 +1,7 @@
 import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
+import { BIOLOGY_UNITS, getBiologyUnit } from '../lib/biologyUnits'
 import { AppToggles } from '../lib/soundToggle'
-import type { FactoringDifficulty, QuizFormat, SubjectId } from '../types'
+import type { BiologyUnitId, FactoringDifficulty, QuizFormat, SubjectId } from '../types'
 
 interface HomeScreenProps {
   onOpenSubject: (subject: SubjectId) => void
@@ -10,6 +11,7 @@ interface HubHeaderProps {
   title: string
   description: string
   onBack: () => void
+  backLabel?: string
 }
 
 interface ApHumanHubProps {
@@ -26,14 +28,21 @@ interface MathHubProps {
 
 interface BiologyHubProps {
   onBack: () => void
+  onOpenUnit: (unitId: BiologyUnitId) => void
 }
 
-function HubHeader({ title, description, onBack }: HubHeaderProps) {
+interface BiologyUnitPageProps {
+  unitId: BiologyUnitId
+  onBack: () => void
+  onStartStudy: () => void
+}
+
+function HubHeader({ title, description, onBack, backLabel = '← Subjects' }: HubHeaderProps) {
   return (
     <header className="subject-hub-header">
       <div className="subject-hub-header-main">
         <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
-          ← Subjects
+          {backLabel}
         </button>
         <div className="subject-hub-header-text">
           <h1>{title}</h1>
@@ -90,7 +99,7 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
         >
           <span className="card-icon">🧬</span>
           <span className="card-title">Biology</span>
-          <span className="card-desc">Nothing here yet — more can be added later</span>
+          <span className="card-desc">Unit 1 biochemistry and more</span>
         </button>
       </div>
     </div>
@@ -183,18 +192,85 @@ export function MathHub({ onBack, onStartFactoring, onStartFactoringQuiz }: Math
   )
 }
 
-export function BiologyHub({ onBack }: BiologyHubProps) {
+export function BiologyHub({ onBack, onOpenUnit }: BiologyHubProps) {
   return (
     <div className="home-screen">
       <HubHeader
         title="Biology"
-        description="This section is ready for new activities."
+        description="Pick a unit. More units can be added later."
         onBack={onBack}
       />
 
-      <p className="empty-state">
-        Nothing here yet. Biology practice can be added to this section later.
-      </p>
+      <section className="home-section">
+        <h2>Units</h2>
+        <div className="unit-card-list">
+          {BIOLOGY_UNITS.map((unit) => (
+            <button
+              key={unit.id}
+              type="button"
+              className="unit-card"
+              onClick={() => onOpenUnit(unit.id)}
+            >
+              <span className="unit-card-kicker">Unit {unit.number}</span>
+              <span className="card-title">{unit.title}</span>
+              <span className="card-desc">{unit.subtitle}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+  )
+}
+
+export function BiologyUnitPage({ unitId, onBack, onStartStudy }: BiologyUnitPageProps) {
+  const unit = getBiologyUnit(unitId)
+  const hasSavedStudy = (() => {
+    try {
+      return Boolean(localStorage.getItem('bio-unit-1-study-progress'))
+    } catch {
+      return false
+    }
+  })()
+
+  return (
+    <div className="home-screen">
+      <HubHeader
+        title={`Unit ${unit.number}: ${unit.title}`}
+        description={unit.subtitle}
+        onBack={onBack}
+        backLabel="← Biology"
+      />
+
+      <section className="home-section">
+        <h2>What you will learn</h2>
+        <ul className="bio-topic-list">
+          {unit.topics.map((topic) => (
+            <li key={topic}>{topic}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="home-section">
+        <h2>Learning guide</h2>
+        <div className="ap-human-card biology-home-card">
+          <div className="ap-human-card-main">
+            <span className="card-icon">📖</span>
+            <div className="ap-human-card-content">
+              <span className="card-title">Study</span>
+              <span className="card-desc">
+                Plain-English teaching, short animations, and check questions after each idea.
+              </span>
+            </div>
+          </div>
+          <div className="mode-buttons">
+            <button type="button" className="btn-primary btn-sm" onClick={onStartStudy}>
+              {hasSavedStudy ? 'Continue study' : 'Start study'}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <ComingLaterNote />
     </div>
   )
 }

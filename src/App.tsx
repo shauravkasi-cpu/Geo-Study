@@ -1,9 +1,10 @@
 import { useCallback, useState } from 'react'
 import { SiteShell } from './components/SiteShell'
 import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
-import { ApHumanHub, BiologyHub, HomeScreen, MathHub } from './components/HomeScreen'
+import { ApHumanHub, BiologyHub, BiologyUnitPage, HomeScreen, MathHub } from './components/HomeScreen'
 import { FactoringPractice } from './components/FactoringPractice'
 import { FactoringQuiz } from './components/FactoringQuiz'
+import { BioStudy } from './components/BioStudy'
 import { QuizPanel } from './components/QuizPanel'
 import { ResultsScreen } from './components/ResultsScreen'
 import { WorldMap } from './components/WorldMap'
@@ -39,6 +40,7 @@ import type {
   QuizFormat,
   QuizSession,
   SubjectId,
+  BiologyUnitId,
 } from './types'
 import './App.css'
 
@@ -111,6 +113,11 @@ function App() {
 
   const goApHuman = useCallback(() => goToSubject('ap-human'), [goToSubject])
   const goMath = useCallback(() => goToSubject('math'), [goToSubject])
+  const goBiology = useCallback(() => goToSubject('biology'), [goToSubject])
+
+  const openBiologyUnit = useCallback((unitId: BiologyUnitId) => {
+    setScreen({ view: 'biology-unit', unitId })
+  }, [])
 
   const startFactoring = useCallback((difficulty: FactoringDifficulty) => {
     setScreen({ view: 'factoring', difficulty })
@@ -272,7 +279,35 @@ function App() {
   if (screen.view === 'subject' && screen.subject === 'biology') {
     return (
       <SiteShell>
-        <BiologyHub onBack={goHome} />
+        <BiologyHub onBack={goHome} onOpenUnit={openBiologyUnit} />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'biology-unit') {
+    return (
+      <SiteShell>
+        <BiologyUnitPage
+          unitId={screen.unitId}
+          onBack={goBiology}
+          onStartStudy={() => setScreen({ view: 'biology-study', unitId: screen.unitId })}
+        />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'biology-study') {
+    return (
+      <SiteShell>
+        <div className="page-with-theme">
+          <div className="page-theme-bar">
+            <AppToggles />
+          </div>
+          <BioStudy
+            unitId={screen.unitId}
+            onBack={() => setScreen({ view: 'biology-unit', unitId: screen.unitId })}
+          />
+        </div>
       </SiteShell>
     )
   }

@@ -63,9 +63,13 @@ export interface QuizSession {
 
 export type SubjectId = 'ap-human' | 'math' | 'biology'
 
+export type BiologyUnitId = 'unit-1'
+
 export type AppScreen =
   | { view: 'home' }
   | { view: 'subject'; subject: SubjectId }
+  | { view: 'biology-unit'; unitId: BiologyUnitId }
+  | { view: 'biology-study'; unitId: BiologyUnitId }
   | { view: 'quiz'; session: QuizSession }
   | { view: 'results'; session: QuizSession }
   | { view: 'ap-human-reference' }
