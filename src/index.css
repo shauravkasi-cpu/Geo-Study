@@ -42,6 +42,7 @@
   --map-ref-feature-line: #d97706;
   --gradient-hero: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
   --gradient-ap: linear-gradient(135deg, #fef3c7 0%, #fff7ed 50%, #ffffff 100%);
+  --gradient-bio: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 50%, #ffffff 100%);
 }
 
 [data-theme='dark'] {
@@ -87,6 +88,7 @@
   --map-ref-feature-line: #f59e0b;
   --gradient-hero: linear-gradient(135deg, #1a2440 0%, #151e32 100%);
   --gradient-ap: linear-gradient(135deg, #2a2010 0%, #1a2440 50%, #151e32 100%);
+  --gradient-bio: linear-gradient(135deg, #10251a 0%, #1a2440 50%, #151e32 100%);
 }
 
 :root {

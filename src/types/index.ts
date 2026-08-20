@@ -61,9 +61,11 @@ export interface QuizSession {
   mcOptions: string[] | null
 }
 
+export type SubjectId = 'ap-human' | 'math' | 'biology'
+
 export type AppScreen =
   | { view: 'home' }
-  | { view: 'custom-builder'; editId?: string }
+  | { view: 'subject'; subject: SubjectId }
   | { view: 'quiz'; session: QuizSession }
   | { view: 'results'; session: QuizSession }
   | { view: 'ap-human-reference' }

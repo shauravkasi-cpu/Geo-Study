@@ -161,6 +161,10 @@ export function getCountries(): Country[] {
   return countriesCache
 }
 
+export function isCountryDataReady(): boolean {
+  return countriesCache.length > 0
+}
+
 export function getCountryByName(name: string): Country | undefined {
   const code = nameToCodeCache.get(name)
   return code ? getCountryByCode(code) : undefined

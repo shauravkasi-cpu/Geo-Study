@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { SiteShell } from './components/SiteShell'
 import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
-import { CustomQuizBuilder } from './components/CustomQuizBuilder'
+import { ApHumanHub, BiologyHub, HomeScreen, MathHub } from './components/HomeScreen'
 import { FactoringPractice } from './components/FactoringPractice'
 import { FactoringQuiz } from './components/FactoringQuiz'
-import { HomeScreen } from './components/HomeScreen'
 import { QuizPanel } from './components/QuizPanel'
 import { ResultsScreen } from './components/ResultsScreen'
 import { WorldMap } from './components/WorldMap'
 import { playAnswerSound } from './lib/answerSounds'
-import { loadCountryData } from './lib/countries'
+import { isCountryDataReady, loadCountryData } from './lib/countries'
 import { getHintView } from './lib/hints'
 import { getItemFocusView } from './lib/mapFocus'
 import {
@@ -33,18 +32,19 @@ import { saveQuizScore } from './lib/storage'
 import { AppToggles } from './lib/soundToggle'
 import type {
   AppScreen,
+  FactoringDifficulty,
   HintView,
   MapClickResult,
-  PresetType,
   QuizAnswer,
   QuizFormat,
   QuizSession,
+  SubjectId,
 } from './types'
 import './App.css'
 
 function App() {
   const [screen, setScreen] = useState<AppScreen>({ view: 'home' })
-  const [loading, setLoading] = useState(true)
+  const [mapLoading, setMapLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [session, setSession] = useState<QuizSession | null>(null)
@@ -53,15 +53,6 @@ function App() {
   const [hintView, setHintView] = useState<HintView | null>(null)
   const [hintUsed, setHintUsed] = useState(false)
 
-  useEffect(() => {
-    loadCountryData()
-      .then(() => setLoading(false))
-      .catch((err) => {
-        setError(err instanceof Error ? err.message : 'Failed to load map data')
-        setLoading(false)
-      })
-  }, [])
-
   const resetQuestionState = () => {
     setLastAnswer(null)
     setAwaitingNext(false)
@@ -69,33 +60,60 @@ function App() {
     setHintUsed(false)
   }
 
-  const startPreset = useCallback((preset: PresetType, format: QuizFormat = 'locate') => {
-    const newSession = createQuizSession({ type: 'preset', preset, format })
-    setSession(newSession)
-    resetQuestionState()
-    setScreen({ view: 'quiz', session: newSession })
+  const ensureMapData = useCallback(async () => {
+    if (isCountryDataReady()) return true
+
+    setMapLoading(true)
+    setError(null)
+    try {
+      await loadCountryData()
+      setMapLoading(false)
+      return true
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load map data')
+      setMapLoading(false)
+      return false
+    }
   }, [])
 
-  const startCustom = useCallback(
-    (countryCodes: string[], name: string, quizId?: string, format: QuizFormat = 'locate') => {
-      const newSession = createQuizSession({
-        type: 'custom',
-        countryCodes,
-        name,
-        quizId,
-        format,
-      })
+  const startApHumanQuiz = useCallback(
+    async (format: QuizFormat = 'locate') => {
+      const ready = await ensureMapData()
+      if (!ready) return
+
+      const newSession = createQuizSession({ type: 'preset', preset: 'ap-human-1', format })
       setSession(newSession)
       resetQuestionState()
       setScreen({ view: 'quiz', session: newSession })
     },
-    [],
+    [ensureMapData],
   )
+
+  const openStudyMap = useCallback(async () => {
+    const ready = await ensureMapData()
+    if (!ready) return
+    setScreen({ view: 'ap-human-reference' })
+  }, [ensureMapData])
 
   const goHome = useCallback(() => {
     setSession(null)
     resetQuestionState()
+    setError(null)
     setScreen({ view: 'home' })
+  }, [])
+
+  const goToSubject = useCallback((subject: SubjectId) => {
+    setSession(null)
+    resetQuestionState()
+    setError(null)
+    setScreen({ view: 'subject', subject })
+  }, [])
+
+  const goApHuman = useCallback(() => goToSubject('ap-human'), [goToSubject])
+  const goMath = useCallback(() => goToSubject('math'), [goToSubject])
+
+  const startFactoring = useCallback((difficulty: FactoringDifficulty) => {
+    setScreen({ view: 'factoring', difficulty })
   }, [])
 
   const handleMapClick = useCallback(
@@ -195,12 +213,12 @@ function App() {
     setScreen({ view: 'quiz', session: retrySession })
   }, [session])
 
-  if (loading) {
+  if (mapLoading) {
     return (
       <SiteShell>
         <div className="loading-screen">
           <div className="loading-spinner" />
-          <p>Loading world map...</p>
+          <p>Loading map...</p>
         </div>
       </SiteShell>
     )
@@ -211,6 +229,9 @@ function App() {
       <SiteShell>
         <div className="loading-screen">
           <p className="error-text">{error}</p>
+          <button type="button" className="btn-secondary" onClick={goHome}>
+            Back to Home
+          </button>
         </div>
       </SiteShell>
     )
@@ -219,15 +240,39 @@ function App() {
   if (screen.view === 'home') {
     return (
       <SiteShell>
-        <HomeScreen
-          onStartPreset={startPreset}
-          onStartCustom={startCustom}
-          onCreateCustom={() => setScreen({ view: 'custom-builder' })}
-          onEditCustom={(id) => setScreen({ view: 'custom-builder', editId: id })}
-          onViewApHumanReference={() => setScreen({ view: 'ap-human-reference' })}
-          onStartFactoring={(difficulty) => setScreen({ view: 'factoring', difficulty })}
+        <HomeScreen onOpenSubject={goToSubject} />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'subject' && screen.subject === 'ap-human') {
+    return (
+      <SiteShell>
+        <ApHumanHub
+          onBack={goHome}
+          onStartQuiz={startApHumanQuiz}
+          onViewStudyMap={openStudyMap}
+        />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'subject' && screen.subject === 'math') {
+    return (
+      <SiteShell>
+        <MathHub
+          onBack={goHome}
+          onStartFactoring={startFactoring}
           onStartFactoringQuiz={() => setScreen({ view: 'factoring-quiz' })}
         />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'subject' && screen.subject === 'biology') {
+    return (
+      <SiteShell>
+        <BiologyHub onBack={goHome} />
       </SiteShell>
     )
   }
@@ -239,7 +284,7 @@ function App() {
           <div className="page-theme-bar">
             <AppToggles />
           </div>
-          <FactoringPractice difficulty={screen.difficulty} onBack={goHome} />
+          <FactoringPractice difficulty={screen.difficulty} onBack={goMath} />
         </div>
       </SiteShell>
     )
@@ -252,7 +297,7 @@ function App() {
           <div className="page-theme-bar">
             <AppToggles />
           </div>
-          <FactoringQuiz onBack={goHome} />
+          <FactoringQuiz onBack={goMath} />
         </div>
       </SiteShell>
     )
@@ -265,20 +310,8 @@ function App() {
           <div className="page-theme-bar">
             <AppToggles />
           </div>
-          <ApHumanReferenceMap onBack={goHome} />
+          <ApHumanReferenceMap onBack={goApHuman} />
         </div>
-      </SiteShell>
-    )
-  }
-
-  if (screen.view === 'custom-builder') {
-    return (
-      <SiteShell>
-        <CustomQuizBuilder
-          editId={screen.editId}
-          onStart={(codes, name) => startCustom(codes, name)}
-          onCancel={goHome}
-        />
       </SiteShell>
     )
   }
@@ -293,7 +326,8 @@ function App() {
           <ResultsScreen
             session={session}
             onRetryMissed={handleRetryMissed}
-            onHome={goHome}
+            onHome={goApHuman}
+            homeLabel="Back to AP Human"
           />
         </div>
       </SiteShell>
@@ -345,7 +379,7 @@ function App() {
             onHint={handleHint}
             onSkip={handleSkip}
             onNext={handleNext}
-            onQuit={goHome}
+            onQuit={goApHuman}
             onMcSelect={handleMcSelect}
             onTypedSubmit={handleTypedSubmit}
           />

@@ -5,9 +5,15 @@ interface ResultsScreenProps {
   session: QuizSession
   onRetryMissed: () => void
   onHome: () => void
+  homeLabel?: string
 }
 
-export function ResultsScreen({ session, onRetryMissed, onHome }: ResultsScreenProps) {
+export function ResultsScreen({
+  session,
+  onRetryMissed,
+  onHome,
+  homeLabel = 'Back to Home',
+}: ResultsScreenProps) {
   const total = session.queue.length
   const correct = session.score
   const percentage = total > 0 ? Math.round((correct / total) * 100) : 0
@@ -57,7 +63,7 @@ export function ResultsScreen({ session, onRetryMissed, onHome }: ResultsScreenP
             </button>
           )}
           <button type="button" className="btn-secondary" onClick={onHome}>
-            Back to Home
+            {homeLabel}
           </button>
         </div>
       </div>

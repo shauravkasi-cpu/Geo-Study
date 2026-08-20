@@ -1,231 +1,200 @@
-import { useEffect, useState } from 'react'
-import { AP_HUMAN_QUIZ_1_NAME } from '../lib/apHumanQuiz1'
-import { CONTINENTS } from '../lib/countries'
+import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
 import { AppToggles } from '../lib/soundToggle'
-import { deleteCustomQuiz, loadCustomQuizzes } from '../lib/storage'
-import type { Continent, CustomQuiz, FactoringDifficulty, PresetType, QuizFormat } from '../types'
+import type { FactoringDifficulty, QuizFormat, SubjectId } from '../types'
 
 interface HomeScreenProps {
-  onStartPreset: (preset: PresetType, format?: QuizFormat) => void
-  onStartCustom: (countryCodes: string[], name: string, quizId?: string, format?: QuizFormat) => void
-  onCreateCustom: () => void
-  onEditCustom: (id: string) => void
-  onViewApHumanReference: () => void
+  onOpenSubject: (subject: SubjectId) => void
+}
+
+interface HubHeaderProps {
+  title: string
+  description: string
+  onBack: () => void
+}
+
+interface ApHumanHubProps {
+  onBack: () => void
+  onStartQuiz: (format: QuizFormat) => void
+  onViewStudyMap: () => void
+}
+
+interface MathHubProps {
+  onBack: () => void
   onStartFactoring: (difficulty: FactoringDifficulty) => void
   onStartFactoringQuiz: () => void
 }
 
-const CONTINENT_ICONS: Partial<Record<Continent, string>> = {
-  Africa: '🌍',
-  Asia: '🌏',
-  Europe: '🇪🇺',
-  'North America': '🗽',
-  'South America': '🌎',
-  Oceania: '🏝️',
+interface BiologyHubProps {
+  onBack: () => void
 }
 
-export function HomeScreen({
-  onStartPreset,
-  onStartCustom,
-  onCreateCustom,
-  onEditCustom,
-  onViewApHumanReference,
-  onStartFactoring,
-  onStartFactoringQuiz,
-}: HomeScreenProps) {
-  const [savedQuizzes, setSavedQuizzes] = useState<CustomQuiz[]>([])
+function HubHeader({ title, description, onBack }: HubHeaderProps) {
+  return (
+    <header className="subject-hub-header">
+      <div className="subject-hub-header-main">
+        <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
+          ← Subjects
+        </button>
+        <div className="subject-hub-header-text">
+          <h1>{title}</h1>
+          <p>{description}</p>
+        </div>
+      </div>
+      <AppToggles />
+    </header>
+  )
+}
 
-  useEffect(() => {
-    setSavedQuizzes(loadCustomQuizzes())
-  }, [])
+function ComingLaterNote() {
+  return <p className="subject-later-note">More activities can be added to this section later.</p>
+}
 
-  const handleDelete = (id: string) => {
-    deleteCustomQuiz(id)
-    setSavedQuizzes(loadCustomQuizzes())
-  }
-
+export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
   return (
     <div className="home-screen">
       <header className="home-header">
         <div className="home-header-top">
-          <h1>Geo Study</h1>
+          <div>
+            <h1>Geo Study</h1>
+            <p className="home-tagline">Choose a subject to practice.</p>
+          </div>
           <AppToggles />
         </div>
       </header>
 
+      <div className="subject-grid">
+        <button
+          type="button"
+          className="subject-card subject-card-aphuman"
+          onClick={() => onOpenSubject('ap-human')}
+        >
+          <span className="card-icon">🗺️</span>
+          <span className="card-title">AP Human Geography</span>
+          <span className="card-desc">Map quiz practice and more</span>
+        </button>
+
+        <button
+          type="button"
+          className="subject-card subject-card-math"
+          onClick={() => onOpenSubject('math')}
+        >
+          <span className="card-icon">✏️</span>
+          <span className="card-title">Math</span>
+          <span className="card-desc">Factoring practice and more</span>
+        </button>
+
+        <button
+          type="button"
+          className="subject-card subject-card-biology"
+          onClick={() => onOpenSubject('biology')}
+        >
+          <span className="card-icon">🧬</span>
+          <span className="card-title">Biology</span>
+          <span className="card-desc">Nothing here yet — more can be added later</span>
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export function ApHumanHub({ onBack, onStartQuiz, onViewStudyMap }: ApHumanHubProps) {
+  return (
+    <div className="home-screen">
+      <HubHeader
+        title="AP Human Geography"
+        description="Map quiz practice for class. More activities can be added later."
+        onBack={onBack}
+      />
+
       <section className="home-section">
-        <h2>AP Human Geography</h2>
+        <h2>Map Quiz Practice</h2>
         <div className="ap-human-card">
           <div className="ap-human-card-main">
             <span className="card-icon">📚</span>
             <div className="ap-human-card-content">
               <span className="card-title">{AP_HUMAN_QUIZ_1_NAME}</span>
+              <span className="card-desc">
+                {AP_HUMAN_QUIZ_1_STATS.countries} countries · {AP_HUMAN_QUIZ_1_STATS.features}{' '}
+                physical features
+              </span>
             </div>
           </div>
           <div className="mode-buttons">
-            <button type="button" className="btn-primary btn-sm" onClick={() => onStartPreset('ap-human-1', 'locate')}>
+            <button type="button" className="btn-primary btn-sm" onClick={() => onStartQuiz('locate')}>
               Click to Locate
             </button>
-            <button type="button" className="btn-secondary btn-sm" onClick={() => onStartPreset('ap-human-1', 'multiple-choice')}>
+            <button
+              type="button"
+              className="btn-secondary btn-sm"
+              onClick={() => onStartQuiz('multiple-choice')}
+            >
               Multiple Choice
             </button>
-            <button type="button" className="btn-secondary btn-sm" onClick={() => onStartPreset('ap-human-1', 'name-it')}>
+            <button type="button" className="btn-secondary btn-sm" onClick={() => onStartQuiz('name-it')}>
               Name It
             </button>
-            <button type="button" className="btn-secondary btn-sm" onClick={onViewApHumanReference}>
+            <button type="button" className="btn-secondary btn-sm" onClick={onViewStudyMap}>
               View Study Map
             </button>
           </div>
         </div>
       </section>
 
-      <section className="home-section">
-        <h2>Preset Quizzes — Click to Locate</h2>
-        <div className="card-grid">
-          <button
-            type="button"
-            className="quiz-card featured"
-            onClick={() => onStartPreset('all', 'locate')}
-          >
-            <span className="card-icon">🌐</span>
-            <span className="card-title">All Countries</span>
-          </button>
+      <ComingLaterNote />
+    </div>
+  )
+}
 
-          {CONTINENTS.map((continent) => (
-            <button
-              key={continent}
-              type="button"
-              className="quiz-card"
-              onClick={() => onStartPreset(continent, 'locate')}
-            >
-              <span className="card-icon">{CONTINENT_ICONS[continent] ?? '🗺️'}</span>
-              <span className="card-title">{continent}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+export function MathHub({ onBack, onStartFactoring, onStartFactoringQuiz }: MathHubProps) {
+  return (
+    <div className="home-screen">
+      <HubHeader
+        title="Math"
+        description="Factoring practice for now. More activities can be added later."
+        onBack={onBack}
+      />
 
       <section className="home-section">
-        <h2>Multiple Choice Mode</h2>
-        <div className="card-grid">
-          <button
-            type="button"
-            className="quiz-card mc-card"
-            onClick={() => onStartPreset('all', 'multiple-choice')}
-          >
-            <span className="card-icon">🎯</span>
-            <span className="card-title">All Countries</span>
-          </button>
-
-          {CONTINENTS.map((continent) => (
-            <button
-              key={continent}
-              type="button"
-              className="quiz-card mc-card"
-              onClick={() => onStartPreset(continent, 'multiple-choice')}
-            >
-              <span className="card-icon">{CONTINENT_ICONS[continent] ?? '🗺️'}</span>
-              <span className="card-title">{continent}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="home-section">
-        <div className="section-header">
-          <h2>Custom Quizzes</h2>
-          <button type="button" className="btn-primary btn-sm" onClick={onCreateCustom}>
-            + Create Quiz
-          </button>
-        </div>
-
-        {savedQuizzes.length === 0 ? (
-          <p className="empty-state">
-            No saved quizzes yet. Create one with your own list of countries.
-          </p>
-        ) : (
-          <ul className="saved-quiz-list">
-            {savedQuizzes.map((quiz) => (
-              <li key={quiz.id} className="saved-quiz-item">
-                <div className="saved-quiz-info">
-                  <span className="saved-quiz-name">{quiz.name}</span>
-                  <span className="saved-quiz-meta">
-                    {quiz.countryCodes.length} countries
-                    {quiz.lastScore && (
-                      <> · Last: {quiz.lastScore.correct}/{quiz.lastScore.total}</>
-                    )}
-                  </span>
-                </div>
-                <div className="saved-quiz-actions">
-                  <button
-                    type="button"
-                    className="btn-primary btn-sm"
-                    onClick={() => onStartCustom(quiz.countryCodes, quiz.name, quiz.id, 'locate')}
-                  >
-                    Locate
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-secondary btn-sm"
-                    onClick={() => onStartCustom(quiz.countryCodes, quiz.name, quiz.id, 'multiple-choice')}
-                  >
-                    MC
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-secondary btn-sm"
-                    onClick={() => onEditCustom(quiz.id)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-danger btn-sm"
-                    onClick={() => handleDelete(quiz.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="home-section">
-        <h2>Math Practice</h2>
+        <h2>Algebra</h2>
         <div className="ap-human-card factoring-home-card">
           <div className="ap-human-card-main">
             <span className="card-icon">✏️</span>
             <div className="ap-human-card-content">
               <span className="card-title">Factoring Practice</span>
+              <span className="card-desc">Easy, hard, and timed quiz modes</span>
             </div>
           </div>
           <div className="mode-buttons">
-            <button
-              type="button"
-              className="btn-primary btn-sm"
-              onClick={() => onStartFactoring('easy')}
-            >
+            <button type="button" className="btn-primary btn-sm" onClick={() => onStartFactoring('easy')}>
               Easy Mode
             </button>
-            <button
-              type="button"
-              className="btn-secondary btn-sm"
-              onClick={() => onStartFactoring('hard')}
-            >
+            <button type="button" className="btn-secondary btn-sm" onClick={() => onStartFactoring('hard')}>
               Hard Mode
             </button>
-            <button
-              type="button"
-              className="btn-secondary btn-sm"
-              onClick={onStartFactoringQuiz}
-            >
+            <button type="button" className="btn-secondary btn-sm" onClick={onStartFactoringQuiz}>
               Quiz Mode
             </button>
           </div>
         </div>
       </section>
+
+      <ComingLaterNote />
+    </div>
+  )
+}
+
+export function BiologyHub({ onBack }: BiologyHubProps) {
+  return (
+    <div className="home-screen">
+      <HubHeader
+        title="Biology"
+        description="This section is ready for new activities."
+        onBack={onBack}
+      />
+
+      <p className="empty-state">
+        Nothing here yet. Biology practice can be added to this section later.
+      </p>
     </div>
   )
 }
