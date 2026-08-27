@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react'
 import { SiteShell } from './components/SiteShell'
 import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
-import { ApHumanHub, BiologyHub, BiologyUnitPage, HomeScreen, MathHub } from './components/HomeScreen'
+import { ApHumanHub, HomeScreen, MathHub } from './components/HomeScreen'
 import { FactoringPractice } from './components/FactoringPractice'
 import { FactoringQuiz } from './components/FactoringQuiz'
-import { BioStudy } from './components/BioStudy'
+import { BioPractice, BiologyTest1Hub } from './components/BioPractice'
 import { QuizPanel } from './components/QuizPanel'
 import { ResultsScreen } from './components/ResultsScreen'
 import { WorldMap } from './components/WorldMap'
@@ -40,8 +40,8 @@ import type {
   QuizFormat,
   QuizSession,
   SubjectId,
-  BiologyUnitId,
 } from './types'
+import type { BioPracticeTopic } from './lib/bioQuiz'
 import './App.css'
 
 function App() {
@@ -115,8 +115,8 @@ function App() {
   const goMath = useCallback(() => goToSubject('math'), [goToSubject])
   const goBiology = useCallback(() => goToSubject('biology'), [goToSubject])
 
-  const openBiologyUnit = useCallback((unitId: BiologyUnitId) => {
-    setScreen({ view: 'biology-unit', unitId })
+  const startBioPractice = useCallback((topic: BioPracticeTopic) => {
+    setScreen({ view: 'biology-practice', topic })
   }, [])
 
   const startFactoring = useCallback((difficulty: FactoringDifficulty) => {
@@ -279,35 +279,15 @@ function App() {
   if (screen.view === 'subject' && screen.subject === 'biology') {
     return (
       <SiteShell>
-        <BiologyHub onBack={goHome} onOpenUnit={openBiologyUnit} />
+        <BiologyTest1Hub onBack={goHome} onStart={startBioPractice} />
       </SiteShell>
     )
   }
 
-  if (screen.view === 'biology-unit') {
+  if (screen.view === 'biology-practice') {
     return (
       <SiteShell>
-        <BiologyUnitPage
-          unitId={screen.unitId}
-          onBack={goBiology}
-          onStartStudy={() => setScreen({ view: 'biology-study', unitId: screen.unitId })}
-        />
-      </SiteShell>
-    )
-  }
-
-  if (screen.view === 'biology-study') {
-    return (
-      <SiteShell>
-        <div className="page-with-theme">
-          <div className="page-theme-bar">
-            <AppToggles />
-          </div>
-          <BioStudy
-            unitId={screen.unitId}
-            onBack={() => setScreen({ view: 'biology-unit', unitId: screen.unitId })}
-          />
-        </div>
+        <BioPractice topic={screen.topic} onBack={goBiology} />
       </SiteShell>
     )
   }

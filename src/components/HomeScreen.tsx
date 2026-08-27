@@ -1,8 +1,6 @@
 import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
-import { BIOLOGY_UNITS, getBiologyUnit } from '../lib/biologyUnits'
-import { BIO_UNIT_1_PROGRESS_KEY } from '../lib/bioUnit1Lesson'
 import { AppToggles } from '../lib/soundToggle'
-import type { BiologyUnitId, FactoringDifficulty, QuizFormat, SubjectId } from '../types'
+import type { FactoringDifficulty, QuizFormat, SubjectId } from '../types'
 
 interface HomeScreenProps {
   onOpenSubject: (subject: SubjectId) => void
@@ -27,16 +25,6 @@ interface MathHubProps {
   onStartFactoringQuiz: () => void
 }
 
-interface BiologyHubProps {
-  onBack: () => void
-  onOpenUnit: (unitId: BiologyUnitId) => void
-}
-
-interface BiologyUnitPageProps {
-  unitId: BiologyUnitId
-  onBack: () => void
-  onStartStudy: () => void
-}
 
 function HubHeader({ title, description, onBack, backLabel = '← Subjects' }: HubHeaderProps) {
   return (
@@ -100,7 +88,7 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
         >
           <span className="card-icon">🧬</span>
           <span className="card-title">Biology</span>
-          <span className="card-desc">Unit 1 biochemistry and more</span>
+          <span className="card-desc">Test 1 Study practice questions</span>
         </button>
       </div>
     </div>
@@ -193,85 +181,3 @@ export function MathHub({ onBack, onStartFactoring, onStartFactoringQuiz }: Math
   )
 }
 
-export function BiologyHub({ onBack, onOpenUnit }: BiologyHubProps) {
-  return (
-    <div className="home-screen">
-      <HubHeader
-        title="Biology"
-        description="Pick a unit. More units can be added later."
-        onBack={onBack}
-      />
-
-      <section className="home-section">
-        <h2>Units</h2>
-        <div className="unit-card-list">
-          {BIOLOGY_UNITS.map((unit) => (
-            <button
-              key={unit.id}
-              type="button"
-              className="unit-card"
-              onClick={() => onOpenUnit(unit.id)}
-            >
-              <span className="unit-card-kicker">Unit {unit.number}</span>
-              <span className="card-title">{unit.title}</span>
-              <span className="card-desc">{unit.subtitle}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-    </div>
-  )
-}
-
-export function BiologyUnitPage({ unitId, onBack, onStartStudy }: BiologyUnitPageProps) {
-  const unit = getBiologyUnit(unitId)
-  const hasSavedStudy = (() => {
-    try {
-      return Boolean(localStorage.getItem(BIO_UNIT_1_PROGRESS_KEY))
-    } catch {
-      return false
-    }
-  })()
-
-  return (
-    <div className="home-screen">
-      <HubHeader
-        title={`Unit ${unit.number}: ${unit.title}`}
-        description={unit.subtitle}
-        onBack={onBack}
-        backLabel="← Biology"
-      />
-
-      <section className="home-section">
-        <h2>What you will learn</h2>
-        <ul className="bio-topic-list">
-          {unit.topics.map((topic) => (
-            <li key={topic}>{topic}</li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="home-section">
-        <h2>Learning guide</h2>
-        <div className="ap-human-card biology-home-card">
-          <div className="ap-human-card-main">
-            <span className="card-icon">📖</span>
-            <div className="ap-human-card-content">
-              <span className="card-title">Study</span>
-              <span className="card-desc">
-                Plain-English teaching, short animations, and check questions after each idea.
-              </span>
-            </div>
-          </div>
-          <div className="mode-buttons">
-            <button type="button" className="btn-primary btn-sm" onClick={onStartStudy}>
-              {hasSavedStudy ? 'Continue study' : 'Start study'}
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <ComingLaterNote />
-    </div>
-  )
-}

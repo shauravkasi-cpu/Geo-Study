@@ -1,3 +1,5 @@
+import type { BioPracticeTopic } from '../lib/bioQuiz'
+
 export type Continent =
   | 'Africa'
   | 'Asia'
@@ -63,13 +65,10 @@ export interface QuizSession {
 
 export type SubjectId = 'ap-human' | 'math' | 'biology'
 
-export type BiologyUnitId = 'unit-1'
-
 export type AppScreen =
   | { view: 'home' }
   | { view: 'subject'; subject: SubjectId }
-  | { view: 'biology-unit'; unitId: BiologyUnitId }
-  | { view: 'biology-study'; unitId: BiologyUnitId }
+  | { view: 'biology-practice'; topic: BioPracticeTopic }
   | { view: 'quiz'; session: QuizSession }
   | { view: 'results'; session: QuizSession }
   | { view: 'ap-human-reference' }
