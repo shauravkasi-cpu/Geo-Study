@@ -1,7 +1,5 @@
 import { ApHumanNotesHub } from './ApHumanPractice'
-import { ApHumanStudyHubCard } from './ApHumanStudyGuide'
 import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
-import type { ApHumanGuideTopic } from '../lib/apHumanGuide'
 import type { ApHumanStudyTopic } from '../lib/apHumanStudy'
 import { AppToggles } from '../lib/soundToggle'
 import { GeoMathHubCard } from './GeoMathPractice'
@@ -24,7 +22,6 @@ interface ApHumanHubProps {
   onStartQuiz: (format: QuizFormat) => void
   onViewStudyMap: () => void
   onStartStudy: (topic: ApHumanStudyTopic) => void
-  onOpenStudyGuide: (topic: ApHumanGuideTopic) => void
 }
 
 interface MathHubProps {
@@ -73,7 +70,7 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
         >
           <span className="card-icon">🗺️</span>
           <span className="card-title">AP Human Geography</span>
-          <span className="card-desc">Map quiz, notes, and Unit 1 study guide</span>
+          <span className="card-desc">Map quiz and notes quiz</span>
         </button>
 
         <button
@@ -105,19 +102,16 @@ export function ApHumanHub({
   onStartQuiz,
   onViewStudyMap,
   onStartStudy,
-  onOpenStudyGuide,
 }: ApHumanHubProps) {
   return (
     <div className="home-screen">
       <HubHeader
         title="AP Human Geography"
-        description="Map quiz practice, notes quiz, and a Unit 1 study guide."
+        description="Map quiz practice and notes quiz."
         onBack={onBack}
       />
 
       <ApHumanNotesHub onStart={onStartStudy} />
-
-      <ApHumanStudyHubCard onStart={onOpenStudyGuide} />
 
       <section className="home-section">
         <h2>Map Quiz Practice</h2>

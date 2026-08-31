@@ -1,4 +1,3 @@
-import type { ApHumanGuideTopic } from '../lib/apHumanGuide'
 import type { ApHumanStudyTopic } from '../lib/apHumanStudy'
 import type { BioPracticeTopic } from '../lib/bioQuiz'
 import type { GeoMathTopic } from '../lib/geoMathQuiz'
@@ -73,7 +72,6 @@ export type AppScreen =
   | { view: 'subject'; subject: SubjectId }
   | { view: 'biology-practice'; topic: BioPracticeTopic }
   | { view: 'ap-human-practice'; topic: ApHumanStudyTopic }
-  | { view: 'ap-human-study'; topic: ApHumanGuideTopic }
   | { view: 'quiz'; session: QuizSession }
   | { view: 'results'; session: QuizSession }
   | { view: 'ap-human-reference' }

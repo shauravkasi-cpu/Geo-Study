@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react'
 import { SiteShell } from './components/SiteShell'
 import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
 import { ApHumanPractice } from './components/ApHumanPractice'
-import { ApHumanStudyGuide } from './components/ApHumanStudyGuide'
 import { ApHumanHub, HomeScreen, MathHub } from './components/HomeScreen'
 import { FactoringPractice } from './components/FactoringPractice'
 import { FactoringQuiz } from './components/FactoringQuiz'
@@ -34,7 +33,6 @@ import {
 } from './lib/quizEngine'
 import { saveQuizScore } from './lib/storage'
 import { AppToggles } from './lib/soundToggle'
-import type { ApHumanGuideTopic } from './lib/apHumanGuide'
 import type { ApHumanStudyTopic } from './lib/apHumanStudy'
 import type {
   AppScreen,
@@ -127,10 +125,6 @@ function App() {
 
   const startApHumanNotes = useCallback((topic: ApHumanStudyTopic) => {
     setScreen({ view: 'ap-human-practice', topic })
-  }, [])
-
-  const startApHumanGuide = useCallback((topic: ApHumanGuideTopic) => {
-    setScreen({ view: 'ap-human-study', topic })
   }, [])
 
   const startFactoring = useCallback((difficulty: FactoringDifficulty) => {
@@ -278,7 +272,6 @@ function App() {
           onStartQuiz={startApHumanQuiz}
           onViewStudyMap={openStudyMap}
           onStartStudy={startApHumanNotes}
-          onOpenStudyGuide={startApHumanGuide}
         />
       </SiteShell>
     )
@@ -317,14 +310,6 @@ function App() {
     return (
       <SiteShell>
         <ApHumanPractice topic={screen.topic} onBack={goApHuman} />
-      </SiteShell>
-    )
-  }
-
-  if (screen.view === 'ap-human-study') {
-    return (
-      <SiteShell>
-        <ApHumanStudyGuide topic={screen.topic} onBack={goApHuman} />
       </SiteShell>
     )
   }
