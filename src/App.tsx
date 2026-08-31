@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { SiteShell } from './components/SiteShell'
 import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
+import { ApHumanPractice } from './components/ApHumanPractice'
 import { ApHumanHub, HomeScreen, MathHub } from './components/HomeScreen'
 import { FactoringPractice } from './components/FactoringPractice'
 import { FactoringQuiz } from './components/FactoringQuiz'
@@ -41,6 +42,7 @@ import type {
   QuizSession,
   SubjectId,
 } from './types'
+import type { ApHumanStudyTopic } from './lib/apHumanStudy'
 import type { BioPracticeTopic } from './lib/bioQuiz'
 import './App.css'
 
@@ -117,6 +119,10 @@ function App() {
 
   const startBioPractice = useCallback((topic: BioPracticeTopic) => {
     setScreen({ view: 'biology-practice', topic })
+  }, [])
+
+  const startApHumanStudy = useCallback((topic: ApHumanStudyTopic) => {
+    setScreen({ view: 'ap-human-practice', topic })
   }, [])
 
   const startFactoring = useCallback((difficulty: FactoringDifficulty) => {
@@ -259,6 +265,7 @@ function App() {
           onBack={goHome}
           onStartQuiz={startApHumanQuiz}
           onViewStudyMap={openStudyMap}
+          onStartStudy={startApHumanStudy}
         />
       </SiteShell>
     )
@@ -288,6 +295,14 @@ function App() {
     return (
       <SiteShell>
         <BioPractice topic={screen.topic} onBack={goBiology} />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'ap-human-practice') {
+    return (
+      <SiteShell>
+        <ApHumanPractice topic={screen.topic} onBack={goApHuman} />
       </SiteShell>
     )
   }

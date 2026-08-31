@@ -1,5 +1,7 @@
+import { ApHumanNotesHub } from './ApHumanPractice'
 import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
 import { AppToggles } from '../lib/soundToggle'
+import type { ApHumanStudyTopic } from '../lib/apHumanStudy'
 import type { FactoringDifficulty, QuizFormat, SubjectId } from '../types'
 
 interface HomeScreenProps {
@@ -17,6 +19,7 @@ interface ApHumanHubProps {
   onBack: () => void
   onStartQuiz: (format: QuizFormat) => void
   onViewStudyMap: () => void
+  onStartStudy: (topic: ApHumanStudyTopic) => void
 }
 
 interface MathHubProps {
@@ -68,7 +71,7 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
         >
           <span className="card-icon">🗺️</span>
           <span className="card-title">AP Human Geography</span>
-          <span className="card-desc">Map quiz practice and more</span>
+          <span className="card-desc">Map quiz and notes MCQ practice</span>
         </button>
 
         <button
@@ -95,14 +98,16 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
   )
 }
 
-export function ApHumanHub({ onBack, onStartQuiz, onViewStudyMap }: ApHumanHubProps) {
+export function ApHumanHub({ onBack, onStartQuiz, onViewStudyMap, onStartStudy }: ApHumanHubProps) {
   return (
     <div className="home-screen">
       <HubHeader
         title="AP Human Geography"
-        description="Map quiz practice for class. More activities can be added later."
+        description="Map quiz practice plus multiple-choice questions from the class notes."
         onBack={onBack}
       />
+
+      <ApHumanNotesHub onStart={onStartStudy} />
 
       <section className="home-section">
         <h2>Map Quiz Practice</h2>
@@ -137,8 +142,6 @@ export function ApHumanHub({ onBack, onStartQuiz, onViewStudyMap }: ApHumanHubPr
           </div>
         </div>
       </section>
-
-      <ComingLaterNote />
     </div>
   )
 }

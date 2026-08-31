@@ -1,3 +1,4 @@
+import type { ApHumanStudyTopic } from '../lib/apHumanStudy'
 import type { BioPracticeTopic } from '../lib/bioQuiz'
 
 export type Continent =
@@ -69,6 +70,7 @@ export type AppScreen =
   | { view: 'home' }
   | { view: 'subject'; subject: SubjectId }
   | { view: 'biology-practice'; topic: BioPracticeTopic }
+  | { view: 'ap-human-practice'; topic: ApHumanStudyTopic }
   | { view: 'quiz'; session: QuizSession }
   | { view: 'results'; session: QuizSession }
   | { view: 'ap-human-reference' }
