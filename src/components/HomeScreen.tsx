@@ -103,7 +103,7 @@ export function ApHumanHub({ onBack, onStartQuiz, onViewStudyMap, onStartStudy }
     <div className="home-screen">
       <HubHeader
         title="AP Human Geography"
-        description="Map quiz practice plus multiple-choice questions from the class notes."
+        description="Map quiz practice plus AP-style multiple-choice from the class notes."
         onBack={onBack}
       />
 

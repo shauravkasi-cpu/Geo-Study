@@ -20,14 +20,14 @@ export interface ApHumanPracticeQuestion {
 }
 
 export const AP_HUMAN_STUDY_TOPICS: { id: ApHumanStudyTopic; label: string; desc: string }[] = [
-  { id: 'all', label: 'All questions', desc: 'Full mix from the class notes, shuffled' },
-  { id: 'maps', label: 'Types of maps', desc: 'Reference vs thematic, choropleth, cartogram, isoline' },
+  { id: 'all', label: 'All questions', desc: 'AP-style mix from these notes, shuffled' },
+  { id: 'maps', label: 'Types of maps', desc: 'Reference vs thematic and when to use each' },
   { id: 'patterns', label: 'Spatial patterns', desc: 'Absolute vs relative, clustering, dispersal' },
   { id: 'projections', label: 'Map projections', desc: 'SADD, Mercator, Gall-Peters, Robinson' },
   { id: 'data', label: 'Geographic data', desc: 'Fieldwork, census, GIS, GPS, remote sensing' },
   { id: 'sectors', label: 'Economic sectors', desc: 'Primary through quinary and development' },
   { id: 'measures', label: 'Development measures', desc: 'GDP, GNI, HDI, GII, and social indicators' },
-  { id: 'theories', label: 'Development theories', desc: 'Wallerstein, dependency, Brandt Line, BRICS' },
+  { id: 'theories', label: 'Development theories', desc: 'Wallerstein, dependency, Rostow, Brandt, BRICS' },
 ]
 
 export function mc(

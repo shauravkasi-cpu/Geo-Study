@@ -253,7 +253,7 @@ export function ApHumanNotesHub({
             <div className="ap-human-card-content">
               <span className="card-title">AP Human Notes Quiz</span>
               <span className="card-desc">
-                {total} multiple-choice questions · some choose-all · from the class slides
+                {total} AP-style multiple-choice questions · vocabulary and application from the notes
               </span>
             </div>
           </div>
