@@ -12,6 +12,7 @@ import {
   type ApHumanStudyTopic,
 } from '../lib/apHumanStudy'
 import { AppToggles } from '../lib/soundToggle'
+import { ApHumanStimulus } from './ApHumanStimuli'
 
 interface ApHumanPracticeProps {
   topic: ApHumanStudyTopic
@@ -204,6 +205,8 @@ function QuestionCard({
   return (
     <div className="bio-study-card">
       {isMulti && <p className="bio-multi-flag">Choose all that apply</p>}
+      {question.stimulus ? <p className="aph-set-flag">Use the figure or table to answer.</p> : null}
+      {question.stimulus ? <ApHumanStimulus id={question.stimulus} /> : null}
       <p className="bio-study-plain">{question.prompt}</p>
       <div className="bio-options">
         {question.options.map((option, optionIndex) => {
@@ -253,7 +256,7 @@ export function ApHumanNotesHub({
             <div className="ap-human-card-content">
               <span className="card-title">AP Human Notes Quiz</span>
               <span className="card-desc">
-                {total} AP-style multiple-choice questions · vocabulary and application from the notes
+                {total} AP-style questions · maps, tables, and charts like the exam
               </span>
             </div>
           </div>

@@ -21,12 +21,12 @@ export const DATA_QUESTIONS: ApHumanPracticeQuestion[] = [
     'a paper atlas of political boundaries',
     'a camera on a drone',
   ], 1, 'GIS stacks thematic and physical layers (roads, income, zoning, floodplains) so users can analyze patterns and make decisions.'),
-  mc('d4', D, 'A city planner wants to compare flood zones, bus routes, income, and vacant lots on one screen before choosing a site for a new clinic. The most useful tool is', [
-    'GPS only',
-    'GIS',
-    'a Mercator navigation chart',
-    'an isoline weather map by itself',
-  ], 1, 'Layering different data sets to answer a “where should we put this?” question is the classic GIS use. GPS would only give a point location.'),
+  mc('d4', D, 'A city planner wants to compare flood zones, bus routes, income, and vacant lots on one screen before choosing a site for a new clinic. Which tool is most appropriate, and why?', [
+    'GPS, because it reports a single coordinate without other data',
+    'GIS, because it can stack and analyze multiple spatial layers at once',
+    'A Mercator chart, because it preserves area at the poles',
+    'Remote sensing only, because interviews are never used in cities',
+  ], 1, 'The AP distinction: GPS locates a point; remote sensing images the surface; GIS analyzes stacked layers for a decision.'),
   mc('d5', D, 'GPS is used mainly to', [
     'shade counties by unemployment rate',
     'determine absolute location by communicating with satellites',

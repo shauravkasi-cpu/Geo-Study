@@ -17,12 +17,12 @@ export const MAP_QUESTIONS: ApHumanPracticeQuestion[] = [
     'To keep compass direction perfectly accurate for ships',
     'To remove all distortion from a world map',
   ], 1, 'Thematic maps answer “what is it like there?” by showing data across space. Reference maps answer “where is it?”'),
-  mc('m3', M, 'A map of the United States uses darker shades of blue for states with higher median income and lighter shades for lower income. This is an example of a', [
-    'dot-density map',
-    'choropleth map',
-    'cartogram',
-    'isoline map',
-  ], 1, 'Choropleth maps use colors or shades within political or statistical units to show the value of a variable.'),
+  mc('m3', M, 'A map of the United States uses darker shades of blue for states with higher median income and lighter shades for lower income. Which of the following best identifies the map type and a limitation of that choice?', [
+    'Dot-density; it cannot show quantity',
+    'Choropleth; values are averaged across each state, so variation inside a state is hidden',
+    'Cartogram; it preserves true land area',
+    'Isoline; it can only show city locations',
+  ], 1, 'Shaded political units = choropleth. AP-level answers also know the limitation: the whole state gets one color.'),
   mc('m4', M, 'A city map places one dot for every reported burglary. Neighborhoods with more crime appear as clusters of dots. This map is best classified as a', [
     'reference map',
     'cartogram',

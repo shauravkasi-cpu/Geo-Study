@@ -191,12 +191,12 @@ export const DEVELOPMENT_QUESTIONS: ApHumanPracticeQuestion[] = [
     'are the same as primary-sector only economies',
     'do not appear in world-systems thinking',
   ], 1, 'NICs complicate a simple rich-North / poor-South story. They manufacture and export and sit in the middle of the system.'),
-  mc('t11', T, 'Which comparison of the two big development theories is most accurate?', [
-    'Rostow sees development as stages one country can climb; Wallerstein sees a single world economy that keeps places in unequal roles',
-    'Both say colonialism is irrelevant',
-    'Wallerstein says every country will automatically reach high mass consumption',
-    'Rostow is only about map projections',
-  ], 0, 'AMSCO 7.5 pairs them. Rostow is a modernization ladder. Wallerstein/dependency are about structure, power, and unequal exchange.'),
+  mc('t11', T, 'A country has raised literacy and factory output but still mainly exports copper and imports expensive electronics. Which interpretation is most AP-appropriate?', [
+    'Rostow would say it is moving up a stage ladder; Wallerstein/dependency would emphasize its still-unequal role in one world economy',
+    'Both models say colonialism is irrelevant',
+    'Wallerstein says every country automatically reaches high mass consumption',
+    'The pattern can only be explained by map projections',
+  ], 0, 'Rostow = national stages. Wallerstein/dependency = structure and unequal exchange. AP often wants you to apply both, not just name them.'),
   mc('t12', T, 'Rostow’s stages of economic growth model is best summarized as', [
     'a three-tier map of core, semi-periphery, and periphery',
     'a five-stage path from a traditional society toward high mass consumption',

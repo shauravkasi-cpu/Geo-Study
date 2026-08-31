@@ -10,6 +10,24 @@ export type ApHumanStudyTopic =
 
 export type ApHumanQuestionTopic = Exclude<ApHumanStudyTopic, 'all'>
 
+export type ApHumanStimulusId =
+  | 'income-choropleth'
+  | 'dot-crime'
+  | 'cartogram-pop'
+  | 'isoline-temp'
+  | 'grad-symbol'
+  | 'mercator-compare'
+  | 'settlement-pattern'
+  | 'gis-layers'
+  | 'forest-change'
+  | 'hdi-table'
+  | 'sector-chart'
+  | 'core-periphery'
+  | 'dependency-flow'
+  | 'brandt-line'
+  | 'gii-table'
+  | 'energy-chart'
+
 export interface ApHumanPracticeQuestion {
   id: string
   topic: ApHumanQuestionTopic
@@ -17,6 +35,8 @@ export interface ApHumanPracticeQuestion {
   options: string[]
   correctIndexes: number[]
   explain: string
+  stimulus?: ApHumanStimulusId
+  setId?: string
 }
 
 export const AP_HUMAN_STUDY_TOPICS: { id: ApHumanStudyTopic; label: string; desc: string }[] = [
@@ -37,8 +57,10 @@ export function mc(
   options: string[],
   correct: number,
   explain: string,
+  stimulus?: ApHumanStimulusId,
+  setId?: string,
 ): ApHumanPracticeQuestion {
-  return { id, topic, prompt, options, correctIndexes: [correct], explain }
+  return { id, topic, prompt, options, correctIndexes: [correct], explain, stimulus, setId }
 }
 
 export function multi(
