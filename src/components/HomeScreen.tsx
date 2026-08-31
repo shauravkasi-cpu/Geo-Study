@@ -4,6 +4,8 @@ import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1
 import type { ApHumanGuideTopic } from '../lib/apHumanGuide'
 import type { ApHumanStudyTopic } from '../lib/apHumanStudy'
 import { AppToggles } from '../lib/soundToggle'
+import { GeoMathHubCard } from './GeoMathPractice'
+import type { GeoMathTopic } from '../lib/geoMathQuiz'
 import type { FactoringDifficulty, QuizFormat, SubjectId } from '../types'
 
 interface HomeScreenProps {
@@ -29,6 +31,7 @@ interface MathHubProps {
   onBack: () => void
   onStartFactoring: (difficulty: FactoringDifficulty) => void
   onStartFactoringQuiz: () => void
+  onStartGeoMath: (topic: GeoMathTopic) => void
 }
 
 
@@ -47,10 +50,6 @@ function HubHeader({ title, description, onBack, backLabel = '← Subjects' }: H
       <AppToggles />
     </header>
   )
-}
-
-function ComingLaterNote() {
-  return <p className="subject-later-note">More activities can be added to this section later.</p>
 }
 
 export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
@@ -84,7 +83,7 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
         >
           <span className="card-icon">✏️</span>
           <span className="card-title">Math</span>
-          <span className="card-desc">Factoring practice and more</span>
+          <span className="card-desc">Factoring plus Geometry Unit 1 practice</span>
         </button>
 
         <button
@@ -157,14 +156,16 @@ export function ApHumanHub({
   )
 }
 
-export function MathHub({ onBack, onStartFactoring, onStartFactoringQuiz }: MathHubProps) {
+export function MathHub({ onBack, onStartFactoring, onStartFactoringQuiz, onStartGeoMath }: MathHubProps) {
   return (
     <div className="home-screen">
       <HubHeader
         title="Math"
-        description="Factoring practice for now. More activities can be added later."
+        description="Factoring practice and Geometry Unit 1 quizzes with diagrams and equations."
         onBack={onBack}
       />
+
+      <GeoMathHubCard onStart={onStartGeoMath} />
 
       <section className="home-section">
         <h2>Algebra</h2>
@@ -189,8 +190,6 @@ export function MathHub({ onBack, onStartFactoring, onStartFactoringQuiz }: Math
           </div>
         </div>
       </section>
-
-      <ComingLaterNote />
     </div>
   )
 }

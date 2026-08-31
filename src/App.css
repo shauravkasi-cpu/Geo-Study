@@ -2541,3 +2541,89 @@
 [data-theme='dark'] .aphg-topic-card .unit-card-kicker {
   color: #fbbf24;
 }
+
+.math-study .bio-study-kicker,
+.math-study .bio-multi-flag {
+  color: #1d4ed8;
+}
+
+[data-theme='dark'] .math-study .bio-study-kicker,
+[data-theme='dark'] .math-study .bio-multi-flag {
+  color: #93c5fd;
+}
+
+.math-progress-bar,
+.math-study .bio-progress-bar {
+  background: #2563eb;
+}
+
+.math-study .bio-option:hover:not(:disabled) {
+  border-color: #2563eb;
+  background: color-mix(in srgb, #2563eb 10%, var(--bg-subtle));
+}
+
+.math-study .bio-option-picked {
+  border-color: #2563eb;
+  background: color-mix(in srgb, #2563eb 12%, var(--bg-subtle));
+}
+
+.geo-math-eq {
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.9rem;
+  background: color-mix(in srgb, #2563eb 8%, var(--bg-subtle));
+  border: 1px solid color-mix(in srgb, #2563eb 28%, var(--border));
+  border-radius: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text);
+  overflow-x: auto;
+}
+
+.geo-math-typed {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.35rem;
+}
+
+.geo-math-prefix,
+.geo-math-unit {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.geo-math-input {
+  flex: 1;
+  min-width: 140px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-subtle);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.geo-math-input:focus {
+  border-color: #2563eb;
+  background: var(--bg-elevated);
+}
+
+.geo-math-input-correct {
+  border-color: var(--success);
+  background: var(--success-bg);
+}
+
+.geo-math-input-wrong {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
+
+.geo-math-svg {
+  max-width: 520px;
+}
+

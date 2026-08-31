@@ -7,6 +7,7 @@ import { ApHumanHub, HomeScreen, MathHub } from './components/HomeScreen'
 import { FactoringPractice } from './components/FactoringPractice'
 import { FactoringQuiz } from './components/FactoringQuiz'
 import { BioPractice, BiologyTest1Hub } from './components/BioPractice'
+import { GeoMathPractice } from './components/GeoMathPractice'
 import { QuizPanel } from './components/QuizPanel'
 import { ResultsScreen } from './components/ResultsScreen'
 import { WorldMap } from './components/WorldMap'
@@ -46,6 +47,7 @@ import type {
   SubjectId,
 } from './types'
 import type { BioPracticeTopic } from './lib/bioQuiz'
+import type { GeoMathTopic } from './lib/geoMathQuiz'
 import './App.css'
 
 function App() {
@@ -133,6 +135,10 @@ function App() {
 
   const startFactoring = useCallback((difficulty: FactoringDifficulty) => {
     setScreen({ view: 'factoring', difficulty })
+  }, [])
+
+  const startGeoMath = useCallback((topic: GeoMathTopic) => {
+    setScreen({ view: 'geo-math-practice', topic })
   }, [])
 
   const handleMapClick = useCallback(
@@ -285,6 +291,7 @@ function App() {
           onBack={goHome}
           onStartFactoring={startFactoring}
           onStartFactoringQuiz={() => setScreen({ view: 'factoring-quiz' })}
+          onStartGeoMath={startGeoMath}
         />
       </SiteShell>
     )
@@ -318,6 +325,14 @@ function App() {
     return (
       <SiteShell>
         <ApHumanStudyGuide topic={screen.topic} onBack={goApHuman} />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'geo-math-practice') {
+    return (
+      <SiteShell>
+        <GeoMathPractice topic={screen.topic} onBack={goMath} />
       </SiteShell>
     )
   }

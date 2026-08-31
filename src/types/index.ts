@@ -1,6 +1,7 @@
 import type { ApHumanGuideTopic } from '../lib/apHumanGuide'
 import type { ApHumanStudyTopic } from '../lib/apHumanStudy'
 import type { BioPracticeTopic } from '../lib/bioQuiz'
+import type { GeoMathTopic } from '../lib/geoMathQuiz'
 
 export type Continent =
   | 'Africa'
@@ -78,6 +79,7 @@ export type AppScreen =
   | { view: 'ap-human-reference' }
   | { view: 'factoring'; difficulty: FactoringDifficulty }
   | { view: 'factoring-quiz' }
+  | { view: 'geo-math-practice'; topic: GeoMathTopic }
 
 export interface MapClickResult {
   lngLat: [number, number]
