@@ -1,10 +1,21 @@
+import hoverBundled from '../assets/sounds/tf2-button-click-hover.mp3'
+import correctBundled from '../assets/sounds/duolingo-correct.mp3'
+import wrongBundled from '../assets/sounds/duolingo-wrong.mp3'
+
 type SfxName = 'hover' | 'correct' | 'wrong'
 
-const SFX_SRC: Record<SfxName, string> = {
-  hover: '/sounds/tf2-button-click-hover.mp3',
-  correct: '/sounds/duolingo-correct.mp3',
-  wrong: '/sounds/duolingo-wrong.mp3',
-}
+const SFX_SRC: Record<SfxName, string> =
+  import.meta.env.VITE_BUNDLE_SFX === 'true'
+    ? {
+        hover: hoverBundled,
+        correct: correctBundled,
+        wrong: wrongBundled,
+      }
+    : {
+        hover: '/sounds/tf2-button-click-hover.mp3',
+        correct: '/sounds/duolingo-correct.mp3',
+        wrong: '/sounds/duolingo-wrong.mp3',
+      }
 
 const SFX_ENABLED_KEY = 'geo-study-sfx-enabled'
 const SFX_VOLUME = 0.55
