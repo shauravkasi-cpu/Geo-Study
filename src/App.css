@@ -1770,8 +1770,9 @@
   background: #fff;
   border: 1px solid var(--border-strong);
   border-radius: 12px;
-  padding: 0.7rem 0.65rem 0.55rem;
+  padding: 0.85rem 0.75rem 0.65rem;
   overflow-x: auto;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
 }
 
 [data-theme='dark'] .aph-figure-frame {
@@ -1786,10 +1787,42 @@
 
 .aph-svg {
   width: 100%;
-  max-width: 520px;
+  max-width: 580px;
   height: auto;
   display: block;
   margin: 0 auto;
+}
+
+.aph-figure-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+.aph-figure-panel-label {
+  margin: 0 0 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+}
+
+.aph-map-wrap {
+  position: relative;
+  background: #eef4f8;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.aph-map-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .aph-table {
