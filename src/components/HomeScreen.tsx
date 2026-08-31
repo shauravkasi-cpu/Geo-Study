@@ -1,7 +1,9 @@
 import { ApHumanNotesHub } from './ApHumanPractice'
+import { ApHumanStudyHubCard } from './ApHumanStudyGuide'
 import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
-import { AppToggles } from '../lib/soundToggle'
+import type { ApHumanGuideTopic } from '../lib/apHumanGuide'
 import type { ApHumanStudyTopic } from '../lib/apHumanStudy'
+import { AppToggles } from '../lib/soundToggle'
 import type { FactoringDifficulty, QuizFormat, SubjectId } from '../types'
 
 interface HomeScreenProps {
@@ -20,6 +22,7 @@ interface ApHumanHubProps {
   onStartQuiz: (format: QuizFormat) => void
   onViewStudyMap: () => void
   onStartStudy: (topic: ApHumanStudyTopic) => void
+  onOpenStudyGuide: (topic: ApHumanGuideTopic) => void
 }
 
 interface MathHubProps {
@@ -71,7 +74,7 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
         >
           <span className="card-icon">🗺️</span>
           <span className="card-title">AP Human Geography</span>
-          <span className="card-desc">Map quiz and notes MCQ practice</span>
+          <span className="card-desc">Map quiz, notes, and Unit 1 study guide</span>
         </button>
 
         <button
@@ -98,16 +101,24 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
   )
 }
 
-export function ApHumanHub({ onBack, onStartQuiz, onViewStudyMap, onStartStudy }: ApHumanHubProps) {
+export function ApHumanHub({
+  onBack,
+  onStartQuiz,
+  onViewStudyMap,
+  onStartStudy,
+  onOpenStudyGuide,
+}: ApHumanHubProps) {
   return (
     <div className="home-screen">
       <HubHeader
         title="AP Human Geography"
-        description="Map quiz practice plus AP-style multiple-choice from the class notes."
+        description="Map quiz practice, notes quiz, and a Unit 1 study guide."
         onBack={onBack}
       />
 
       <ApHumanNotesHub onStart={onStartStudy} />
+
+      <ApHumanStudyHubCard onStart={onOpenStudyGuide} />
 
       <section className="home-section">
         <h2>Map Quiz Practice</h2>
@@ -183,4 +194,3 @@ export function MathHub({ onBack, onStartFactoring, onStartFactoringQuiz }: Math
     </div>
   )
 }
-

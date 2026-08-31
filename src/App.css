@@ -2402,3 +2402,49 @@
     font-size: 1rem;
   }
 }
+
+.aphg-study .bio-study-kicker,
+.aphg-study .bio-multi-flag {
+  color: #b45309;
+}
+
+[data-theme='dark'] .aphg-study .bio-study-kicker,
+[data-theme='dark'] .aphg-study .bio-multi-flag {
+  color: #fbbf24;
+}
+
+.aphg-study .bio-progress-bar {
+  background: #f59e0b;
+}
+
+.aphg-study .bio-option:hover:not(:disabled) {
+  border-color: #f59e0b;
+  background: color-mix(in srgb, #f59e0b 10%, var(--bg-subtle));
+}
+
+.aphg-study .bio-option-picked {
+  border-color: #f59e0b;
+  background: color-mix(in srgb, #f59e0b 12%, var(--bg-subtle));
+}
+
+.aphg-topic-card {
+  background: var(--gradient-ap);
+  border-color: #fbbf24;
+}
+
+.aphg-topic-card:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 6px 24px rgba(245, 158, 11, 0.15);
+}
+
+.aphg-topic-card .unit-card-kicker {
+  color: #b45309;
+}
+
+[data-theme='dark'] .aphg-topic-card {
+  border-color: #92400e;
+}
+
+[data-theme='dark'] .aphg-topic-card .unit-card-kicker {
+  color: #fbbf24;
+}
