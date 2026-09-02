@@ -128,13 +128,13 @@ export const PASSIVE_QUESTIONS: BioPracticeQuestion[] = [
     'has no net H₂O movement; that is the happy animal cell',
     'wilts the way a plant does in salt water',
     'always plasmolyzes as the membrane pulls inward',
-  ], 1, 'Dynamic equilibrium. Best environment for animal cells.', 'animal-tonicity')
+  ], 1, 'Dynamic equilibrium. Best environment for animal cells.', 'animal-tonicity'),
   mc('p22', T, 'Cytolysis is', [
     'an animal cell swelling and bursting in hypotonic solution',
     'a plant becoming turgid in a healthy hypotonic bath',
     'a bacterium splitting itself by binary fission',
     'hormones leaving the cell by vesicle exocytosis',
-  ], 0, 'Dead/burst animal cell. Plants resist this with wall + central vacuole.')
+  ], 0, 'Dead/burst animal cell. Plants resist this with wall + central vacuole.'),
   mc('p23', T, 'Contractile vacuoles', [
     'are in typical animal cells to stop cytolysis',
     'are in freshwater protists like Amoeba, not animal cells',
@@ -146,7 +146,7 @@ export const PASSIVE_QUESTIONS: BioPracticeQuestion[] = [
     'plasmolyzes — membrane pulls in; the plant looks wilted',
     'bursts as easily as a red blood cell would',
     'shows no change in the large central vacuole',
-  ], 1, 'Water left. Dead/wilted plant cell in the notes.', 'plant-tonicity')
+  ], 1, 'Water left. Dead/wilted plant cell in the notes.', 'plant-tonicity'),
   mc('p25', T, 'A plant cell in an isotonic solution', [
     'is in its happiest, most turgid state',
     'has no net H₂O movement; alive but limp',
@@ -194,7 +194,7 @@ export const PASSIVE_QUESTIONS: BioPracticeQuestion[] = [
     'hypertonic, because outside has little water / more solute',
     'isotonic, because both sides already contain water',
     'a gas, so osmosis cannot happen at all',
-  ], 1, 'Outside is high solute / low water. Hypertonic solution.', 'hypertonic-cell')
+  ], 1, 'Outside is high solute / low water. Hypertonic solution.', 'hypertonic-cell'),
   mc('p33', T, 'In that 90% vs 10% water diagram, water moves', [
     'into the cell, toward the lower-water side',
     'out of the cell, high water → low water',
@@ -212,7 +212,7 @@ export const PASSIVE_QUESTIONS: BioPracticeQuestion[] = [
     'hypotonic, because the cell has lower solute than outside',
     'a virus, because it has no cytoplasm of its own',
     'isotonic, because both sides already contain water',
-  ], 1, 'Notes: HYPOtonic cell (low solute) in a HYPERtonic solution (high solute).', 'hypertonic-cell')
+  ], 1, 'Notes: HYPOtonic cell (low solute) in a HYPERtonic solution (high solute).', 'hypertonic-cell'),
   mc('p36', T, 'Facilitated diffusion is', [
     'high → low with a channel or carrier; still no ATP',
     'low → high with the Na+/K+ pump and ATP',
@@ -260,13 +260,13 @@ export const PASSIVE_QUESTIONS: BioPracticeQuestion[] = [
     'go high → low with no ATP; only facilitated needs a protein',
     'use vesicles that fuse with the plasma membrane',
     'move solutes from low concentration up to high',
-  ], 1, 'The protein is the difference, not energy or direction.')
+  ], 1, 'The protein is the difference, not energy or direction.'),
   mc('p44', T, 'Osmosis vs simple diffusion: osmosis is specifically', [
     'ion pumping by the sodium-potassium pump',
     'water moving across a membrane down its gradient',
     'glucose using a carrier protein helper',
     'proteins leaving the cell by exocytosis',
-  ], 1, 'Both are passive. Osmosis = water. Aquaporins can speed water but do not make it active.')
+  ], 1, 'Both are passive. Osmosis = water. Aquaporins can speed water but do not make it active.'),
   mc('p45', T, 'A red blood cell in distilled water will', [
     'shrivel as water leaves the cell',
     'take in water and risk cytolysis',
@@ -296,7 +296,7 @@ export const PASSIVE_QUESTIONS: BioPracticeQuestion[] = [
     'is zero even though molecules still move randomly',
     'switches over to phagocytosis of solute',
     'flips the plasma membrane inside out',
-  ], 1, 'That is equilibrium / dynamic equilibrium.')
+  ], 1, 'That is equilibrium / dynamic equilibrium.'),
   mc('p50', T, 'Net passive transport cannot occur if', [
     'a concentration gradient is present',
     'there is already no concentration gradient',
@@ -386,7 +386,7 @@ export const PASSIVE_QUESTIONS: BioPracticeQuestion[] = [
     'osmosis is water; facilitated uses a protein for other molecules',
     'both move solutes from low concentration to high',
     'neither one needs a membrane in order to occur',
-  ], 1, 'Know the 3-way compare: simple vs osmosis vs facilitated.')
+  ], 1, 'Know the 3-way compare: simple vs osmosis vs facilitated.'),
   mc('p65', T, 'Starch cannot cross; water can. A high-starch bag in distilled water will', [
     'lose starch by simple diffusion into the beaker',
     'gain water by osmosis and swell',

@@ -338,7 +338,7 @@ export const MEMBRANE_QUESTIONS: BioPracticeQuestion[] = [
     'a phospholipid, polar head plus nonpolar tails',
     'O₂, a small uncharged gas with no head',
     'cellulose, a plant-wall polysaccharide',
-  ], 1, 'Amphipathic = both hydrophilic and hydrophobic parts.', 'phospholipid')
+  ], 1, 'Amphipathic = both hydrophilic and hydrophobic parts.', 'phospholipid'),
   mc('m57', T, 'Integral vs peripheral — which is accurate?', [
     'integral on edges only; peripheral spans fully',
     'integral spans; peripheral sits on a surface',

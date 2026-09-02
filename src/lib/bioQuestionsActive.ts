@@ -8,7 +8,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'ATP; cargo moves low → high, against the gradient',
     'only osmosis of water through lipid tails',
     'a cellulose wall surrounding every cell',
-  ], 1, 'If it goes low to high, it costs ATP.')
+  ], 1, 'If it goes low to high, it costs ATP.'),
   mc('a2', T, 'Passive vs active — direction', [
     'passive low → high; active high → low',
     'passive high → low; active low → high',
@@ -32,7 +32,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'active bulk export by vesicles fusing with the membrane',
     'cell-drinking of extracellular fluid',
     '3 Na⁺ in and 2 K⁺ out per ATP spent',
-  ], 1, 'Exo = exiting. ATP required. Examples: hormone secretion, protein secretion, nerve communication.', 'endo-exo')
+  ], 1, 'Exo = exiting. ATP required. Examples: hormone secretion, protein secretion, nerve communication.', 'endo-exo'),
   mc('a6', T, '“Exo” in exocytosis means cargo is', [
     'entering the cell in a vesicle',
     'exiting the cell after vesicle fusion',
@@ -56,7 +56,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'active bulk intake of large cargo using vesicles',
     'water leaving only a hypertonic animal cell',
     'facilitated diffusion of glucose downhill',
-  ], 1, 'Endo = into the cell. Three types: pinocytosis, phagocytosis, receptor-mediated.', 'endo-exo')
+  ], 1, 'Endo = into the cell. Three types: pinocytosis, phagocytosis, receptor-mediated.', 'endo-exo'),
   mc('a10', T, 'The three types of endocytosis are', [
     'simple diffusion, osmosis, facilitated diffusion',
     'pinocytosis, phagocytosis, receptor-mediated',
@@ -74,7 +74,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'cell-eating: engulfing food or bacteria into vesicles',
     'osmosis of water through aquaporin channels',
     'cholesterol buffering how fluid the bilayer is',
-  ], 1, 'Macrophages engulfing bacteria; immune cells engulfing yeast.')
+  ], 1, 'Macrophages engulfing bacteria; immune cells engulfing yeast.'),
   mc('a13', T, 'A macrophage engulfing bacteria is', [
     'osmosis of water into the cell',
     'phagocytosis, a type of active endocytosis',
@@ -86,7 +86,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'is passive and does not need the receptor to match cargo',
     'is only used for oxygen gas crossing the lipid tails',
     'is the same process as bacterial binary fission',
-  ], 0, 'Receptor shape is essential — lock and key for the signal.')
+  ], 0, 'Receptor shape is essential — lock and key for the signal.'),
   mc('a15', T, 'Receptor shape matters in receptor-mediated endocytosis because', [
     'shape is irrelevant to whether cargo is taken in',
     'the receptor must fit the hormone or cholesterol to bind it',
@@ -98,7 +98,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'both are active vesicle traffic; exo = out, endo = in',
     'exo is osmosis; endo is simple diffusion of gases',
     'both move only O₂ through the lipid tails',
-  ], 1, 'Direction of the vesicle cargo is the difference.')
+  ], 1, 'Direction of the vesicle cargo is the difference.'),
   mc('a17', T, 'The sodium-potassium pump uses ATP to', [
     'simple-diffuse glucose through the tails',
     'keep Na⁺ and K⁺ at the right inside/outside levels',
@@ -140,7 +140,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'leak toward equilibrium; the salty-banana gradient collapses',
     'turn into oxygen gas inside the membrane',
     'assemble peptidoglycan outside the plasma membrane',
-  ], 1, 'Active transport maintains gradients that diffusion would wipe out.')
+  ], 1, 'Active transport maintains gradients that diffusion would wipe out.'),
   mc('a24', T, 'Pinocytosis vs phagocytosis', [
     'pino = drink small fluid; phago = eat large particles',
     'pino needs ATP; phago does not use energy',
@@ -176,7 +176,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'The sodium-potassium pump needs ATP to move Na⁺ and K⁺',
     'Facilitated diffusion of glucose down its gradient needs ATP',
     'Phagocytosis uses vesicles to take in large particles',
-  ], 2, 'Facilitated diffusion is still passive. Protein help ≠ energy.')
+  ], 2, 'Facilitated diffusion is still passive. Protein help ≠ energy.'),
   mc('a30', T, 'Bulk transport means', [
     'O₂ sneaking between phospholipid tails',
     'moving large/many materials with vesicles',
@@ -212,7 +212,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'change shape, using ATP, against both ion gradients',
     'dissolve the phospholipid bilayer into free lipids',
     'turn into a chloroplast and start making sugar',
-  ], 1, 'Notes: a transport protein changes shape to move the ions — and this pump is active.', 'nak-pump')
+  ], 1, 'Notes: a transport protein changes shape to move the ions — and this pump is active.', 'nak-pump'),
   mc('a36', T, 'After many pump cycles, outside the cell you should find relatively', [
     'high K⁺ and low Na⁺',
     'high Na⁺ and low K⁺',
@@ -224,7 +224,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'releasing signal chemicals from vesicles at the membrane',
     'building peptidoglycan around the neuron cell',
     'Hooke naming empty chambers he saw in cork',
-  ], 1, 'Secretion = exocytosis.')
+  ], 1, 'Secretion = exocytosis.'),
   mc('a38', T, 'Which needs a vesicle, not just a pump protein?', [
     'moving 3 Na⁺ ions across the membrane',
     'exporting a large protein hormone',
@@ -236,7 +236,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'neither process ever touches the plasma membrane',
     'both are simple diffusion of O₂ and CO₂',
     'both occur only inside intact virus particles',
-  ], 0, 'Vesicle traffic remodels the plasma membrane.', 'endo-exo')
+  ], 0, 'Vesicle traffic remodels the plasma membrane.', 'endo-exo'),
   mc('a40', T, 'A molecule going low → high through a protein is', [
     'osmosis of water toward low solute',
     'active transport that requires ATP',
@@ -254,7 +254,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'large particles such as food or bacteria',
     'only H₂O through aquaporin channels',
     'only Na⁺ through the ion pump',
-  ], 1, 'Eating.')
+  ], 1, 'Eating.'),
   mc('a43', T, 'Which protein type starts receptor-mediated endocytosis?', [
     'an integral receptor that binds the target',
     'cellulose synthase in a plant wall',
@@ -284,7 +284,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'only facilitated diffusion spends ATP on glucose',
     'neither process uses a membrane protein helper',
     'both move cargo from low concentration up to high',
-  ], 0, 'Protein is not the same as energy.')
+  ], 0, 'Protein is not the same as energy.'),
   mc('a48', T, 'To take in one hormone and ignore a similar-sized random molecule, use', [
     'simple diffusion through the tails',
     'receptor-mediated endocytosis',
@@ -296,7 +296,7 @@ export const ACTIVE_QUESTIONS: BioPracticeQuestion[] = [
     'lets substances run down gradients the cell already has',
     'is just another name for the Na+/K+ pump',
     'always uses vesicles and never uses proteins',
-  ], 1, 'Pumps create order; diffusion spends it.')
+  ], 1, 'Pumps create order; diffusion spends it.'),
   mc('a50', T, 'Which list is only bulk active transport?', [
     'osmosis and simple diffusion',
     'endocytosis and exocytosis',

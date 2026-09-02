@@ -47,13 +47,13 @@ export const HISTORY_QUESTIONS: BioPracticeQuestion[] = [
     'all cells have chloroplasts; all cells have walls; all cells are bacteria',
     'viruses are fully alive; cells appear from salt; energy use is optional',
     'only animals have cells; plants, fungi, and bacteria do not',
-  ], 0, 'Memorize all three exactly: all living things are made of cells; cells are the basic unit of life; all cells come from other cells. Bacteria are cells. Viruses are not.')
+  ], 0, 'Memorize all three exactly: all living things are made of cells; cells are the basic unit of life; all cells come from other cells. Bacteria are cells. Viruses are not.'),
   mc('h8', H, '“Cells are the basic unit of life” means', [
     'organs are smaller than individual atoms',
     'the cell is the smallest living/functional unit',
     'viruses count as complete living cells',
     'only cork tissue is considered alive',
-  ], 1, 'Tissues and organs are made OF cells.')
+  ], 1, 'Tissues and organs are made OF cells.'),
   mc('h9', H, 'Which scientist matches “all plants are made of cells”?', [
     'Schwann',
     'Schleiden',
@@ -134,19 +134,19 @@ export const PROK_EUK_QUESTIONS: BioPracticeQuestion[] = [
     'cytoplasm, ribosomes, a membrane, and DNA or RNA',
     'mitochondria and a nucleolus in every cell',
     'lysosomes and centrioles in every cell',
-  ], 1, 'Ribosomes make proteins and are NOT considered an organelle here.')
+  ], 1, 'Ribosomes make proteins and are NOT considered an organelle here.'),
   mc('e4', E, 'Ribosomes', [
     'are membrane-bound organelles like mitochondria',
     'make proteins and are not called organelles here',
     'store DNA only inside eukaryotic nuclei',
     'are cellulose stacked in plant cell walls',
-  ], 1, 'That is why prokaryotes can still make protein with no nucleus.')
+  ], 1, 'That is why prokaryotes can still make protein with no nucleus.'),
   mc('e5', E, 'Prokaryotic cells are', [
     'always multicellular tissues with nuclei',
     'unicellular, ~1–10 µm, no nucleus or membrane organelles',
     '10–100 µm with linear DNA in a true nucleus',
     'always packed with chloroplasts for sugar',
-  ], 1, 'One slide says 1–5 µm; the comparison table says most bacteria 1–10 µm. Either way they are smaller than typical eukaryotes.')
+  ], 1, 'One slide says 1–5 µm; the comparison table says most bacteria 1–10 µm. Either way they are smaller than typical eukaryotes.'),
   mc('e6', E, 'A nucleoid is', [
     'a true nucleus wrapped in a membrane',
     'the prokaryote region that holds circular DNA',
@@ -182,7 +182,7 @@ export const PROK_EUK_QUESTIONS: BioPracticeQuestion[] = [
     'may be uni- or multicellular, 10–100 µm, with a nucleus',
     'never have any kind of cell wall at all',
     'have 70s ribosomes sitting in a nucleoid',
-  ], 1, 'Eu = true nucleus (with nucleolus). Membrane-bound organelles present. Plant/fungi walls are allowed.')
+  ], 1, 'Eu = true nucleus (with nucleolus). Membrane-bound organelles present. Plant/fungi walls are allowed.'),
   mc('e12', E, 'Eukaryotic ribosomes are', [
     '70s, smaller than bacterial ones',
     '80s, larger than bacterial ones',
@@ -230,13 +230,13 @@ export const PROK_EUK_QUESTIONS: BioPracticeQuestion[] = [
     'prokaryotes in these notes',
     'all plant cells in tissues',
     'all animal cells in tissues',
-  ], 1, 'Some protists and fungi are unicellular eukaryotes, but eukaryotes can also be multicellular.')
+  ], 1, 'Some protists and fungi are unicellular eukaryotes, but eukaryotes can also be multicellular.'),
   mc('e20', E, 'Which can be unicellular OR multicellular?', [
     'prokaryotes only, in these notes',
     'eukaryotes (some protists/fungi stay unicellular)',
     'all bacteria, which form true tissues',
     'all viruses, which are complete cells',
-  ], 1, 'Do not say all eukaryotes are multicellular. Plants and animals are multicellular eukaryotes.')
+  ], 1, 'Do not say all eukaryotes are multicellular. Plants and animals are multicellular eukaryotes.'),
   mc('e21', E, 'Membrane-bound organelles are found in', [
     'prokaryotes',
     'eukaryotes',
@@ -272,7 +272,7 @@ export const PROK_EUK_QUESTIONS: BioPracticeQuestion[] = [
     'make cork, make animalcules, make viruses',
     'carry out osmosis and nothing else',
     'carry out phagocytosis and nothing else',
-  ], 0, 'Energy for activities, proteins do the work, more cells for growth/replacement.')
+  ], 0, 'Energy for activities, proteins do the work, more cells for growth/replacement.'),
   mc('e27', E, 'Cells make proteins because proteins', [
     'are cellulose walls',
     'do the work in cells',
@@ -308,7 +308,7 @@ export const PROK_EUK_QUESTIONS: BioPracticeQuestion[] = [
     'no nucleus and no membrane-bound organelles',
     'no DNA anywhere in a prokaryote',
     'no plasma membrane around bacteria',
-  ], 1, 'They still have DNA, ribosomes, cytoplasm, and a membrane.')
+  ], 1, 'They still have DNA, ribosomes, cytoplasm, and a membrane.'),
   mc('e33', E, '“Eu = true nucleus” means eukaryotes have', [
     'a nucleoid with no membrane',
     'a membrane-bound nucleus',
@@ -326,13 +326,13 @@ export const PROK_EUK_QUESTIONS: BioPracticeQuestion[] = [
     'prokaryotes (covered later in the notes)',
     'viruses, because they have a capsid',
     'fungi, because they have chitin walls',
-  ], 1, 'Prokaryotic type of cell.')
+  ], 1, 'Prokaryotic type of cell.'),
   mc('e36', E, 'A capsule around a bacterium is', [
     'the membrane-bound nucleus',
     'an extra layer outside the peptidoglycan wall',
     'a chloroplast making glucose',
     'a tight junction between cells',
-  ], 1, 'Wall + capsule surround many prokaryotes.')
+  ], 1, 'Wall + capsule surround many prokaryotes.'),
   mc('e37', E, 'Which is more complex and larger?', [
     'a typical prokaryote',
     'a typical eukaryote',
@@ -353,19 +353,19 @@ export const PLANT_ANIMAL_QUESTIONS: BioPracticeQuestion[] = [
     'no wall, irregular shape, small vacuoles, lysosomes, centrioles',
     'chloroplasts that make the cell green',
     'a peptidoglycan wall plus an outer capsule',
-  ], 1, 'Lysosomes = digestion/cleaning. Centrioles = reproduction.', 'plant-animal-cells')
+  ], 1, 'Lysosomes = digestion/cleaning. Centrioles = reproduction.', 'plant-animal-cells'),
   mc('pa2', P, 'Plant cells have', [
     'centrioles as their unique listed organelle',
     'cellulose wall, fixed shape, one large vacuole, chloroplasts',
     'no plasma membrane, only a cellulose wall',
     'only lysosomes and no vacuole at all',
-  ], 1, 'Chloroplasts: green; convert sunlight to food.', 'plant-animal-cells')
+  ], 1, 'Chloroplasts: green; convert sunlight to food.', 'plant-animal-cells'),
   mc('pa3', P, 'Lysosomes are specialized in', [
     'plant cells, where they run photosynthesis',
     'animal cells, for digestion and cleaning',
     'all bacterial nucleoid DNA regions',
     'viral envelopes stolen from a host',
-  ], 1, 'Know which extra organelles each cell type has in this unit.')
+  ], 1, 'Know which extra organelles each cell type has in this unit.'),
   mc('pa4', P, 'Centrioles are specialized in', [
     'plant cells for photosynthesis',
     'animal cells for reproduction',
@@ -377,13 +377,13 @@ export const PLANT_ANIMAL_QUESTIONS: BioPracticeQuestion[] = [
     'make plants green and turn sunlight into food',
     'are peptidoglycan in bacterial walls',
     'are found in typical animal muscle cells',
-  ], 1, 'Plant specialized organelle.')
+  ], 1, 'Plant specialized organelle.'),
   mc('pa6', P, 'Plant cell walls are', [
     'inside the membrane, made of protein only',
     'outside the membrane, cellulose, for support',
     'chitin, as in all plant tissues',
     'present in typical animal cells too',
-  ], 1, 'Fungi: chitin wall. Animals: NOT PRESENT.')
+  ], 1, 'Fungi: chitin wall. Animals: NOT PRESENT.'),
   mc('pa7', P, 'Fungal cell walls are', [
     'cellulose',
     'chitin',
@@ -395,19 +395,19 @@ export const PLANT_ANIMAL_QUESTIONS: BioPracticeQuestion[] = [
     'stores water/food/waste and helps turgor/shape',
     'functions as a second membrane-bound nucleus',
     'pumps three Na⁺ ions out of the cell',
-  ], 1, 'It also helps prevent bursting in hypotonic environments. Links Part 1 turgor to Part 2 structure.')
+  ], 1, 'It also helps prevent bursting in hypotonic environments. Links Part 1 turgor to Part 2 structure.'),
   mc('pa9', P, 'Animal vacuoles are', [
     'one giant central vacuole like plants',
     'lots of small vacuoles that may store nutrients',
     'chloroplasts that capture sunlight',
     'cellulose walls outside the membrane',
-  ], 1, 'Protists may use contractile vacuoles to push out extra water in hypotonic environments.')
+  ], 1, 'Protists may use contractile vacuoles to push out extra water in hypotonic environments.'),
   mc('pa10', P, 'Contractile vacuoles in protists', [
     'are the same organelles as plant chloroplasts',
     'push out extra water in hypotonic environments',
     'make cellulose for a rigid plant-style wall',
     'are found in typical animal tissue cells',
-  ], 1, 'Part 1: not in animal cells; freshwater protists like Amoeba. They may also help with movement.')
+  ], 1, 'Part 1: not in animal cells; freshwater protists like Amoeba. They may also help with movement.'),
   mc('pa11', P, 'Plant cells have a more fixed shape because of', [
     'centrioles',
     'the cell wall',
@@ -419,13 +419,13 @@ export const PLANT_ANIMAL_QUESTIONS: BioPracticeQuestion[] = [
     'lysosomes and centrioles for cleanup/division',
     'a nucleoid region with circular DNA',
     'peptidoglycan wall plus an outer capsule',
-  ], 0, 'This unit’s plant extras: wall, huge vacuole, chloroplasts.')
+  ], 0, 'This unit’s plant extras: wall, huge vacuole, chloroplasts.'),
   mc('pa13', P, 'Which is listed as animal-specialized (not plant)?', [
     'chloroplasts for photosynthesis',
     'lysosomes and centrioles',
     'a cellulose cell wall',
     'a large central vacuole',
-  ], 1, 'Cleaning/digestion and reproduction structures.')
+  ], 1, 'Cleaning/digestion and reproduction structures.'),
   mc('pa14', P, 'Both plant and animal cells are', [
     'prokaryotic',
     'eukaryotic',
@@ -437,7 +437,7 @@ export const PLANT_ANIMAL_QUESTIONS: BioPracticeQuestion[] = [
     'a plant cell: wall, central vacuole, chloroplasts',
     'a bacterium with a nucleoid region',
     'a virus particle with only a capsid',
-  ], 1, 'Recognize diagrams.', 'plant-animal-cells')
+  ], 1, 'Recognize diagrams.', 'plant-animal-cells'),
   mc('pa16', P, 'An irregular cell with small digestive dots and no wall is', [
     'a plant cell with cellulose',
     'an animal cell',
@@ -461,19 +461,19 @@ export const PLANT_ANIMAL_QUESTIONS: BioPracticeQuestion[] = [
     'plants and fungi ONLY (not animals)',
     'all animal tissues for extra support',
     'viruses, as part of the capsid shell',
-  ], 1, 'Outside the membrane. Structure and support.')
+  ], 1, 'Outside the membrane. Structure and support.'),
   mc('pa20', P, 'Layers of complex carbohydrates in eukaryotic walls are', [
     'cellulose in plants and chitin in fungi',
     'peptidoglycan in plants, like bacteria',
     'protein capsids around a genome',
     'cholesterol stacked into a bilayer',
-  ], 0, 'Do not mix bacterial peptidoglycan into plants.')
+  ], 0, 'Do not mix bacterial peptidoglycan into plants.'),
   mc('pa21', P, 'A wilted plant (from Part 1) has lost water from its', [
     'centrioles used in animal reproduction',
     'large central vacuoles, so turgor dropped',
     'protein capsid around a virus genome',
     'nucleoid region of circular DNA',
-  ], 1, 'Structure (vacuole/wall) explains osmosis results.')
+  ], 1, 'Structure (vacuole/wall) explains osmosis results.'),
   mc('pa22', P, 'Making energy, proteins, and more cells is true of', [
     'viruses living independently',
     'cells in general (the 3 main jobs)',
@@ -488,25 +488,25 @@ export const SURFACES_VIRUS_QUESTIONS: BioPracticeQuestion[] = [
     'interlocking proteins that hold cells together',
     'nucleoids holding circular DNA loops',
     'protein capsids around a virus genome',
-  ], 1, 'Interlocking proteins stitch neighboring animal cells.')
+  ], 1, 'Interlocking proteins stitch neighboring animal cells.'),
   mc('v2', S, 'Gap junctions', [
     'are plant wall pores, also called plasmodesmata',
     'connect animal cytoplasms so ions and impulses can pass',
     'are peptidoglycan in bacterial cell walls',
     'are virus particles stuck between two cells',
-  ], 1, 'Direct passage between animal cells.')
+  ], 1, 'Direct passage between animal cells.'),
   mc('v3', S, 'Plasmodesmata are', [
     'animal tight junctions of interlocking proteins',
     'pores in the plant wall that interconnect plant cells',
     'bacterial flagella used for swimming',
     'viral envelopes made of stolen membrane',
-  ], 1, 'Allow cytoplasmic exchange, transport, and communication.')
+  ], 1, 'Allow cytoplasmic exchange, transport, and communication.'),
   mc('v4', S, 'Plants need plasmodesmata for communication because', [
     'plants cannot move, so wall pores share cytoplasm/signals',
     'plants have no plasma membranes at all',
     'animals have cellulose walls that need pores',
     'viruses use them to photosynthesize food',
-  ], 0, 'Immobile + walls = need tunnels through walls.')
+  ], 0, 'Immobile + walls = need tunnels through walls.'),
   mc('v5', S, 'TRACIE “intercellular joining” examples were', [
     'only ribosomes making protein',
     'tight junctions and plasmodesmata',
@@ -518,13 +518,13 @@ export const SURFACES_VIRUS_QUESTIONS: BioPracticeQuestion[] = [
     'both are bacterial peptidoglycan cell walls',
     'gap junctions are found in plant cells only',
     'plasmodesmata zipper animal cells with interlocking proteins',
-  ], 0, 'Same goal, different kingdoms/structures.')
+  ], 0, 'Same goal, different kingdoms/structures.'),
   mc('v7', S, 'Viruses are described as', [
     'cells that divide by binary fission',
     'infectious particles with some, not all, traits of life',
     'the basic unit of life in cell theory',
     'eukaryotes that contain true nuclei',
-  ], 1, 'Not full organisms by cell-theory standards.', 'virus-struct')
+  ], 1, 'Not full organisms by cell-theory standards.', 'virus-struct'),
   mc('v8', S, 'Viruses need a ______ to survive and have ______ cells of their own.', [
     'host; no',
     'chloroplast; many',
@@ -536,7 +536,7 @@ export const SURFACES_VIRUS_QUESTIONS: BioPracticeQuestion[] = [
     'rapidly and show genetic variation (strains)',
     'only if they photosynthesize sugars',
     'only inside cork named by Hooke',
-  ], 1, 'They have some life traits (genetic change) but not all.')
+  ], 1, 'They have some life traits (genetic change) but not all.'),
   mc('v10', S, 'Compared with prokaryotic and eukaryotic cells, viruses are', [
     'larger than both cell types',
     'much smaller than both cell types',
@@ -548,7 +548,7 @@ export const SURFACES_VIRUS_QUESTIONS: BioPracticeQuestion[] = [
     'a capsid, DNA or RNA genome, and an envelope',
     'peptidoglycan walls and 70s ribosomes',
     'chloroplasts that make sugar from light',
-  ], 1, 'Match the slide list for the quiz.', 'virus-struct')
+  ], 1, 'Match the slide list for the quiz.', 'virus-struct'),
   mc('v12', S, 'A capsid is', [
     'a plant’s large central vacuole',
     'the virus’s protective protein shell',
@@ -572,7 +572,7 @@ export const SURFACES_VIRUS_QUESTIONS: BioPracticeQuestion[] = [
     'need a host, have no cells, and do not use energy alone',
     'are 10–100 µm eukaryotic cells with organelles',
     'have peptidoglycan walls and 70s ribosomes',
-  ], 1, 'Cell theory is about cells. Viruses fail that test.')
+  ], 1, 'Cell theory is about cells. Viruses fail that test.'),
   mc('v16', S, 'Which is smallest?', [
     'typical eukaryotic cell',
     'typical bacterium',
