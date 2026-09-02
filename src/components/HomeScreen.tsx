@@ -90,7 +90,7 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
         >
           <span className="card-icon">🧬</span>
           <span className="card-title">Biology</span>
-          <span className="card-desc">Test 1 Study practice questions</span>
+          <span className="card-desc">Honors Bio Unit 1 and Unit 2 tests and practice</span>
         </button>
       </div>
     </div>

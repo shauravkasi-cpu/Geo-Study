@@ -5,7 +5,7 @@ import { ApHumanPractice } from './components/ApHumanPractice'
 import { ApHumanHub, HomeScreen, MathHub } from './components/HomeScreen'
 import { FactoringPractice } from './components/FactoringPractice'
 import { FactoringQuiz } from './components/FactoringQuiz'
-import { BioPractice, BiologyTest1Hub } from './components/BioPractice'
+import { BioPractice, BiologyHub, BiologyUnit1Hub, BiologyUnit2Hub } from './components/BioPractice'
 import { GeoMathPractice } from './components/GeoMathPractice'
 import { QuizPanel } from './components/QuizPanel'
 import { ResultsScreen } from './components/ResultsScreen'
@@ -44,7 +44,7 @@ import type {
   QuizSession,
   SubjectId,
 } from './types'
-import type { BioPracticeTopic } from './lib/bioQuiz'
+import type { BioPracticeTopic, BioUnit2Topic, BioUnitId } from './lib/bioQuiz'
 import type { GeoMathTopic } from './lib/geoMathQuiz'
 import './App.css'
 
@@ -119,8 +119,16 @@ function App() {
   const goMath = useCallback(() => goToSubject('math'), [goToSubject])
   const goBiology = useCallback(() => goToSubject('biology'), [goToSubject])
 
-  const startBioPractice = useCallback((topic: BioPracticeTopic) => {
-    setScreen({ view: 'biology-practice', topic })
+  const goBiologyUnit = useCallback((unit: BioUnitId) => {
+    setScreen({ view: 'biology-unit', unit })
+  }, [])
+
+  const startBioUnit1Practice = useCallback((topic: BioPracticeTopic) => {
+    setScreen({ view: 'biology-practice', unit: 1, topic })
+  }, [])
+
+  const startBioUnit2Practice = useCallback((topic: BioUnit2Topic) => {
+    setScreen({ view: 'biology-practice', unit: 2, topic })
   }, [])
 
   const startApHumanNotes = useCallback((topic: ApHumanStudyTopic) => {
@@ -293,7 +301,23 @@ function App() {
   if (screen.view === 'subject' && screen.subject === 'biology') {
     return (
       <SiteShell>
-        <BiologyTest1Hub onBack={goHome} onStart={startBioPractice} />
+        <BiologyHub onBack={goHome} onOpenUnit={goBiologyUnit} />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'biology-unit' && screen.unit === 1) {
+    return (
+      <SiteShell>
+        <BiologyUnit1Hub onBack={goBiology} onStart={startBioUnit1Practice} />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'biology-unit' && screen.unit === 2) {
+    return (
+      <SiteShell>
+        <BiologyUnit2Hub onBack={goBiology} onStart={startBioUnit2Practice} />
       </SiteShell>
     )
   }
@@ -301,7 +325,11 @@ function App() {
   if (screen.view === 'biology-practice') {
     return (
       <SiteShell>
-        <BioPractice topic={screen.topic} onBack={goBiology} />
+        <BioPractice
+          unit={screen.unit}
+          topic={screen.topic}
+          onBack={() => goBiologyUnit(screen.unit)}
+        />
       </SiteShell>
     )
   }

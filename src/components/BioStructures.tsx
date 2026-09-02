@@ -392,6 +392,340 @@ function Hydrolysis() {
   )
 }
 
+function Bilayer() {
+  const heads = [30, 58, 86, 114, 142, 170, 198, 226, 254]
+  return (
+    <svg {...SVG} aria-hidden>
+      {heads.map((x) => (
+        <g key={`t${x}`}>
+          <circle cx={x} cy={38} r="9" fill="#38bdf8" stroke="#0369a1" />
+          <line x1={x} y1={47} x2={x - 6} y2={78} stroke="#334155" strokeWidth="2.4" />
+          <line x1={x} y1={47} x2={x + 6} y2={78} stroke="#334155" strokeWidth="2.4" />
+        </g>
+      ))}
+      {heads.map((x) => (
+        <g key={`b${x}`}>
+          <line x1={x} y1={112} x2={x - 6} y2={82} stroke="#334155" strokeWidth="2.4" />
+          <line x1={x} y1={112} x2={x + 6} y2={82} stroke="#334155" strokeWidth="2.4" />
+          <circle cx={x} cy={122} r="9" fill="#38bdf8" stroke="#0369a1" />
+        </g>
+      ))}
+      <text x="140" y="18" textAnchor="middle" fontSize="11" fill="#0369a1">
+        hydrophilic heads (polar)
+      </text>
+      <text x="140" y="98" textAnchor="middle" fontSize="11" fill="#334155">
+        hydrophobic tails (nonpolar)
+      </text>
+    </svg>
+  )
+}
+
+function FluidMosaic() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <rect x="16" y="48" width="248" height="64" fill="#bae6fd" stroke="#0369a1" />
+      <rect x="16" y="68" width="248" height="24" fill="#fef3c7" />
+      <rect x="52" y="40" width="22" height="80" rx="6" fill="#f97316" stroke="#9a3412" />
+      <rect x="118" y="54" width="28" height="52" rx="8" fill="#a855f7" stroke="#6b21a8" />
+      <circle cx="188" cy="80" r="10" fill="#eab308" stroke="#854d0e" />
+      <text x="63" y="86" textAnchor="middle" fontSize="9" fill="#fff" fontWeight="700">
+        ch
+      </text>
+      <text x="132" y="84" textAnchor="middle" fontSize="9" fill="#fff" fontWeight="700">
+        car
+      </text>
+      <text x="188" y="84" textAnchor="middle" fontSize="9" fill="#422006">
+        chol
+      </text>
+      <text x="230" y="84" textAnchor="middle" fontSize="10">
+        lipid
+      </text>
+      <text x="140" y="22" textAnchor="middle" fontSize="12" fontWeight="700">
+        fluid mosaic model
+      </text>
+      <text x="140" y="148" textAnchor="middle" fontSize="11" fill="#475569">
+        lipids + proteins + carbs can move
+      </text>
+    </svg>
+  )
+}
+
+function ChannelCarrier() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <rect x="18" y="58" width="110" height="44" fill="#bae6fd" stroke="#0369a1" />
+      <rect x="18" y="72" width="110" height="16" fill="#fef3c7" />
+      <rect x="58" y="50" width="28" height="60" rx="6" fill="#f97316" stroke="#9a3412" />
+      <rect x="64" y="56" width="16" height="48" fill="#fff7ed" />
+      <text x="73" y="128" textAnchor="middle" fontSize="11">
+        channel (pore)
+      </text>
+      <rect x="152" y="58" width="110" height="44" fill="#bae6fd" stroke="#0369a1" />
+      <rect x="152" y="72" width="110" height="16" fill="#fef3c7" />
+      <ellipse cx="207" cy="80" rx="18" ry="28" fill="#a855f7" stroke="#6b21a8" />
+      <text x="207" y="84" textAnchor="middle" fontSize="10" fill="#fff">
+        Δ
+      </text>
+      <text x="207" y="128" textAnchor="middle" fontSize="11">
+        carrier (shape change)
+      </text>
+    </svg>
+  )
+}
+
+function DiffusionStarch() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <rect x="88" y="28" width="104" height="104" rx="12" fill="#e0f2fe" stroke="#0369a1" strokeWidth="3" />
+      <text x="140" y="58" textAnchor="middle" fontSize="12" fontWeight="700">
+        60% starch
+      </text>
+      <text x="140" y="78" textAnchor="middle" fontSize="12">
+        10% glucose
+      </text>
+      <text x="140" y="112" textAnchor="middle" fontSize="11" fill="#0369a1">
+        cell
+      </text>
+      <text x="36" y="70" textAnchor="middle" fontSize="11">
+        10%
+      </text>
+      <text x="36" y="86" textAnchor="middle" fontSize="11">
+        starch
+      </text>
+      <text x="244" y="70" textAnchor="middle" fontSize="11">
+        40%
+      </text>
+      <text x="244" y="86" textAnchor="middle" fontSize="11">
+        glucose
+      </text>
+      <text x="140" y="152" textAnchor="middle" fontSize="11" fill="#475569">
+        membrane permeable to starch ONLY
+      </text>
+    </svg>
+  )
+}
+
+function OsmosisBeaker() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <rect x="30" y="24" width="220" height="112" rx="8" fill="#e0f2fe" stroke="#0369a1" />
+      <line x1="140" y1="24" x2="140" y2="136" stroke="#0369a1" strokeWidth="4" />
+      {[48, 70, 92, 114, 60, 84, 108].map((y, i) => (
+        <circle key={`a${i}`} cx={70 + (i % 3) * 18} cy={y} r="5" fill="#dc2626" />
+      ))}
+      <circle cx="188" cy="80" r="5" fill="#dc2626" />
+      <circle cx="210" cy="100" r="5" fill="#dc2626" />
+      <text x="86" y="148" textAnchor="middle" fontSize="12" fontWeight="700">
+        A
+      </text>
+      <text x="196" y="148" textAnchor="middle" fontSize="12" fontWeight="700">
+        B
+      </text>
+      <text x="140" y="16" textAnchor="middle" fontSize="11" fill="#475569">
+        permeable to water only · red = sucrose
+      </text>
+    </svg>
+  )
+}
+
+function HypertonicCell() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <rect x="16" y="20" width="248" height="120" rx="10" fill="#fee2e2" stroke="#b91c1c" />
+      <ellipse cx="140" cy="80" rx="52" ry="40" fill="#dbeafe" stroke="#1d4ed8" strokeWidth="3" />
+      <text x="140" y="76" textAnchor="middle" fontSize="12" fontWeight="700">
+        90% water
+      </text>
+      <text x="140" y="94" textAnchor="middle" fontSize="11">
+        cell
+      </text>
+      <text x="140" y="36" textAnchor="middle" fontSize="12" fill="#991b1b" fontWeight="700">
+        10% water outside
+      </text>
+      <text x="140" y="152" textAnchor="middle" fontSize="11" fill="#475569">
+        membrane permeable to water only
+      </text>
+    </svg>
+  )
+}
+
+function AnimalTonicity() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <ellipse cx="52" cy="78" rx="28" ry="34" fill="#fecaca" stroke="#b91c1c" strokeWidth="2" />
+      <ellipse cx="140" cy="78" rx="32" ry="32" fill="#bbf7d0" stroke="#15803d" strokeWidth="2" />
+      <ellipse cx="228" cy="78" rx="40" ry="40" fill="#fecaca" stroke="#b91c1c" strokeWidth="2" strokeDasharray="4 3" />
+      <text x="52" y="82" textAnchor="middle" fontSize="10">
+        shrivel
+      </text>
+      <text x="140" y="82" textAnchor="middle" fontSize="10">
+        normal
+      </text>
+      <text x="228" y="82" textAnchor="middle" fontSize="10">
+        burst
+      </text>
+      <text x="52" y="132" textAnchor="middle" fontSize="11">
+        hypertonic
+      </text>
+      <text x="140" y="132" textAnchor="middle" fontSize="11">
+        isotonic
+      </text>
+      <text x="228" y="132" textAnchor="middle" fontSize="11">
+        hypotonic
+      </text>
+      <text x="140" y="18" textAnchor="middle" fontSize="12" fontWeight="700">
+        animal cells
+      </text>
+    </svg>
+  )
+}
+
+function PlantTonicity() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <rect x="22" y="40" width="56" height="72" fill="none" stroke="#166534" strokeWidth="3" />
+      <ellipse cx="50" cy="78" rx="16" ry="22" fill="#fecaca" stroke="#b91c1c" />
+      <rect x="112" y="40" width="56" height="72" fill="none" stroke="#166534" strokeWidth="3" />
+      <rect x="118" y="48" width="44" height="56" fill="#fef9c3" stroke="#ca8a04" />
+      <rect x="202" y="40" width="56" height="72" fill="none" stroke="#166534" strokeWidth="3" />
+      <rect x="206" y="44" width="48" height="64" fill="#bbf7d0" stroke="#15803d" />
+      <text x="50" y="132" textAnchor="middle" fontSize="11">
+        plasmolysis
+      </text>
+      <text x="140" y="132" textAnchor="middle" fontSize="11">
+        limp
+      </text>
+      <text x="230" y="132" textAnchor="middle" fontSize="11">
+        turgid
+      </text>
+      <text x="50" y="28" textAnchor="middle" fontSize="10">
+        hypertonic
+      </text>
+      <text x="140" y="28" textAnchor="middle" fontSize="10">
+        isotonic
+      </text>
+      <text x="230" y="28" textAnchor="middle" fontSize="10">
+        hypotonic
+      </text>
+    </svg>
+  )
+}
+
+function NakPump() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <rect x="20" y="52" width="240" height="52" fill="#bae6fd" stroke="#0369a1" />
+      <rect x="20" y="70" width="240" height="16" fill="#fef3c7" />
+      <rect x="118" y="40" width="44" height="76" rx="8" fill="#0f766e" stroke="#134e4a" />
+      <text x="140" y="84" textAnchor="middle" fontSize="10" fill="#fff" fontWeight="700">
+        pump
+      </text>
+      <text x="70" y="32" textAnchor="middle" fontSize="12" fill="#b91c1c" fontWeight="700">
+        3 Na⁺ OUT
+      </text>
+      <text x="210" y="32" textAnchor="middle" fontSize="12" fill="#1d4ed8" fontWeight="700">
+        2 K⁺ IN
+      </text>
+      <text x="70" y="140" textAnchor="middle" fontSize="11">
+        high Na⁺ outside
+      </text>
+      <text x="210" y="140" textAnchor="middle" fontSize="11">
+        high K⁺ inside
+      </text>
+    </svg>
+  )
+}
+
+function EndoExo() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <rect x="20" y="48" width="240" height="44" fill="#bae6fd" stroke="#0369a1" />
+      <circle cx="78" cy="36" r="14" fill="#fdba74" stroke="#c2410c" />
+      <text x="78" y="40" textAnchor="middle" fontSize="9">
+        in
+      </text>
+      <path d="M78 50 C70 62 70 78 78 90" fill="none" stroke="#c2410c" strokeWidth="2" />
+      <circle cx="78" cy="104" r="14" fill="#fdba74" stroke="#c2410c" />
+      <text x="78" y="148" textAnchor="middle" fontSize="11">
+        endocytosis
+      </text>
+      <circle cx="202" cy="104" r="14" fill="#86efac" stroke="#166534" />
+      <path d="M202 90 C210 78 210 62 202 50" fill="none" stroke="#166534" strokeWidth="2" />
+      <circle cx="202" cy="36" r="14" fill="#86efac" stroke="#166534" />
+      <text x="202" y="40" textAnchor="middle" fontSize="9">
+        out
+      </text>
+      <text x="202" y="148" textAnchor="middle" fontSize="11">
+        exocytosis
+      </text>
+    </svg>
+  )
+}
+
+function ProkCell() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <ellipse cx="140" cy="80" rx="110" ry="52" fill="#fef9c3" stroke="#854d0e" strokeWidth="6" />
+      <ellipse cx="140" cy="80" rx="98" ry="42" fill="#fef3c7" stroke="#ca8a04" strokeWidth="2" />
+      <ellipse cx="118" cy="80" rx="28" ry="16" fill="none" stroke="#166534" strokeWidth="2" strokeDasharray="4 3" />
+      <text x="118" y="84" textAnchor="middle" fontSize="9">
+        DNA
+      </text>
+      <circle cx="176" cy="68" r="5" fill="#b45309" />
+      <circle cx="188" cy="88" r="5" fill="#b45309" />
+      <circle cx="164" cy="92" r="5" fill="#b45309" />
+      <line x1="250" y1="80" x2="272" y2="80" stroke="#334155" strokeWidth="3" />
+      <text x="140" y="22" textAnchor="middle" fontSize="12" fontWeight="700">
+        prokaryote (no nucleus)
+      </text>
+      <text x="140" y="150" textAnchor="middle" fontSize="11" fill="#475569">
+        nucleoid · 70s ribosomes · cell wall
+      </text>
+    </svg>
+  )
+}
+
+function PlantAnimalCells() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <rect x="18" y="28" width="110" height="110" fill="#dcfce7" stroke="#166534" strokeWidth="4" />
+      <circle cx="78" cy="62" r="16" fill="#bfdbfe" stroke="#1d4ed8" />
+      <rect x="58" y="88" width="44" height="36" fill="#86efac" stroke="#166534" />
+      <ellipse cx="96" cy="96" rx="12" ry="18" fill="#22c55e" stroke="#166534" />
+      <text x="73" y="152" textAnchor="middle" fontSize="11">
+        plant
+      </text>
+      <ellipse cx="206" cy="84" rx="52" ry="46" fill="#fee2e2" stroke="#b91c1c" strokeWidth="2" />
+      <circle cx="196" cy="70" r="16" fill="#bfdbfe" stroke="#1d4ed8" />
+      <circle cx="224" cy="96" r="8" fill="#f97316" />
+      <circle cx="188" cy="104" r="7" fill="#f97316" />
+      <text x="206" y="152" textAnchor="middle" fontSize="11">
+        animal
+      </text>
+    </svg>
+  )
+}
+
+function VirusStruct() {
+  return (
+    <svg {...SVG} aria-hidden>
+      <polygon
+        points="140,18 188,46 188,94 140,122 92,94 92,46"
+        fill="#e2e8f0"
+        stroke="#334155"
+        strokeWidth="3"
+      />
+      <circle cx="140" cy="70" r="22" fill="#fecaca" stroke="#b91c1c" />
+      <text x="140" y="74" textAnchor="middle" fontSize="10">
+        DNA/RNA
+      </text>
+      <text x="140" y="142" textAnchor="middle" fontSize="11">
+        capsid (protein shell)
+      </text>
+    </svg>
+  )
+}
+
 const MAP: Record<BioStructureId, () => ReactElement> = {
   'water-polar': WaterPolar,
   'water-hbonds': WaterHbonds,
@@ -411,6 +745,19 @@ const MAP: Record<BioStructureId, () => ReactElement> = {
   dehydration: Dehydration,
   hydrolysis: Hydrolysis,
   'fatty-compare': FattyCompare,
+  bilayer: Bilayer,
+  'fluid-mosaic': FluidMosaic,
+  'channel-carrier': ChannelCarrier,
+  'diffusion-starch': DiffusionStarch,
+  'osmosis-beaker': OsmosisBeaker,
+  'hypertonic-cell': HypertonicCell,
+  'animal-tonicity': AnimalTonicity,
+  'plant-tonicity': PlantTonicity,
+  'nak-pump': NakPump,
+  'endo-exo': EndoExo,
+  'prok-cell': ProkCell,
+  'plant-animal-cells': PlantAnimalCells,
+  'virus-struct': VirusStruct,
 }
 
 export function BioStructure({ id }: BioStructureProps) {

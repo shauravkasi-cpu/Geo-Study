@@ -1535,6 +1535,7 @@
 .biology-home-card {
   background: var(--gradient-bio);
   border-color: #86efac;
+  height: 100%;
 }
 
 .bio-topic-list {

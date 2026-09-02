@@ -1,5 +1,5 @@
 import type { ApHumanStudyTopic } from '../lib/apHumanStudy'
-import type { BioPracticeTopic } from '../lib/bioQuiz'
+import type { BioPracticeTopic, BioUnit2Topic, BioUnitId } from '../lib/bioQuiz'
 import type { GeoMathTopic } from '../lib/geoMathQuiz'
 
 export type Continent =
@@ -70,7 +70,9 @@ export type SubjectId = 'ap-human' | 'math' | 'biology'
 export type AppScreen =
   | { view: 'home' }
   | { view: 'subject'; subject: SubjectId }
-  | { view: 'biology-practice'; topic: BioPracticeTopic }
+  | { view: 'biology-unit'; unit: BioUnitId }
+  | { view: 'biology-practice'; unit: 1; topic: BioPracticeTopic }
+  | { view: 'biology-practice'; unit: 2; topic: BioUnit2Topic }
   | { view: 'ap-human-practice'; topic: ApHumanStudyTopic }
   | { view: 'quiz'; session: QuizSession }
   | { view: 'results'; session: QuizSession }

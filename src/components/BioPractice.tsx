@@ -2,22 +2,42 @@ import { useMemo, useState } from 'react'
 import { playAnswerSound } from '../lib/answerSounds'
 import {
   BIO_TEST1_TOPICS,
+  BIO_UNIT2_TOPICS,
   answersMatch,
   type BioPracticeQuestion,
   type BioPracticeTopic,
+  type BioUnit2Topic,
+  type BioUnitId,
 } from '../lib/bioQuiz'
-import { getBioQuestionsByIds, getBioTest1Count, getBioTest1Questions } from '../lib/bioQuestionBank'
+import {
+  getBioQuestionsByIds,
+  getBioTest1Count,
+  getBioTest1Questions,
+  getBioUnit2Count,
+  getBioUnit2Questions,
+} from '../lib/bioQuestionBank'
 import { AppToggles } from '../lib/soundToggle'
 import { BioStructure } from './BioStructures'
 
 interface BioPracticeProps {
-  topic: BioPracticeTopic
+  unit: BioUnitId
+  topic: BioPracticeTopic | BioUnit2Topic
   onBack: () => void
 }
 
-export function BioPractice({ topic, onBack }: BioPracticeProps) {
-  const topicMeta = BIO_TEST1_TOPICS.find((item) => item.id === topic)
-  const [queue, setQueue] = useState(() => getBioTest1Questions(topic))
+function loadQuestions(unit: BioUnitId, topic: BioPracticeTopic | BioUnit2Topic) {
+  return unit === 1
+    ? getBioTest1Questions(topic as BioPracticeTopic)
+    : getBioUnit2Questions(topic as BioUnit2Topic)
+}
+
+export function BioPractice({ unit, topic, onBack }: BioPracticeProps) {
+  const topicMeta =
+    unit === 1
+      ? BIO_TEST1_TOPICS.find((item) => item.id === topic)
+      : BIO_UNIT2_TOPICS.find((item) => item.id === topic)
+  const kicker = unit === 1 ? 'Unit 1' : 'Unit 2'
+  const [queue, setQueue] = useState(() => loadQuestions(unit, topic))
   const [index, setIndex] = useState(0)
   const [picked, setPicked] = useState<number[]>([])
   const [checked, setChecked] = useState(false)
@@ -62,7 +82,7 @@ export function BioPractice({ topic, onBack }: BioPracticeProps) {
   }
 
   const restart = (ids?: string[]) => {
-    const next = ids?.length ? getBioQuestionsByIds(ids) : getBioTest1Questions(topic)
+    const next = ids?.length ? getBioQuestionsByIds(ids) : loadQuestions(unit, topic)
     setQueue(next)
     setIndex(0)
     setPicked([])
@@ -77,10 +97,10 @@ export function BioPractice({ topic, onBack }: BioPracticeProps) {
       <div className="bio-study">
         <header className="bio-study-header">
           <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
-            ← Biology
+            ← Unit {unit}
           </button>
           <div className="bio-study-header-text">
-            <p className="bio-study-kicker">Test 1 Study</p>
+            <p className="bio-study-kicker">{kicker}</p>
             <h1>No questions in this set</h1>
           </div>
         </header>
@@ -93,10 +113,10 @@ export function BioPractice({ topic, onBack }: BioPracticeProps) {
       <div className="bio-study">
         <header className="bio-study-header">
           <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
-            ← Biology
+            ← Unit {unit}
           </button>
           <div className="bio-study-header-text">
-            <p className="bio-study-kicker">Test 1 Study</p>
+            <p className="bio-study-kicker">{kicker}</p>
             <h1>Quiz complete</h1>
           </div>
           <AppToggles />
@@ -118,7 +138,7 @@ export function BioPractice({ topic, onBack }: BioPracticeProps) {
               New shuffle
             </button>
             <button type="button" className="btn-secondary" onClick={onBack}>
-              Back to Biology
+              Back to Unit {unit}
             </button>
           </div>
         </div>
@@ -130,11 +150,11 @@ export function BioPractice({ topic, onBack }: BioPracticeProps) {
     <div className="bio-study">
       <header className="bio-study-header">
         <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
-          ← Biology
+          ← Unit {unit}
         </button>
         <div className="bio-study-header-text">
           <p className="bio-study-kicker">
-            Test 1 Study · {topicMeta?.label}
+            {kicker} · {topicMeta?.label}
             {isMulti ? ' · Choose all that apply' : ''}
           </p>
           <h1>Practice</h1>
@@ -234,7 +254,51 @@ function QuestionCard({
   )
 }
 
-export function BiologyTest1Hub({
+export function BiologyHub({
+  onBack,
+  onOpenUnit,
+}: {
+  onBack: () => void
+  onOpenUnit: (unit: BioUnitId) => void
+}) {
+  const unit1 = useMemo(() => getBioTest1Count('all'), [])
+  const unit2 = useMemo(() => getBioUnit2Count('all'), [])
+
+  return (
+    <div className="home-screen">
+      <header className="subject-hub-header">
+        <div className="subject-hub-header-main">
+          <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
+            ← Subjects
+          </button>
+          <div className="subject-hub-header-text">
+            <h1>Biology</h1>
+            <p>Honors Bio · pick a unit for tests and practice.</p>
+          </div>
+        </div>
+        <AppToggles />
+      </header>
+
+      <section className="home-section">
+        <h2>Units</h2>
+        <div className="bio-topic-grid">
+          <button type="button" className="unit-card" onClick={() => onOpenUnit(1)}>
+            <span className="unit-card-kicker">{unit1} questions</span>
+            <span className="card-title">Unit 1</span>
+            <span className="card-desc">Water, reactions, and macromolecules · Test 1 study</span>
+          </button>
+          <button type="button" className="unit-card" onClick={() => onOpenUnit(2)}>
+            <span className="unit-card-kicker">{unit2} questions</span>
+            <span className="card-title">Unit 2</span>
+            <span className="card-desc">Cell membrane, transport, cell theory, and structure</span>
+          </button>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+export function BiologyUnit1Hub({
   onBack,
   onStart,
 }: {
@@ -248,10 +312,10 @@ export function BiologyTest1Hub({
       <header className="subject-hub-header">
         <div className="subject-hub-header-main">
           <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
-            ← Subjects
+            ← Biology
           </button>
           <div className="subject-hub-header-text">
-            <h1>Biology</h1>
+            <h1>Biology Unit 1</h1>
             <p>Honors Bio Test 1 · water through macromolecules.</p>
           </div>
         </div>
@@ -259,12 +323,12 @@ export function BiologyTest1Hub({
       </header>
 
       <section className="home-section">
-        <h2>Test 1 Study</h2>
+        <h2>Full Unit 1 test</h2>
         <div className="ap-human-card biology-home-card">
           <div className="ap-human-card-main">
             <span className="card-icon">🧬</span>
             <div className="ap-human-card-content">
-              <span className="card-title">Test 1 Study</span>
+              <span className="card-title">All of Unit 1</span>
               <span className="card-desc">
                 {total} multiple-choice questions · some choose-all · structure diagrams
               </span>
@@ -293,6 +357,109 @@ export function BiologyTest1Hub({
               <span className="card-desc">{item.desc}</span>
             </button>
           ))}
+        </div>
+      </section>
+    </div>
+  )
+}
+
+export function BiologyUnit2Hub({
+  onBack,
+  onStart,
+}: {
+  onBack: () => void
+  onStart: (topic: BioUnit2Topic) => void
+}) {
+  const allCount = useMemo(() => getBioUnit2Count('all'), [])
+  const part1Count = useMemo(() => getBioUnit2Count('part1'), [])
+  const part2Count = useMemo(() => getBioUnit2Count('part2'), [])
+
+  return (
+    <div className="home-screen">
+      <header className="subject-hub-header">
+        <div className="subject-hub-header-main">
+          <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
+            ← Biology
+          </button>
+          <div className="subject-hub-header-text">
+            <h1>Biology Unit 2</h1>
+            <p>Honors Bio · cell membrane, transport, cell theory, and structure.</p>
+          </div>
+        </div>
+        <AppToggles />
+      </header>
+
+      <section className="home-section">
+        <h2>Unit 2 tests</h2>
+        <div className="bio-topic-grid">
+          <div className="ap-human-card biology-home-card">
+            <div className="ap-human-card-main">
+              <span className="card-icon">🧪</span>
+              <div className="ap-human-card-content">
+                <span className="card-title">Part 1 only test</span>
+                <span className="card-desc">
+                  {part1Count} questions · membrane, passive transport, active transport
+                </span>
+              </div>
+            </div>
+            <div className="mode-buttons">
+              <button type="button" className="btn-primary btn-sm" onClick={() => onStart('part1')}>
+                Start Part 1 test
+              </button>
+            </div>
+          </div>
+          <div className="ap-human-card biology-home-card">
+            <div className="ap-human-card-main">
+              <span className="card-icon">🔬</span>
+              <div className="ap-human-card-content">
+                <span className="card-title">Part 2 only test</span>
+                <span className="card-desc">
+                  {part2Count} questions · cell theory, prokaryotes/eukaryotes, plant vs animal, viruses
+                </span>
+              </div>
+            </div>
+            <div className="mode-buttons">
+              <button type="button" className="btn-primary btn-sm" onClick={() => onStart('part2')}>
+                Start Part 2 test
+              </button>
+            </div>
+          </div>
+          <div className="ap-human-card biology-home-card">
+            <div className="ap-human-card-main">
+              <span className="card-icon">🧬</span>
+              <div className="ap-human-card-content">
+                <span className="card-title">All of Unit 2 test</span>
+                <span className="card-desc">
+                  {allCount} questions · Part 1 and Part 2 mixed and shuffled
+                </span>
+              </div>
+            </div>
+            <div className="mode-buttons">
+              <button type="button" className="btn-primary btn-sm" onClick={() => onStart('all')}>
+                Start all of Unit 2
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-section">
+        <h2>Practice by section</h2>
+        <div className="bio-topic-grid">
+          {BIO_UNIT2_TOPICS.filter((item) => item.id !== 'all' && item.id !== 'part1' && item.id !== 'part2').map(
+            (item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="unit-card"
+                onClick={() => onStart(item.id)}
+              >
+                <span className="unit-card-kicker">{getBioUnit2Count(item.id)} questions</span>
+                <span className="card-title">{item.label}</span>
+                <span className="card-desc">{item.desc}</span>
+              </button>
+            ),
+          )}
         </div>
       </section>
     </div>
