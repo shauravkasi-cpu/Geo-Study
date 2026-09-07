@@ -1,5 +1,6 @@
 import { ApHumanNotesHub } from './ApHumanPractice'
 import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
+import { getVocabCount } from '../lib/apHumanVocabBank'
 import type { ApHumanStudyTopic } from '../lib/apHumanStudy'
 import { AppToggles } from '../lib/soundToggle'
 import { GeoMathHubCard } from './GeoMathPractice'
@@ -22,6 +23,7 @@ interface ApHumanHubProps {
   onStartQuiz: (format: QuizFormat) => void
   onViewStudyMap: () => void
   onStartStudy: (topic: ApHumanStudyTopic) => void
+  onOpenVocab: () => void
 }
 
 interface MathHubProps {
@@ -70,7 +72,7 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
         >
           <span className="card-icon">🗺️</span>
           <span className="card-title">AP Human Geography</span>
-          <span className="card-desc">Map quiz and notes quiz</span>
+          <span className="card-desc">Map quiz, notes quiz, and vocab quizzes</span>
         </button>
 
         <button
@@ -102,14 +104,28 @@ export function ApHumanHub({
   onStartQuiz,
   onViewStudyMap,
   onStartStudy,
+  onOpenVocab,
 }: ApHumanHubProps) {
   return (
     <div className="home-screen">
       <HubHeader
         title="AP Human Geography"
-        description="Map quiz practice and notes quiz."
+        description="Map quiz practice, notes quiz, and vocabulary quizzes."
         onBack={onBack}
       />
+
+      <section className="home-section">
+        <h2>Vocab Quiz</h2>
+        <div className="bio-topic-grid">
+          <button type="button" className="unit-card" onClick={onOpenVocab}>
+            <span className="unit-card-kicker">
+              {getVocabCount('all')} questions · Units 7.5, 7.2, 7.3, 1.1–1.7
+            </span>
+            <span className="card-title">Vocab Quiz 1</span>
+            <span className="card-desc">Hard application questions · typing or multiple choice</span>
+          </button>
+        </div>
+      </section>
 
       <ApHumanNotesHub onStart={onStartStudy} />
 

@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { SiteShell } from './components/SiteShell'
 import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
 import { ApHumanPractice } from './components/ApHumanPractice'
+import { ApHumanVocabHub, ApHumanVocabPractice } from './components/ApHumanVocabPractice'
 import { ApHumanHub, HomeScreen, MathHub } from './components/HomeScreen'
 import { FactoringPractice } from './components/FactoringPractice'
 import { FactoringQuiz } from './components/FactoringQuiz'
@@ -34,6 +35,7 @@ import {
 import { saveQuizScore } from './lib/storage'
 import { AppToggles } from './lib/soundToggle'
 import type { ApHumanStudyTopic } from './lib/apHumanStudy'
+import type { VocabQuizMode, VocabQuizTopic } from './lib/apHumanVocab'
 import type {
   AppScreen,
   FactoringDifficulty,
@@ -133,6 +135,14 @@ function App() {
 
   const startApHumanNotes = useCallback((topic: ApHumanStudyTopic) => {
     setScreen({ view: 'ap-human-practice', topic })
+  }, [])
+
+  const openApHumanVocab = useCallback(() => {
+    setScreen({ view: 'ap-human-vocab-hub' })
+  }, [])
+
+  const startApHumanVocab = useCallback((mode: VocabQuizMode, topic: VocabQuizTopic) => {
+    setScreen({ view: 'ap-human-vocab', mode, topic })
   }, [])
 
   const startFactoring = useCallback((difficulty: FactoringDifficulty) => {
@@ -280,6 +290,7 @@ function App() {
           onStartQuiz={startApHumanQuiz}
           onViewStudyMap={openStudyMap}
           onStartStudy={startApHumanNotes}
+          onOpenVocab={openApHumanVocab}
         />
       </SiteShell>
     )
@@ -338,6 +349,26 @@ function App() {
     return (
       <SiteShell>
         <ApHumanPractice topic={screen.topic} onBack={goApHuman} />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'ap-human-vocab-hub') {
+    return (
+      <SiteShell>
+        <ApHumanVocabHub onBack={goApHuman} onStart={startApHumanVocab} />
+      </SiteShell>
+    )
+  }
+
+  if (screen.view === 'ap-human-vocab') {
+    return (
+      <SiteShell>
+        <ApHumanVocabPractice
+          topic={screen.topic}
+          mode={screen.mode}
+          onBack={openApHumanVocab}
+        />
       </SiteShell>
     )
   }

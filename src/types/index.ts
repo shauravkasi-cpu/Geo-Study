@@ -1,4 +1,5 @@
 import type { ApHumanStudyTopic } from '../lib/apHumanStudy'
+import type { VocabQuizMode, VocabQuizTopic } from '../lib/apHumanVocab'
 import type { BioPracticeTopic, BioUnit2Topic, BioUnitId } from '../lib/bioQuiz'
 import type { GeoMathTopic } from '../lib/geoMathQuiz'
 
@@ -74,6 +75,8 @@ export type AppScreen =
   | { view: 'biology-practice'; unit: 1; topic: BioPracticeTopic }
   | { view: 'biology-practice'; unit: 2; topic: BioUnit2Topic }
   | { view: 'ap-human-practice'; topic: ApHumanStudyTopic }
+  | { view: 'ap-human-vocab-hub' }
+  | { view: 'ap-human-vocab'; mode: VocabQuizMode; topic: VocabQuizTopic }
   | { view: 'quiz'; session: QuizSession }
   | { view: 'results'; session: QuizSession }
   | { view: 'ap-human-reference' }
