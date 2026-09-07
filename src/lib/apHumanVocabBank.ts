@@ -10,6 +10,7 @@ import { VOCAB_THEORY_QUESTIONS } from './apHumanVocabTheories'
 import {
   VOCAB_TERMS,
   checkTypedVocab,
+  isVocabTerm,
   normalizeVocabAnswer,
   shuffle,
   toPracticeQuestion,
@@ -80,6 +81,14 @@ export function validateVocabBank(): VocabValidationIssue[] {
     if (new Set([question.term, ...question.distractors]).size !== 4) {
       issues.push({ id: question.id, term: question.term, message: 'Correct answer repeats a distractor' })
     }
+    for (const distractor of question.distractors) {
+      if (!isVocabTerm(distractor)) {
+        issues.push({ id: question.id, message: `Distractor "${distractor}" is not on the vocab list` })
+      }
+    }
+    if (/\([A-Z]{2,4}\)/.test(question.term)) {
+      issues.push({ id: question.id, term: question.term, message: 'Answer term should not include an acronym in parentheses' })
+    }
 
     const promptNorm = normalizeVocabAnswer(question.prompt)
     const termNorm = normalizeVocabAnswer(question.term)
@@ -102,10 +111,10 @@ export function validateVocabBank(): VocabValidationIssue[] {
 
   for (const def of VOCAB_TERMS) {
     const list = byTerm.get(def.term) ?? []
-    if (list.length < 3) {
+    if (list.length < 5) {
       issues.push({
         term: def.term,
-        message: `Expected at least 3 questions, found ${list.length}`,
+        message: `Expected at least 5 questions, found ${list.length}`,
       })
     }
     if (list.some((question) => question.unit !== def.unit)) {

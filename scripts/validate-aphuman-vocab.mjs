@@ -1,63 +1,21 @@
-import { readFileSync, readdirSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-const lib = join(root, 'src', 'lib')
-
-const catalogSrc = readFileSync(join(lib, 'apHumanVocab.ts'), 'utf8')
-const catalogTerms = [...catalogSrc.matchAll(/term:\s*'([^']+)'/g)].map((match) => match[1])
-
-const files = readdirSync(lib).filter((name) => name.startsWith('apHumanVocab') && name.endsWith('.ts'))
-const questionBlocks = []
-
-for (const file of files) {
-  if (file === 'apHumanVocab.ts' || file === 'apHumanVocabBank.ts') continue
-  const src = readFileSync(join(lib, file), 'utf8')
-  const calls = src.split(/\bq\(/).slice(1)
-  for (const call of calls) {
-    const id = call.match(/^\s*'([^']+)'/)?.[1]
-    const unit = call.match(/^\s*'[^']+',\s*'([^']+)'/)?.[1]
-    const term = call.match(/^\s*'[^']+',\s*'[^']+',\s*\n\s*'([^']+)'/)?.[1]
-    const prompt = call.match(/^\s*'[^']+',\s*'[^']+',\s*\n\s*'[^']+',\s*\n\s*'((?:\\'|[^'])*)'/)?.[1]
-    if (id && term && prompt) {
-      questionBlocks.push({ id, unit, term, prompt: prompt.replace(/\\'/g, "'"), file })
-    }
-  }
-}
+import { ALL_VOCAB_QUESTIONS, validateVocabBank } from '../src/lib/apHumanVocabBank.ts'
+import { VOCAB_TERMS } from '../src/lib/apHumanVocab.ts'
 
 const byTerm = new Map()
-const ids = new Set()
-const issues = []
-
-for (const question of questionBlocks) {
-  if (ids.has(question.id)) issues.push(`Duplicate id ${question.id}`)
-  ids.add(question.id)
+for (const question of ALL_VOCAB_QUESTIONS) {
   byTerm.set(question.term, (byTerm.get(question.term) ?? 0) + 1)
-
-  const promptNorm = question.prompt.toLowerCase()
-  const termNorm = question.term.toLowerCase().replace(/[()]/g, ' ').replace(/\s+/g, ' ').trim()
-  if (promptNorm.includes(termNorm)) {
-    issues.push(`${question.id}: prompt contains term "${question.term}"`)
-  }
 }
 
-console.log(`Catalog terms: ${catalogTerms.length}`)
-console.log(`Parsed questions: ${questionBlocks.length}`)
-console.log('Coverage:')
-for (const term of catalogTerms) {
-  const count = byTerm.get(term) ?? 0
-  console.log(`  ${count}  ${term}`)
-  if (count < 3) issues.push(`${term}: expected 3+ questions, found ${count}`)
+console.log(`Catalog terms: ${VOCAB_TERMS.length}`)
+console.log(`Questions: ${ALL_VOCAB_QUESTIONS.length}`)
+for (const def of VOCAB_TERMS) {
+  console.log(`  ${byTerm.get(def.term) ?? 0}  ${def.term}`)
 }
 
-for (const term of byTerm.keys()) {
-  if (!catalogTerms.includes(term)) issues.push(`Unknown term in questions: ${term}`)
-}
-
+const issues = validateVocabBank()
 if (issues.length) {
   console.error(`\n${issues.length} issues:`)
-  for (const issue of issues) console.error(`- ${issue}`)
+  for (const issue of issues) console.error(`- ${issue.id ?? ''} ${issue.term ?? ''} ${issue.message}`)
   process.exit(1)
 }
 
