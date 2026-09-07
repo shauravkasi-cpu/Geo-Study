@@ -57,10 +57,10 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
       <header className="home-header">
         <div className="home-header-top">
           <div>
-            <p className="home-kicker">Study that feels like the exam</p>
+            <p className="home-kicker">College-level practice</p>
             <h1>Geo Study</h1>
             <p className="home-tagline">
-              AP Human scenarios, map drills, and practice quizzes built to make you want to keep going.
+              AP Human Geography, mathematics, and biology practice.
             </p>
           </div>
           <AppToggles />
@@ -113,7 +113,7 @@ export function ApHumanHub({
     <div className="home-screen">
       <HubHeader
         title="AP Human Geography"
-        description="Scenario vocab, notes quiz, and map drills — built like AP items, not flashcards."
+        description="Vocabulary, notes, and map practice for AP Human Geography."
         onBack={onBack}
       />
 
@@ -126,7 +126,7 @@ export function ApHumanHub({
             </span>
             <span className="card-title">Vocab Quiz 1</span>
             <span className="card-desc">
-              Read a map, city, or data table — then name the concept. Typing or multiple choice.
+              College-level scenarios. Typing or multiple choice.
             </span>
           </button>
         </div>

@@ -133,10 +133,10 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
           </p>
           <p className="vocab-done-note">
             {score >= 90
-              ? 'Exam-ready on this set. Keep the scenarios in your head, not just the definitions.'
+              ? 'Strong command of this set. Continue reviewing the scenarios, not only the definitions.'
               : score >= 70
-                ? 'Solid. Retry the misses and watch for look-alike terms.'
-                : 'Read each scenario again. The answer is the concept the situation is pointing at.'}
+                ? 'A solid result. Retry missed items and distinguish closely related terms.'
+                : 'Review each scenario. The correct term is the concept the situation describes.'}
           </p>
           <div className="bio-study-actions vocab-study-actions">
             {missedIds.length > 0 && (
@@ -208,7 +208,7 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
         ) : isTyped ? (
           <p className="bio-study-wait">Type the vocabulary concept, then check.</p>
         ) : (
-          <p className="bio-study-wait">Tap a choice to lock it in.</p>
+          <p className="bio-study-wait">Select an answer to continue.</p>
         )}
       </div>
     </div>
@@ -341,8 +341,7 @@ export function ApHumanVocabHub({
           <div className="subject-hub-header-text">
             <h1>Vocab Quiz 1</h1>
             <p>
-              AP-style scenarios from Units 7.5, 7.2, 7.3, and 1.1–1.7. Read the situation, then name the
-              concept.
+              College-level application items from Units 7.5, 7.2, 7.3, and 1.1–1.7.
             </p>
           </div>
         </div>
