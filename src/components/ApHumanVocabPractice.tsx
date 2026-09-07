@@ -273,7 +273,7 @@ function QuestionCard({
             autoComplete="off"
             spellCheck={false}
             aria-label="Vocabulary answer"
-            placeholder="Example: cartogram"
+            placeholder=""
             enterKeyHint="done"
           />
         </form>

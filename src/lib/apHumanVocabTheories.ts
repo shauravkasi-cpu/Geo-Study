@@ -18,7 +18,7 @@ export const VOCAB_THEORY_QUESTIONS: VocabQuestion[] = [
     ['Literacy Rate', 'Site', 'Cartogram'],
     'One global division of labor is World Systems Theory. Literacy Rate is schooling. Site is local physical character. A cartogram resizes map area by data.'),
   q('th-wst-5', 'theories', 'World Systems Theory',
-    'A free-response item asks why many lower-income countries remain specialized in agricultural and mineral exports while higher-income countries retain high-value services. The expected model classifies the world by economic role rather than by climate.',
+    'Many lower-income countries still export crops and minerals, while higher-income countries keep banking and design. The model groups the world by economic role, not by climate.',
     ['Environmental Determinism', 'National Scale', 'Built Environment'],
     'Grouping the world by economic role is World Systems Theory. Environmental Determinism would blame climate. National Scale is one country. Built Environment is human-made structures.'),
 
@@ -39,7 +39,7 @@ export const VOCAB_THEORY_QUESTIONS: VocabQuestion[] = [
     ['Purchasing Power Parity', 'Sense of Place', 'Quaternary Sector'],
     'Wealthy states remaining wealthy through a poorer export partner is the Dependency Model. PPP compares prices. Sense of Place is feeling. Quaternary Sector is information work.'),
   q('th-dep-5', 'theories', 'Dependency Model',
-    'A textbook states that more developed countries require less developed countries in order to obtain inexpensive raw materials and markets. The claim is not merely that a country exports petroleum.',
+    'A poor country’s ports were built to ship fruit out. Years later it still buys machines and loans from the same wealthy partner.',
     ['Commodity Dependence', 'Gini Coefficient', 'Functional Region'],
     'Richer countries needing a poorer periphery is the Dependency Model. Commodity Dependence is export concentration on one product. Gini measures inequality inside a country. A functional region is organized around a node.'),
 
@@ -56,11 +56,11 @@ export const VOCAB_THEORY_QUESTIONS: VocabQuestion[] = [
     ['Distance Decay', 'Life Expectancy', 'Local Scale'],
     'One export price driving the whole budget is Commodity Dependence. Distance Decay is declining interaction with distance. Life Expectancy is years lived. Local Scale is neighborhood-level analysis.'),
   q('th-com-4', 'theories', 'Commodity Dependence',
-    'A free-response item uses Ethiopia and coffee, or Nigeria and petroleum, to illustrate why a country is vulnerable to a world price it does not control.',
+    'A government cannot pay teachers when the world price of its only major mineral falls.',
     ['Human Development Index', 'Formal Region', 'Cartographic Scale'],
     'Vulnerability to one export price is Commodity Dependence. HDI is a well-being composite. A formal region shares a trait. Cartographic Scale is the map-to-Earth ratio.'),
   q('th-com-5', 'theories', 'Commodity Dependence',
-    'A country may possess factories and cities and still remain vulnerable if nearly all of its foreign-exchange earnings derive from a single crop or mineral.',
+    'A country builds factories and a capital city, but nearly all money from abroad still comes from one mineral whose price it does not set.',
     ['Quinary Sector', 'Built Environment', 'Relative Location'],
     'Foreign earnings from one raw good is Commodity Dependence, even if other sectors exist. Quinary Sector is top decision-making. Built Environment is buildings and roads. Relative Location is position compared with other places.'),
 ]
