@@ -57,8 +57,11 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
       <header className="home-header">
         <div className="home-header-top">
           <div>
+            <p className="home-kicker">Study that feels like the exam</p>
             <h1>Geo Study</h1>
-            <p className="home-tagline">Choose a subject to practice.</p>
+            <p className="home-tagline">
+              AP Human scenarios, map drills, and practice quizzes built to make you want to keep going.
+            </p>
           </div>
           <AppToggles />
         </div>
@@ -72,7 +75,7 @@ export function HomeScreen({ onOpenSubject }: HomeScreenProps) {
         >
           <span className="card-icon">🗺️</span>
           <span className="card-title">AP Human Geography</span>
-          <span className="card-desc">Map quiz, notes quiz, and vocab quizzes</span>
+          <span className="card-desc">Scenario vocab, notes quiz, and map drills</span>
         </button>
 
         <button
@@ -110,19 +113,21 @@ export function ApHumanHub({
     <div className="home-screen">
       <HubHeader
         title="AP Human Geography"
-        description="Map quiz practice, notes quiz, and vocabulary quizzes."
+        description="Scenario vocab, notes quiz, and map drills — built like AP items, not flashcards."
         onBack={onBack}
       />
 
       <section className="home-section">
         <h2>Vocab Quiz</h2>
         <div className="bio-topic-grid">
-          <button type="button" className="unit-card" onClick={onOpenVocab}>
-            <span className="unit-card-kicker">
-              {getVocabCount('all')} questions · Units 7.5, 7.2, 7.3, 1.1–1.7
+          <button type="button" className="unit-card vocab-feature-card" onClick={onOpenVocab}>
+            <span className="unit-card-kicker vocab-unit-kicker">
+              {getVocabCount('all')} scenarios · Units 7.5, 7.2, 7.3, 1.1–1.7
             </span>
             <span className="card-title">Vocab Quiz 1</span>
-            <span className="card-desc">Hard application questions · typing or multiple choice</span>
+            <span className="card-desc">
+              Read a map, city, or data table — then name the concept. Typing or multiple choice.
+            </span>
           </button>
         </div>
       </section>

@@ -15,6 +15,8 @@ import {
 } from '../lib/apHumanVocab'
 import { AppToggles } from '../lib/soundToggle'
 
+const OPTION_LETTERS = ['A', 'B', 'C', 'D'] as const
+
 interface ApHumanVocabPracticeProps {
   topic: VocabQuizTopic
   mode: VocabQuizMode
@@ -26,7 +28,7 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
     topic === 'all'
       ? { label: 'All units', desc: 'Full Vocab Quiz 1 mix' }
       : VOCAB_UNITS.find((item) => item.id === topic)
-  const modeLabel = mode === 'typed' ? 'Typing Quiz' : 'Multiple Choice'
+  const modeLabel = mode === 'typed' ? 'Typing' : 'Multiple Choice'
   const [queue, setQueue] = useState(() => getVocabQuestions(topic, mode))
   const [index, setIndex] = useState(0)
   const [picked, setPicked] = useState<number[]>([])
@@ -40,6 +42,7 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
   const question = queue[index]
   const isTyped = mode === 'typed'
   const percent = queue.length === 0 ? 0 : Math.round(((done ? queue.length : index) / queue.length) * 100)
+  const unitMeta = question ? VOCAB_UNITS.find((item) => item.id === question.unit) : undefined
 
   const gradeCurrent = (selection: number[]) => {
     if (!question || checked || question.kind !== 'mc' || !question.correctIndexes) return
@@ -94,8 +97,8 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
 
   if (queue.length === 0) {
     return (
-      <div className="bio-study">
-        <header className="bio-study-header">
+      <div className="bio-study vocab-study">
+        <header className="bio-study-header vocab-study-header">
           <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
             ← Vocab Quiz 1
           </button>
@@ -109,9 +112,10 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
   }
 
   if (done) {
+    const score = Math.round((correctCount / queue.length) * 100)
     return (
-      <div className="bio-study">
-        <header className="bio-study-header">
+      <div className="bio-study vocab-study">
+        <header className="bio-study-header vocab-study-header">
           <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
             ← Vocab Quiz 1
           </button>
@@ -121,14 +125,20 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
           </div>
           <AppToggles />
         </header>
-        <div className="bio-study-card bio-study-done">
-          <p className="bio-study-plain">
-            {topicMeta?.label ?? 'Practice'} · {correctCount} / {queue.length} correct
+        <div className="bio-study-card vocab-study-card vocab-study-done">
+          <p className="vocab-done-kicker">{topicMeta?.label ?? 'Practice'}</p>
+          <p className="vocab-done-score">{score}%</p>
+          <p className="bio-study-plain vocab-done-count">
+            {correctCount} of {queue.length} correct
           </p>
-          <p className="bio-study-score">
-            Score: <strong>{Math.round((correctCount / queue.length) * 100)}%</strong>
+          <p className="vocab-done-note">
+            {score >= 90
+              ? 'Exam-ready on this set. Keep the scenarios in your head, not just the definitions.'
+              : score >= 70
+                ? 'Solid. Retry the misses and watch for look-alike terms.'
+                : 'Read each scenario again. The answer is the concept the situation is pointing at.'}
           </p>
-          <div className="bio-study-actions">
+          <div className="bio-study-actions vocab-study-actions">
             {missedIds.length > 0 && (
               <button type="button" className="btn-primary" onClick={() => restart(missedIds)}>
                 Retry missed ({missedIds.length})
@@ -147,33 +157,34 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
   }
 
   return (
-    <div className="bio-study">
-      <header className="bio-study-header">
+    <div className="bio-study vocab-study">
+      <header className="bio-study-header vocab-study-header">
         <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
           ← Vocab Quiz 1
         </button>
         <div className="bio-study-header-text">
           <p className="bio-study-kicker">
             Vocab Quiz 1 · {topicMeta?.label} · {modeLabel}
-            {isTyped ? ' · Type the concept' : ''}
           </p>
-          <h1>Practice</h1>
+          <h1>{isTyped ? 'Name the concept' : 'Pick the concept'}</h1>
         </div>
-        <span className="bio-practice-score">
+        <span className="bio-practice-score vocab-score-chip">
           {correctCount} / {index + (checked ? 1 : 0)}
         </span>
         <AppToggles />
       </header>
 
-      <div className="bio-progress" aria-hidden>
-        <div className="bio-progress-bar" style={{ width: `${percent}%` }} />
+      <div className="bio-progress vocab-progress" aria-hidden>
+        <div className="bio-progress-bar vocab-progress-bar" style={{ width: `${percent}%` }} />
       </div>
       <p className="bio-progress-label">
-        Question {index + 1} / {queue.length}
+        Question {index + 1} of {queue.length}
+        {unitMeta ? ` · ${unitMeta.code} ${unitMeta.label}` : ''}
       </p>
 
       <QuestionCard
         question={question}
+        unitLabel={unitMeta ? `${unitMeta.code} · ${unitMeta.label}` : undefined}
         picked={picked}
         typedValue={typedValue}
         checked={checked}
@@ -184,7 +195,7 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
         onTypedSubmit={gradeTyped}
       />
 
-      <div className="bio-study-actions">
+      <div className="bio-study-actions vocab-study-actions">
         {isTyped && !checked ? (
           <button type="button" className="btn-primary" onClick={gradeTyped} disabled={!typedValue.trim()}>
             Check answer
@@ -192,12 +203,12 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
         ) : null}
         {checked ? (
           <button type="button" className="btn-primary" onClick={goNext}>
-            {index === queue.length - 1 ? 'See score' : 'Next'}
+            {index === queue.length - 1 ? 'See score' : 'Next question'}
           </button>
         ) : isTyped ? (
           <p className="bio-study-wait">Type the vocabulary concept, then check.</p>
         ) : (
-          <p className="bio-study-wait">Pick an answer to continue.</p>
+          <p className="bio-study-wait">Tap a choice to lock it in.</p>
         )}
       </div>
     </div>
@@ -206,6 +217,7 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
 
 function QuestionCard({
   question,
+  unitLabel,
   picked,
   typedValue,
   checked,
@@ -216,6 +228,7 @@ function QuestionCard({
   onTypedSubmit,
 }: {
   question: VocabPracticeQuestion
+  unitLabel?: string
   picked: number[]
   typedValue: string
   checked: boolean
@@ -225,13 +238,22 @@ function QuestionCard({
   onTypedChange: (value: string) => void
   onTypedSubmit: () => void
 }) {
+  const resultOk = isTyped
+    ? typedCorrect
+    : picked[0] != null && Boolean(question.correctIndexes?.includes(picked[0]))
+
   return (
-    <div className="bio-study-card">
-      {isTyped ? <p className="bio-multi-flag">Type the vocabulary concept</p> : null}
-      <p className="bio-study-plain">{question.prompt}</p>
+    <div className="bio-study-card vocab-study-card">
+      <div className="vocab-card-meta">
+        {unitLabel ? <span className="vocab-unit-chip">{unitLabel}</span> : null}
+        <span className="bio-multi-flag vocab-mode-flag">
+          {isTyped ? 'Type the concept' : 'Choose the best term'}
+        </span>
+      </div>
+      <p className="bio-study-plain vocab-prompt">{question.prompt}</p>
       {isTyped ? (
         <form
-          className="geo-math-typed"
+          className="geo-math-typed vocab-typed"
           onSubmit={(event) => {
             event.preventDefault()
             onTypedSubmit()
@@ -239,7 +261,7 @@ function QuestionCard({
         >
           <input
             className={[
-              'geo-math-input',
+              'geo-math-input vocab-input',
               checked && typedCorrect ? 'geo-math-input-correct' : '',
               checked && !typedCorrect ? 'geo-math-input-wrong' : '',
             ]
@@ -251,16 +273,17 @@ function QuestionCard({
             autoComplete="off"
             spellCheck={false}
             aria-label="Vocabulary answer"
-            placeholder="Vocabulary concept"
+            placeholder="Example: cartogram"
+            enterKeyHint="done"
           />
         </form>
       ) : (
-        <div className="bio-options">
+        <div className="bio-options vocab-options">
           {(question.options ?? []).map((option, optionIndex) => {
             const isCorrect = question.correctIndexes?.includes(optionIndex)
             const isPicked = picked.includes(optionIndex)
             const className = [
-              'bio-option',
+              'bio-option vocab-option',
               isPicked && !checked ? 'bio-option-picked' : '',
               checked && isCorrect ? 'bio-option-correct' : '',
               checked && isPicked && !isCorrect ? 'bio-option-wrong' : '',
@@ -276,21 +299,22 @@ function QuestionCard({
                 onClick={() => onPick(optionIndex)}
                 disabled={checked}
               >
-                {option}
+                <span className="vocab-option-letter">{OPTION_LETTERS[optionIndex] ?? optionIndex + 1}</span>
+                <span className="vocab-option-text">{option}</span>
               </button>
             )
           })}
         </div>
       )}
       {checked && (
-        <p className="bio-study-explain">
+        <p className={`bio-study-explain vocab-explain ${resultOk ? 'vocab-explain-ok' : 'vocab-explain-miss'}`}>
           {isTyped
             ? typedCorrect
               ? `Correct. The concept is ${question.term}. `
               : `Incorrect. The correct answer is ${question.term}. `
-            : picked[0] != null && question.correctIndexes && !question.correctIndexes.includes(picked[0])
-              ? `Incorrect. The correct answer is ${question.term}. `
-              : 'Correct. '}
+            : resultOk
+              ? `Correct. The concept is ${question.term}. `
+              : `Incorrect. The correct answer is ${question.term}. `}
           {question.explain}
         </p>
       )}
@@ -308,7 +332,7 @@ export function ApHumanVocabHub({
   const total = useMemo(() => getVocabCount('all'), [])
 
   return (
-    <div className="home-screen">
+    <div className="home-screen vocab-hub">
       <header className="subject-hub-header">
         <div className="subject-hub-header-main">
           <button type="button" className="btn-secondary btn-sm" onClick={onBack}>
@@ -316,7 +340,10 @@ export function ApHumanVocabHub({
           </button>
           <div className="subject-hub-header-text">
             <h1>Vocab Quiz 1</h1>
-            <p>Application questions from Units 7.5, 7.2, 7.3, and 1.1–1.7.</p>
+            <p>
+              AP-style scenarios from Units 7.5, 7.2, 7.3, and 1.1–1.7. Read the situation, then name the
+              concept.
+            </p>
           </div>
         </div>
         <AppToggles />
@@ -324,8 +351,8 @@ export function ApHumanVocabHub({
 
       <section className="home-section">
         <h2>Choose a quiz type</h2>
-        <div className="bio-topic-grid">
-          <div className="ap-human-card biology-home-card">
+        <div className="bio-topic-grid vocab-mode-grid">
+          <div className="ap-human-card vocab-home-card">
             <div className="ap-human-card-main">
               <span className="card-icon">⌨️</span>
               <div className="ap-human-card-content">
@@ -341,13 +368,13 @@ export function ApHumanVocabHub({
               </button>
             </div>
           </div>
-          <div className="ap-human-card biology-home-card">
+          <div className="ap-human-card vocab-home-card">
             <div className="ap-human-card-main">
               <span className="card-icon">📝</span>
               <div className="ap-human-card-content">
                 <span className="card-title">Multiple Choice</span>
                 <span className="card-desc">
-                  {total} scenarios · 4 choices · related AP Human distractors
+                  {total} scenarios · 4 AP-style choices · nearby look-alike terms
                 </span>
               </div>
             </div>
@@ -366,12 +393,12 @@ export function ApHumanVocabHub({
 
       <section className="home-section">
         <h2>Practice by unit</h2>
-        <div className="bio-topic-grid">
+        <div className="bio-topic-grid vocab-unit-grid">
           {VOCAB_UNITS.map((item) => (
-            <div key={item.id} className="ap-human-card biology-home-card">
+            <div key={item.id} className="ap-human-card vocab-home-card vocab-unit-card">
               <div className="ap-human-card-main">
                 <div className="ap-human-card-content">
-                  <span className="unit-card-kicker">
+                  <span className="unit-card-kicker vocab-unit-kicker">
                     {item.code} · {getVocabCount(item.id)} questions
                   </span>
                   <span className="card-title">{item.label}</span>

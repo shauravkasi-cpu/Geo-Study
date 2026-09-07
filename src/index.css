@@ -92,7 +92,7 @@
 }
 
 :root {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: 'Segoe UI', 'SF Pro Text', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color: var(--text);
@@ -113,9 +113,17 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--bg);
   color: var(--text);
   transition: background 0.2s, color 0.2s;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+button,
+input,
+textarea {
+  font-size: 1rem;
 }
 
 #root {

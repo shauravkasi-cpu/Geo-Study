@@ -190,6 +190,19 @@
   gap: 1rem;
 }
 
+.home-kicker {
+  margin: 0 0 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b45309;
+}
+
+[data-theme='dark'] .home-kicker {
+  color: #fbbf24;
+}
+
 .home-header h1 {
   font-size: 2.5rem;
   font-weight: 800;
@@ -2613,5 +2626,290 @@
 
 .geo-math-svg {
   max-width: 520px;
+}
+
+/* Vocab Quiz — AP Human study look */
+.vocab-study {
+  max-width: 720px;
+  padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
+}
+
+.vocab-study .bio-study-kicker,
+.vocab-study .bio-multi-flag,
+.vocab-mode-flag,
+.vocab-unit-kicker {
+  color: #b45309;
+}
+
+[data-theme='dark'] .vocab-study .bio-study-kicker,
+[data-theme='dark'] .vocab-study .bio-multi-flag,
+[data-theme='dark'] .vocab-mode-flag,
+[data-theme='dark'] .vocab-unit-kicker {
+  color: #fbbf24;
+}
+
+.vocab-progress-bar,
+.vocab-study .bio-progress-bar {
+  background: linear-gradient(90deg, #f59e0b, #ea580c);
+}
+
+.vocab-study-card {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, #f59e0b 7%, var(--bg-elevated)), var(--bg-elevated));
+  border-color: color-mix(in srgb, #f59e0b 35%, var(--border-strong));
+  padding: 1.4rem 1.45rem 1.5rem;
+  border-radius: 18px;
+}
+
+.vocab-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.7rem;
+  margin-bottom: 0.75rem;
+}
+
+.vocab-unit-chip {
+  display: inline-flex;
+  align-items: center;
+  background: color-mix(in srgb, #f59e0b 14%, var(--bg-subtle));
+  color: #92400e;
+  border: 1px solid color-mix(in srgb, #f59e0b 40%, var(--border));
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+[data-theme='dark'] .vocab-unit-chip {
+  color: #fcd34d;
+}
+
+.vocab-prompt {
+  font-size: 1.18rem;
+  font-weight: 650;
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+}
+
+.vocab-options {
+  gap: 0.65rem;
+}
+
+.vocab-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  min-height: 52px;
+  padding: 0.85rem 0.95rem;
+  border-radius: 14px;
+  transition: border-color 0.15s, background 0.15s, transform 0.12s, box-shadow 0.15s;
+}
+
+.vocab-option:hover:not(:disabled) {
+  border-color: #f59e0b;
+  background: color-mix(in srgb, #f59e0b 12%, var(--bg-subtle));
+  transform: translateY(-1px);
+}
+
+.vocab-study .bio-option-picked {
+  border-color: #d97706;
+  background: color-mix(in srgb, #f59e0b 16%, var(--bg-subtle));
+}
+
+.vocab-option-letter {
+  flex-shrink: 0;
+  width: 1.85rem;
+  height: 1.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #b45309;
+}
+
+[data-theme='dark'] .vocab-option-letter {
+  color: #fbbf24;
+}
+
+.vocab-option-text {
+  padding-top: 0.2rem;
+  line-height: 1.4;
+}
+
+.vocab-typed {
+  margin-top: 0.2rem;
+}
+
+.vocab-input {
+  min-height: 52px;
+  font-size: 16px;
+  border-radius: 14px;
+}
+
+.vocab-input:focus {
+  border-color: #d97706;
+}
+
+.vocab-explain {
+  padding: 0.85rem 0.95rem;
+  border-radius: 12px;
+  line-height: 1.5;
+}
+
+.vocab-explain-ok {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--text);
+}
+
+.vocab-explain-miss {
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--text);
+}
+
+.vocab-study-done {
+  text-align: center;
+}
+
+.vocab-done-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.vocab-done-score {
+  margin: 0;
+  font-size: clamp(2.6rem, 10vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #d97706;
+  line-height: 1;
+}
+
+[data-theme='dark'] .vocab-done-score {
+  color: #fbbf24;
+}
+
+.vocab-done-count {
+  margin: 0.65rem 0 0.4rem;
+}
+
+.vocab-done-note {
+  margin: 0 auto 0.4rem;
+  max-width: 28rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.vocab-study-actions {
+  justify-content: center;
+}
+
+.vocab-home-card {
+  background: var(--gradient-ap);
+  border-color: #fbbf24;
+}
+
+.vocab-feature-card {
+  background: var(--gradient-ap);
+  border-color: #fbbf24;
+}
+
+.vocab-feature-card:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 6px 24px rgba(245, 158, 11, 0.16);
+}
+
+.vocab-unit-grid .vocab-home-card {
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .home-screen {
+    padding: 1.25rem 1rem 2.25rem;
+  }
+
+  .home-header h1 {
+    font-size: 1.85rem;
+  }
+
+  .home-tagline {
+    font-size: 0.98rem;
+    line-height: 1.45;
+  }
+
+  .subject-card {
+    min-height: 0;
+    padding: 1.2rem 1.15rem;
+  }
+
+  .subject-hub-header-text h1 {
+    font-size: 1.45rem;
+  }
+
+  .vocab-study {
+    padding: 0.85rem 0.95rem calc(1.75rem + env(safe-area-inset-bottom));
+  }
+
+  .vocab-study-header {
+    gap: 0.65rem;
+  }
+
+  .vocab-study .bio-study-header-text h1 {
+    font-size: 1.15rem;
+  }
+
+  .vocab-prompt {
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+
+  .vocab-option {
+    min-height: 48px;
+  }
+
+  .vocab-study-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .vocab-study-actions .btn-primary,
+  .vocab-study-actions .btn-secondary {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .mode-buttons {
+    width: 100%;
+  }
+
+  .mode-buttons .btn-primary,
+  .mode-buttons .btn-secondary {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  .ap-human-card,
+  .vocab-home-card,
+  .vocab-unit-card {
+    padding: 1.15rem 1.1rem;
+  }
+
+  .site-credit-top {
+    right: 0.7rem;
+    top: calc(0.35rem + env(safe-area-inset-top));
+  }
 }
 
