@@ -42,7 +42,6 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
   const question = queue[index]
   const isTyped = mode === 'typed'
   const percent = queue.length === 0 ? 0 : Math.round(((done ? queue.length : index) / queue.length) * 100)
-  const unitMeta = question ? VOCAB_UNITS.find((item) => item.id === question.unit) : undefined
 
   const gradeCurrent = (selection: number[]) => {
     if (!question || checked || question.kind !== 'mc' || !question.correctIndexes) return
@@ -179,12 +178,10 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
       </div>
       <p className="bio-progress-label">
         Question {index + 1} of {queue.length}
-        {unitMeta ? ` · ${unitMeta.code} ${unitMeta.label}` : ''}
       </p>
 
       <QuestionCard
         question={question}
-        unitLabel={unitMeta ? `${unitMeta.code} · ${unitMeta.label}` : undefined}
         picked={picked}
         typedValue={typedValue}
         checked={checked}
@@ -217,7 +214,6 @@ export function ApHumanVocabPractice({ topic, mode, onBack }: ApHumanVocabPracti
 
 function QuestionCard({
   question,
-  unitLabel,
   picked,
   typedValue,
   checked,
@@ -228,7 +224,6 @@ function QuestionCard({
   onTypedSubmit,
 }: {
   question: VocabPracticeQuestion
-  unitLabel?: string
   picked: number[]
   typedValue: string
   checked: boolean
@@ -245,7 +240,6 @@ function QuestionCard({
   return (
     <div className="bio-study-card vocab-study-card">
       <div className="vocab-card-meta">
-        {unitLabel ? <span className="vocab-unit-chip">{unitLabel}</span> : null}
         <span className="bio-multi-flag vocab-mode-flag">
           {isTyped ? 'Type the concept' : 'Choose the best term'}
         </span>

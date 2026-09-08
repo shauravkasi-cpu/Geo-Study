@@ -2657,20 +2657,6 @@
   margin-bottom: 0.75rem;
 }
 
-.vocab-unit-chip {
-  display: inline-flex;
-  align-items: center;
-  background: var(--accent-subtle);
-  color: var(--accent);
-  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
-  border-radius: 999px;
-  padding: 0.2rem 0.65rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .vocab-prompt {
   font-size: 1.18rem;
   font-weight: 650;
