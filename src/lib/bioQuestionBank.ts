@@ -12,6 +12,7 @@ import { MACRO_QUESTIONS } from './bioQuestionsMacros'
 import { MEMBRANE_QUESTIONS } from './bioQuestionsMembrane'
 import { PASSIVE_QUESTIONS } from './bioQuestionsPassive'
 import { STRUCTURE_QUESTIONS } from './bioQuestions'
+import { TRANSPORT_QUIZ_QUESTIONS } from './bioQuestionsTransportQuiz'
 import {
   HISTORY_QUESTIONS,
   PLANT_ANIMAL_QUESTIONS,
@@ -30,6 +31,7 @@ const UNIT2_QUESTIONS: BioPracticeQuestion[] = [
   ...MEMBRANE_QUESTIONS,
   ...PASSIVE_QUESTIONS,
   ...ACTIVE_QUESTIONS,
+  ...TRANSPORT_QUIZ_QUESTIONS,
   ...HISTORY_QUESTIONS,
   ...PROK_EUK_QUESTIONS,
   ...PLANT_ANIMAL_QUESTIONS,
