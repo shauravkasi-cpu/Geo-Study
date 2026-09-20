@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { SiteShell } from './components/SiteShell'
 import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
+import { ApHumanRegionsMap } from './components/ApHumanRegionsMap'
 import { ApHumanPractice } from './components/ApHumanPractice'
 import { ApHumanVocabHub, ApHumanVocabPractice } from './components/ApHumanVocabPractice'
 import { ApHumanHub, HomeScreen, MathHub } from './components/HomeScreen'
@@ -24,8 +25,10 @@ import {
   getCurrentItemType,
   getHighlightCountryCode,
   getHighlightFeatureCoords,
+  getHighlightRegionCodes,
   getMcFeatureMarker,
   getMcHighlightCode,
+  getMcHighlightCodes,
   getWrongClickCountryCode,
   skipQuestion,
   submitAnswer,
@@ -101,6 +104,29 @@ function App() {
     const ready = await ensureMapData()
     if (!ready) return
     setScreen({ view: 'ap-human-reference' })
+  }, [ensureMapData])
+
+  const startApHumanRegionsQuiz = useCallback(
+    async (format: QuizFormat = 'locate') => {
+      const ready = await ensureMapData()
+      if (!ready) return
+
+      const newSession = createQuizSession({
+        type: 'preset',
+        preset: 'ap-human-regions',
+        format,
+      })
+      setSession(newSession)
+      resetQuestionState()
+      setScreen({ view: 'quiz', session: newSession })
+    },
+    [ensureMapData],
+  )
+
+  const openRegionsStudyMap = useCallback(async () => {
+    const ready = await ensureMapData()
+    if (!ready) return
+    setScreen({ view: 'ap-human-regions-reference' })
   }, [ensureMapData])
 
   const goHome = useCallback(() => {
@@ -289,6 +315,8 @@ function App() {
           onBack={goHome}
           onStartQuiz={startApHumanQuiz}
           onViewStudyMap={openStudyMap}
+          onStartRegionsQuiz={startApHumanRegionsQuiz}
+          onViewRegionsMap={openRegionsStudyMap}
           onStartStudy={startApHumanNotes}
           onOpenVocab={openApHumanVocab}
         />
@@ -420,6 +448,19 @@ function App() {
     )
   }
 
+  if (screen.view === 'ap-human-regions-reference') {
+    return (
+      <SiteShell>
+        <div className="page-with-theme">
+          <div className="page-theme-bar">
+            <AppToggles />
+          </div>
+          <ApHumanRegionsMap onBack={goApHuman} />
+        </div>
+      </SiteShell>
+    )
+  }
+
   if (screen.view === 'results' && session) {
     return (
       <SiteShell>
@@ -440,8 +481,10 @@ function App() {
 
   if (screen.view === 'quiz' && session) {
     const highlightCode = getHighlightCountryCode(lastAnswer)
+    const highlightCodes = awaitingNext ? getHighlightRegionCodes(lastAnswer) : null
     const wrongHighlightCode = getWrongClickCountryCode(lastAnswer)
     const revealHighlightCode = !awaitingNext ? getMcHighlightCode(session) : null
+    const revealHighlightCodes = !awaitingNext ? getMcHighlightCodes(session) : null
     const revealFeaturePoint = !awaitingNext ? getMcFeatureMarker(session) : null
     const highlightPoint = getHighlightFeatureCoords(lastAnswer)
     const clickPoint = getClickMarkerCoords(lastAnswer)
@@ -462,8 +505,10 @@ function App() {
             <WorldMap
               onMapClick={handleMapClick}
               highlightCode={awaitingNext ? highlightCode : null}
+              highlightCodes={highlightCodes}
               wrongHighlightCode={awaitingNext ? wrongHighlightCode : null}
               mcHighlightCode={revealHighlightCode}
+              mcHighlightCodes={revealHighlightCodes}
               mcFeaturePoint={revealFeaturePoint}
               highlightPoint={awaitingNext ? highlightPoint : null}
               clickPoint={awaitingNext ? clickPoint : null}

@@ -401,6 +401,10 @@
   gap: 1rem;
 }
 
+.ap-human-card + .ap-human-card {
+  margin-top: 1rem;
+}
+
 .ap-human-card-main {
   display: flex;
   align-items: center;
@@ -1116,6 +1120,11 @@
   background: var(--map-ref-feature-dot);
   border-radius: 50%;
   border: 1px solid var(--map-ref-feature-line);
+}
+
+.legend-swatch-region {
+  background: linear-gradient(135deg, #60a5fa, #34d399 50%, #f59e0b);
+  border: 1px solid var(--map-ref-country-stroke);
 }
 
 .reference-map-container {

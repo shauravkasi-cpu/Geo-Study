@@ -2,6 +2,7 @@ import type { Geometry, Position } from 'geojson'
 import { getCountryFeatures } from './countries'
 import { getExtraCountryCentroid, getExtraMapCountry } from './extraMapCountries'
 import { getPhysicalFeature } from './physicalFeatures'
+import { getWorldRegion } from './worldRegions'
 import { parseItemId } from '../types'
 
 export interface MapFocusView {
@@ -115,9 +116,43 @@ function focusForFeature(featureId: string): MapFocusView | null {
   )
 }
 
+function focusForRegion(regionId: string): MapFocusView | null {
+  const region = getWorldRegion(regionId)
+  if (!region) return null
+
+  let bounds: [number, number, number, number] | null = null
+  for (const code of region.countryCodes) {
+    const extra = getExtraMapCountry(code)
+    const extraBounds = extra ? geometryBounds(extra.displayGeometry) : null
+    const feature = getCountryFeatures().find((entry) => entry.properties.isoCode === code)
+    const featureBounds = feature ? geometryBounds(feature.geometry) : null
+    const next = extraBounds ?? featureBounds
+    if (!next) continue
+    bounds = bounds
+      ? [
+          Math.min(bounds[0], next[0]),
+          Math.min(bounds[1], next[1]),
+          Math.max(bounds[2], next[2]),
+          Math.max(bounds[3], next[3]),
+        ]
+      : [...next]
+  }
+
+  if (bounds) return viewportFromBounds(...bounds)
+
+  const deg = Math.max(region.radiusKm / 110, 8)
+  return viewportFromBounds(
+    region.coordinates[0] - deg,
+    region.coordinates[1] - deg * 0.75,
+    region.coordinates[0] + deg,
+    region.coordinates[1] + deg * 0.75,
+  )
+}
+
 export function getItemFocusView(itemId: string | null): MapFocusView | null {
   if (!itemId) return null
   const { type, key } = parseItemId(itemId)
   if (type === 'country') return focusForCountry(key)
+  if (type === 'region') return focusForRegion(key)
   return focusForFeature(key)
 }

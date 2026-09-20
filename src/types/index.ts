@@ -12,9 +12,9 @@ export type Continent =
   | 'Oceania'
   | 'Antarctica'
 
-export type PresetType = 'all' | Continent | 'ap-human-1'
+export type PresetType = 'all' | Continent | 'ap-human-1' | 'ap-human-regions'
 
-export type QuizItemType = 'country' | 'feature'
+export type QuizItemType = 'country' | 'feature' | 'region'
 
 export type QuizFormat = 'locate' | 'multiple-choice' | 'name-it'
 
@@ -80,6 +80,7 @@ export type AppScreen =
   | { view: 'quiz'; session: QuizSession }
   | { view: 'results'; session: QuizSession }
   | { view: 'ap-human-reference' }
+  | { view: 'ap-human-regions-reference' }
   | { view: 'factoring'; difficulty: FactoringDifficulty }
   | { view: 'factoring-quiz' }
   | { view: 'geo-math-practice'; topic: GeoMathTopic }

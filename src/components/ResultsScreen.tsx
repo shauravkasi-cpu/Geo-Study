@@ -38,9 +38,11 @@ export function ResultsScreen({
             <ul className="missed-list">
               {missed.map((a) => (
                 <li key={a.targetId}>
-                  <span className="missed-type">{a.targetType === 'feature' ? '📍' : '🏳️'}</span>
+                  <span className="missed-type">
+                    {a.targetType === 'feature' ? '📍' : a.targetType === 'region' ? '🌐' : '🏳️'}
+                  </span>
                   {a.targetName}
-                  {a.clickedName && a.targetType === 'country' && (
+                  {a.clickedName && (a.targetType === 'country' || a.targetType === 'region') && (
                     <span className="missed-detail"> — clicked {a.clickedName}</span>
                   )}
                   {a.distanceKm !== null && a.targetType === 'feature' && (

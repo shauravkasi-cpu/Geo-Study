@@ -101,7 +101,9 @@ export function QuizPanel({
           <p className="prompt-label">
             {itemType === 'feature'
               ? 'What physical feature is marked on the map?'
-              : 'Which country is highlighted?'}
+              : itemType === 'region'
+                ? 'Which region is highlighted?'
+                : 'Which country is highlighted?'}
           </p>
           <div className="mc-options">
             {session.mcOptions.map((key) => {
@@ -126,7 +128,9 @@ export function QuizPanel({
           <p className="prompt-label">
             {itemType === 'feature'
               ? 'Name the highlighted physical feature'
-              : 'Name the highlighted country'}
+              : itemType === 'region'
+                ? 'Name the highlighted region'
+                : 'Name the highlighted country'}
           </p>
           <form
             className="name-it-form"
@@ -140,7 +144,13 @@ export function QuizPanel({
               className="name-it-input"
               value={typedAnswer}
               onChange={(event) => setTypedAnswer(event.target.value)}
-              placeholder={itemType === 'feature' ? 'Type feature name…' : 'Type country name…'}
+              placeholder={
+                itemType === 'feature'
+                  ? 'Type feature name…'
+                  : itemType === 'region'
+                    ? 'Type region name…'
+                    : 'Type country name…'
+              }
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
@@ -172,7 +182,10 @@ export function QuizPanel({
             <>
               <span className="feedback-icon">✓</span>
               <p className="feedback-text">Correct!</p>
-              {lastAnswer.targetType === 'country' && !isMc && !isNameIt && lastAnswer.clickedName && (
+              {(lastAnswer.targetType === 'country' || lastAnswer.targetType === 'region') &&
+                !isMc &&
+                !isNameIt &&
+                lastAnswer.clickedName && (
                 <p className="feedback-sub">
                   You picked <strong>{lastAnswer.clickedName}</strong>
                 </p>
@@ -188,7 +201,9 @@ export function QuizPanel({
           ) : (
             <>
               <span className="feedback-icon">✗</span>
-              {lastAnswer.targetType === 'country' && !isMc && !isNameIt && (
+              {(lastAnswer.targetType === 'country' || lastAnswer.targetType === 'region') &&
+                !isMc &&
+                !isNameIt && (
                 <p className="feedback-text">
                   You picked: <strong>{lastAnswer.clickedName ?? 'Nothing (ocean)'}</strong>
                 </p>
@@ -213,9 +228,14 @@ export function QuizPanel({
               <p className="feedback-sub">
                 Correct answer: <strong>{lastAnswer.targetName}</strong>
               </p>
-              {lastAnswer.targetType === 'country' && !isMc && !isNameIt && lastAnswer.clickedName && (
+              {(lastAnswer.targetType === 'country' || lastAnswer.targetType === 'region') &&
+                !isMc &&
+                !isNameIt &&
+                lastAnswer.clickedName && (
                 <p className="feedback-sub">
-                  Green = correct country · Red = where you clicked
+                  {lastAnswer.targetType === 'region'
+                    ? 'Green = correct region · Red = where you clicked'
+                    : 'Green = correct country · Red = where you clicked'}
                 </p>
               )}
             </>

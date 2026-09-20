@@ -1,5 +1,6 @@
 import { ApHumanNotesHub } from './ApHumanPractice'
 import { AP_HUMAN_QUIZ_1_NAME, AP_HUMAN_QUIZ_1_STATS } from '../lib/apHumanQuiz1'
+import { AP_HUMAN_REGIONS_QUIZ_NAME, AP_HUMAN_REGIONS_STATS } from '../lib/apHumanRegionsQuiz'
 import { getVocabCount } from '../lib/apHumanVocabBank'
 import type { ApHumanStudyTopic } from '../lib/apHumanStudy'
 import { AppToggles } from '../lib/soundToggle'
@@ -22,6 +23,8 @@ interface ApHumanHubProps {
   onBack: () => void
   onStartQuiz: (format: QuizFormat) => void
   onViewStudyMap: () => void
+  onStartRegionsQuiz: (format: QuizFormat) => void
+  onViewRegionsMap: () => void
   onStartStudy: (topic: ApHumanStudyTopic) => void
   onOpenVocab: () => void
 }
@@ -106,6 +109,8 @@ export function ApHumanHub({
   onBack,
   onStartQuiz,
   onViewStudyMap,
+  onStartRegionsQuiz,
+  onViewRegionsMap,
   onStartStudy,
   onOpenVocab,
 }: ApHumanHubProps) {
@@ -162,6 +167,45 @@ export function ApHumanHub({
               Name It
             </button>
             <button type="button" className="btn-secondary btn-sm" onClick={onViewStudyMap}>
+              View Study Map
+            </button>
+          </div>
+        </div>
+
+        <div className="ap-human-card">
+          <div className="ap-human-card-main">
+            <span className="card-icon">🌐</span>
+            <div className="ap-human-card-content">
+              <span className="card-title">{AP_HUMAN_REGIONS_QUIZ_NAME}</span>
+              <span className="card-desc">
+                {AP_HUMAN_REGIONS_STATS.bigPicture} world regions · {AP_HUMAN_REGIONS_STATS.closerLook}{' '}
+                subregions
+              </span>
+            </div>
+          </div>
+          <div className="mode-buttons">
+            <button
+              type="button"
+              className="btn-primary btn-sm"
+              onClick={() => onStartRegionsQuiz('locate')}
+            >
+              Click to Locate
+            </button>
+            <button
+              type="button"
+              className="btn-secondary btn-sm"
+              onClick={() => onStartRegionsQuiz('multiple-choice')}
+            >
+              Multiple Choice
+            </button>
+            <button
+              type="button"
+              className="btn-secondary btn-sm"
+              onClick={() => onStartRegionsQuiz('name-it')}
+            >
+              Name It
+            </button>
+            <button type="button" className="btn-secondary btn-sm" onClick={onViewRegionsMap}>
               View Study Map
             </button>
           </div>

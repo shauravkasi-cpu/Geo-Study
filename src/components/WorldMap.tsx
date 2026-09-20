@@ -23,8 +23,10 @@ import type { HintView, MapClickResult, QuizItemType } from '../types'
 interface WorldMapProps {
   onMapClick?: (result: MapClickResult) => void
   highlightCode?: string | null
+  highlightCodes?: string[] | null
   wrongHighlightCode?: string | null
   mcHighlightCode?: string | null
+  mcHighlightCodes?: string[] | null
   mcFeaturePoint?: [number, number] | null
   highlightPoint?: [number, number] | null
   clickPoint?: [number, number] | null
@@ -114,8 +116,10 @@ function geoStyle(
 export function WorldMap({
   onMapClick,
   highlightCode,
+  highlightCodes,
   wrongHighlightCode,
   mcHighlightCode,
+  mcHighlightCodes,
   mcFeaturePoint,
   highlightPoint,
   clickPoint,
@@ -135,6 +139,18 @@ export function WorldMap({
     () => new Set(hintView?.highlightCountryCodes ?? []),
     [hintView],
   )
+  const correctCountrySet = useMemo(() => {
+    const codes = new Set(highlightCodes ?? [])
+    if (highlightCode) codes.add(highlightCode)
+    return codes
+  }, [highlightCodes, highlightCode])
+  const mcCountrySet = useMemo(() => {
+    const codes = new Set(mcHighlightCodes ?? [])
+    if (mcHighlightCode) codes.add(mcHighlightCode)
+    return codes
+  }, [mcHighlightCodes, mcHighlightCode])
+  const usesPointClick = clickMode === 'feature' || clickMode === 'region'
+  const hasMcHighlight = mcCountrySet.size > 0 || !!mcFeaturePoint
 
   useEffect(() => {
     if (focusView) {
@@ -148,18 +164,18 @@ export function WorldMap({
     } else if (mcFeaturePoint) {
       setMapCenter(mcFeaturePoint)
       setMapZoom(2.5)
-    } else if (mcHighlightCode) {
+    } else if (mcHighlightCode || (mcHighlightCodes && mcHighlightCodes.length > 0)) {
       setMapCenter([20, 20])
       setMapZoom(1)
     }
     // focusKey intentionally drives re-zoom per question; avoid resetting when parent re-renders.
-  }, [focusKey, hintView, mcFeaturePoint, mcHighlightCode])
+  }, [focusKey, hintView, mcFeaturePoint, mcHighlightCode, mcHighlightCodes])
 
   const getRole = (geoName: string, geoId: string | number | undefined): 'default' | 'correct' | 'wrong' | 'mc' | 'hint' | 'dimmed' => {
     const iso = resolveGeoIso(geoName, geoId)
 
-    if (iso && mcHighlightCode && iso === mcHighlightCode) return 'mc'
-    if (iso && highlightCode && iso === highlightCode) return 'correct'
+    if (iso && mcCountrySet.has(iso)) return 'mc'
+    if (iso && correctCountrySet.has(iso)) return 'correct'
     if (iso && wrongHighlightCode && iso === wrongHighlightCode) return 'wrong'
 
     if (hintCountrySet.size > 0 && iso) {
@@ -168,7 +184,7 @@ export function WorldMap({
     return 'default'
   }
 
-  const isInteractive = !disabled && !mcHighlightCode
+  const isInteractive = !disabled && !hasMcHighlight
 
   const handleCountryClick = useCallback(
     (geoName: string, geoId: string | number | undefined, event: React.MouseEvent) => {
@@ -192,7 +208,7 @@ export function WorldMap({
     (event: React.MouseEvent, projection: GeoProjection) => {
       event.stopPropagation()
       event.preventDefault()
-      if (!isInteractive || !onMapClick || clickMode !== 'feature') return
+      if (!isInteractive || !onMapClick || !usesPointClick) return
 
       const lngLat = getLngLatFromClick(event, projection)
       if (!lngLat) return
@@ -206,7 +222,7 @@ export function WorldMap({
           : null,
       })
     },
-    [isInteractive, onMapClick, clickMode, features],
+    [isInteractive, onMapClick, usesPointClick, features],
   )
 
   return (
@@ -295,7 +311,7 @@ export function WorldMap({
                   )
                 })}
 
-                {clickMode === 'feature' && isInteractive && (
+                {usesPointClick && isInteractive && (
                   <rect
                     x={-800}
                     y={-450}
@@ -331,6 +347,9 @@ export function WorldMap({
       </ComposableMap>
       {clickMode === 'feature' && isInteractive && (
         <p className="map-hint">Click the location on the map — no labels shown</p>
+      )}
+      {clickMode === 'region' && isInteractive && (
+        <p className="map-hint">Click the region on the map</p>
       )}
       {clickMode === 'country' && isInteractive && (
         <p className="map-hint">Click a country (ocean clicks are ignored)</p>

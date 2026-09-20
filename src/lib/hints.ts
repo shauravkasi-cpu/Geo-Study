@@ -2,6 +2,7 @@ import type { Feature, Geometry, Position } from 'geojson'
 import { getCountries, getCountryByCode, getCountryFeatures } from './countries'
 import { getExtraCountryCentroid } from './extraMapCountries'
 import { getPhysicalFeature, haversineDistanceKm } from './physicalFeatures'
+import { getWorldRegion } from './worldRegions'
 import type { HintView } from '../types'
 import { parseItemId } from '../types'
 
@@ -119,6 +120,12 @@ export function getHintView(itemId: string): HintView | null {
     if (!country || !countryCenter) return null
 
     return buildHintView(countryCenter, key)
+  }
+
+  if (type === 'region') {
+    const region = getWorldRegion(key)
+    if (!region) return null
+    return buildHintView(region.coordinates, region.countryCodes[0])
   }
 
   const feature = getPhysicalFeature(key)

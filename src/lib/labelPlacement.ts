@@ -3,7 +3,7 @@ export interface MapLabel {
   lng: number
   lat: number
   text: string
-  kind: 'country' | 'feature'
+  kind: 'country' | 'feature' | 'region'
 }
 
 export interface PlacedLabel extends MapLabel {
@@ -108,8 +108,8 @@ export function placeMapLabels(
         dy /= dist
 
         const push = 2.5
-        const aMovable = a.kind === 'country'
-        const bMovable = b.kind === 'country'
+        const aMovable = a.kind === 'country' || a.kind === 'region'
+        const bMovable = b.kind === 'country' || b.kind === 'region'
 
         if (aMovable) {
           a.dx -= dx * push * (bMovable ? 0.5 : 1)
