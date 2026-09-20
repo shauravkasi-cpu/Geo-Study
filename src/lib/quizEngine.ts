@@ -16,10 +16,11 @@ import {
 import { getCountryCentroid } from './hints'
 import { getPhysicalFeature, haversineDistanceKm, isFeatureClickCorrect } from './physicalFeatures'
 import {
-  getWorldRegion,
-  isRegionClickCorrect,
+  getRegionAnswer,
+  getRegionBubble,
+  isRegionBubbleCorrect,
   isRegionNameCorrect,
-} from './worldRegions'
+} from './regionBubbles'
 import {
   makeItemId,
   parseItemId,
@@ -137,7 +138,7 @@ export function generateMcFeatureOptions(correctId: string, poolIds: string[]): 
 }
 
 export function generateMcRegionOptions(correctId: string, poolIds: string[]): string[] {
-  return generateNearbyOptions(correctId, poolIds, (id) => getWorldRegion(id)?.coordinates ?? null)
+  return generateNearbyOptions(correctId, poolIds, (id) => getRegionAnswer(id)?.coordinates ?? null)
 }
 
 function generateNearbyOptions(
@@ -182,7 +183,7 @@ export function getMcOptionLabel(itemType: QuizItemType, key: string): string {
     return getCountryDisplayName(key)
   }
   if (itemType === 'region') {
-    return getWorldRegion(key)?.name ?? key
+    return getRegionAnswer(key)?.name ?? key
   }
   return getPhysicalFeature(key)?.name ?? key
 }
@@ -196,7 +197,10 @@ function buildMcOptions(session: QuizSession): string[] | null {
     return generateMcOptions(key, getPoolCodes(session))
   }
   if (type === 'region') {
-    return generateMcRegionOptions(key, getPoolRegionIds(session))
+    const pool = getPoolRegionIds(session)
+    const map = getRegionAnswer(key)?.map
+    const sameMap = map ? pool.filter((id) => getRegionAnswer(id)?.map === map) : pool
+    return generateMcRegionOptions(key, sameMap.length >= 4 ? sameMap : pool)
   }
   return generateMcFeatureOptions(key, getPoolFeatureIds(session))
 }
@@ -234,7 +238,7 @@ export function getItemName(itemId: string): string {
     return getCountryDisplayName(key)
   }
   if (type === 'region') {
-    return getWorldRegion(key)?.name ?? key
+    return getRegionAnswer(key)?.name ?? key
   }
   return getPhysicalFeature(key)?.name ?? key
 }
@@ -272,9 +276,7 @@ export function submitAnswer(
   if (type === 'country') {
     correct = result.countryCode === key
   } else if (type === 'region') {
-    const check = isRegionClickCorrect(key, result.countryCode, result.lngLat)
-    correct = check.correct
-    distanceKm = Math.round(check.distanceKm)
+    return null
   } else {
     const check = isFeatureClickCorrect(key, result.lngLat)
     correct = check.correct
@@ -292,6 +294,29 @@ export function submitAnswer(
     clickedLngLat: result.lngLat,
     distanceKm,
     correct,
+  })
+}
+
+export function submitRegionBubbleAnswer(
+  session: QuizSession,
+  bubbleId: string,
+): QuizSession | null {
+  const targetId = getCurrentItemId(session)
+  if (!targetId || session.status === 'complete') return null
+
+  const { type, key } = parseItemId(targetId)
+  if (type !== 'region') return null
+
+  const bubble = getRegionBubble(bubbleId)
+  return advanceSession(session, {
+    targetId,
+    targetName: getItemName(targetId),
+    targetType: type,
+    clickedCode: bubbleId,
+    clickedName: bubble?.name ?? bubbleId,
+    clickedLngLat: bubble?.coordinates ?? null,
+    distanceKm: null,
+    correct: isRegionBubbleCorrect(key, bubbleId),
   })
 }
 
@@ -469,12 +494,16 @@ export function getWrongClickCountryCode(lastAnswer: QuizAnswer | null): string 
     return null
   }
   if (lastAnswer.targetType === 'region') {
-    const region = getWorldRegion(parseItemId(lastAnswer.targetId).key)
-    if (!region?.countryCodes.includes(lastAnswer.clickedCode)) {
-      return lastAnswer.clickedCode
-    }
+    return lastAnswer.clickedCode
   }
   return null
+}
+
+export function getCurrentRegionAnswerId(session: QuizSession): string | null {
+  const id = getCurrentItemId(session)
+  if (!id) return null
+  const { type, key } = parseItemId(id)
+  return type === 'region' ? key : null
 }
 
 function isRevealFormat(format: QuizFormat): boolean {
@@ -495,20 +524,13 @@ export function getMcHighlightCodes(session: QuizSession): string[] | null {
   if (!id) return null
   const { type, key } = parseItemId(id)
   if (type === 'country') return [key]
-  if (type === 'region') return getWorldRegion(key)?.countryCodes ?? []
+  if (type === 'region') return [key]
   return null
 }
 
 export function getHighlightRegionCodes(lastAnswer: QuizAnswer | null): string[] | null {
   if (!lastAnswer || lastAnswer.targetType !== 'region') return null
-  const { key } = parseItemId(lastAnswer.targetId)
-  return getWorldRegion(key)?.countryCodes ?? []
-}
-
-function getSparseRegionMarker(regionId: string): [number, number] | null {
-  const region = getWorldRegion(regionId)
-  if (!region || region.countryCodes.length > 5) return null
-  return region.coordinates
+  return [parseItemId(lastAnswer.targetId).key]
 }
 
 export function getMcFeatureMarker(session: QuizSession): [number, number] | null {
@@ -516,21 +538,14 @@ export function getMcFeatureMarker(session: QuizSession): [number, number] | nul
   const id = getCurrentItemId(session)
   if (!id) return null
   const { type, key } = parseItemId(id)
-  if (type === 'feature') return getPhysicalFeature(key)?.coordinates ?? null
-  if (type === 'region') return getSparseRegionMarker(key)
-  return null
+  if (type !== 'feature') return null
+  return getPhysicalFeature(key)?.coordinates ?? null
 }
 
 export function getHighlightFeatureCoords(lastAnswer: QuizAnswer | null): [number, number] | null {
-  if (!lastAnswer) return null
+  if (!lastAnswer || lastAnswer.targetType !== 'feature') return null
   const { key } = parseItemId(lastAnswer.targetId)
-  if (lastAnswer.targetType === 'feature') {
-    return getPhysicalFeature(key)?.coordinates ?? null
-  }
-  if (lastAnswer.targetType === 'region') {
-    return getSparseRegionMarker(key)
-  }
-  return null
+  return getPhysicalFeature(key)?.coordinates ?? null
 }
 
 export function getClickMarkerCoords(lastAnswer: QuizAnswer | null): [number, number] | null {

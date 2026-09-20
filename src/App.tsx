@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { SiteShell } from './components/SiteShell'
 import { ApHumanReferenceMap } from './components/ApHumanReferenceMap'
 import { ApHumanRegionsMap } from './components/ApHumanRegionsMap'
+import { RegionBubbleMap } from './components/RegionBubbleMap'
 import { ApHumanPractice } from './components/ApHumanPractice'
 import { ApHumanVocabHub, ApHumanVocabPractice } from './components/ApHumanVocabPractice'
 import { ApHumanHub, HomeScreen, MathHub } from './components/HomeScreen'
@@ -23,6 +24,7 @@ import {
   getCurrentItemId,
   getCurrentItemName,
   getCurrentItemType,
+  getCurrentRegionAnswerId,
   getHighlightCountryCode,
   getHighlightFeatureCoords,
   getHighlightRegionCodes,
@@ -33,8 +35,10 @@ import {
   skipQuestion,
   submitAnswer,
   submitMcAnswer,
+  submitRegionBubbleAnswer,
   submitTypedAnswer,
 } from './lib/quizEngine'
+import { getRegionMapForAnswer } from './lib/regionBubbles'
 import { saveQuizScore } from './lib/storage'
 import { AppToggles } from './lib/soundToggle'
 import type { ApHumanStudyTopic } from './lib/apHumanStudy'
@@ -49,6 +53,7 @@ import type {
   QuizSession,
   SubjectId,
 } from './types'
+import { parseItemId } from './types'
 import type { BioPracticeTopic, BioUnit2Topic, BioUnitId } from './lib/bioQuiz'
 import type { GeoMathTopic } from './lib/geoMathQuiz'
 import './App.css'
@@ -185,6 +190,24 @@ function App() {
       if (session.format === 'multiple-choice' || session.format === 'name-it') return
 
       const updated = submitAnswer(session, result)
+      if (!updated) return
+
+      const answer = updated.answers[updated.answers.length - 1]
+      playAnswerSound(answer.correct)
+      setSession(updated)
+      setLastAnswer(answer)
+      setAwaitingNext(true)
+      setHintView(null)
+    },
+    [session, awaitingNext],
+  )
+
+  const handleBubbleClick = useCallback(
+    (bubbleId: string) => {
+      if (!session || awaitingNext || session.status === 'complete') return
+      if (session.format === 'multiple-choice' || session.format === 'name-it') return
+
+      const updated = submitRegionBubbleAnswer(session, bubbleId)
       if (!updated) return
 
       const answer = updated.answers[updated.answers.length - 1]
@@ -494,6 +517,12 @@ function App() {
       : getCurrentItemId(session)
     const focusView =
       session.format === 'name-it' ? getItemFocusView(focusItemId) : null
+    const regionAnswerId =
+      awaitingNext && lastAnswer?.targetType === 'region'
+        ? parseItemId(lastAnswer.targetId).key
+        : getCurrentRegionAnswerId(session)
+    const regionMapId = regionAnswerId ? getRegionMapForAnswer(regionAnswerId) : null
+    const isRegionQuiz = Boolean(regionAnswerId)
 
     return (
       <SiteShell>
@@ -502,22 +531,44 @@ function App() {
             <div className="quiz-map-toolbar">
               <AppToggles />
             </div>
-            <WorldMap
-              onMapClick={handleMapClick}
-              highlightCode={awaitingNext ? highlightCode : null}
-              highlightCodes={highlightCodes}
-              wrongHighlightCode={awaitingNext ? wrongHighlightCode : null}
-              mcHighlightCode={revealHighlightCode}
-              mcHighlightCodes={revealHighlightCodes}
-              mcFeaturePoint={revealFeaturePoint}
-              highlightPoint={awaitingNext ? highlightPoint : null}
-              clickPoint={awaitingNext ? clickPoint : null}
-              hintView={hintView}
-              focusView={focusView}
-              focusKey={focusItemId}
-              clickMode={clickMode}
-              disabled={awaitingNext || session.format === 'name-it'}
-            />
+            {isRegionQuiz && regionMapId ? (
+              <RegionBubbleMap
+                mapId={regionMapId}
+                interactive={!awaitingNext && session.format === 'locate'}
+                highlightAnswerId={
+                  awaitingNext && lastAnswer?.targetType === 'region'
+                    ? highlightCodes?.[0] ?? null
+                    : null
+                }
+                wrongBubbleId={
+                  awaitingNext && lastAnswer && !lastAnswer.correct
+                    ? lastAnswer.clickedCode
+                    : null
+                }
+                revealAnswerId={
+                  !awaitingNext && session.format !== 'locate' ? regionAnswerId : null
+                }
+                hintAnswerIds={hintUsed ? hintView?.highlightCountryCodes ?? null : null}
+                onBubbleClick={handleBubbleClick}
+              />
+            ) : (
+              <WorldMap
+                onMapClick={handleMapClick}
+                highlightCode={awaitingNext ? highlightCode : null}
+                highlightCodes={highlightCodes}
+                wrongHighlightCode={awaitingNext ? wrongHighlightCode : null}
+                mcHighlightCode={revealHighlightCode}
+                mcHighlightCodes={revealHighlightCodes}
+                mcFeaturePoint={revealFeaturePoint}
+                highlightPoint={awaitingNext ? highlightPoint : null}
+                clickPoint={awaitingNext ? clickPoint : null}
+                hintView={hintView}
+                focusView={focusView}
+                focusKey={focusItemId}
+                clickMode={clickMode}
+                disabled={awaitingNext || session.format === 'name-it'}
+              />
+            )}
           </div>
           <QuizPanel
             session={session}

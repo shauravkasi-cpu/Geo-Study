@@ -2,7 +2,7 @@ import type { Feature, Geometry, Position } from 'geojson'
 import { getCountries, getCountryByCode, getCountryFeatures } from './countries'
 import { getExtraCountryCentroid } from './extraMapCountries'
 import { getPhysicalFeature, haversineDistanceKm } from './physicalFeatures'
-import { getWorldRegion } from './worldRegions'
+import { getNearbyRegionAnswerIds, getRegionAnswer } from './regionBubbles'
 import type { HintView } from '../types'
 import { parseItemId } from '../types'
 
@@ -123,9 +123,13 @@ export function getHintView(itemId: string): HintView | null {
   }
 
   if (type === 'region') {
-    const region = getWorldRegion(key)
-    if (!region) return null
-    return buildHintView(region.coordinates, region.countryCodes[0])
+    const answer = getRegionAnswer(key)
+    if (!answer) return null
+    return {
+      center: answer.coordinates,
+      zoom: 1,
+      highlightCountryCodes: getNearbyRegionAnswerIds(key, 4),
+    }
   }
 
   const feature = getPhysicalFeature(key)

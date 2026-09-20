@@ -102,7 +102,7 @@ export function QuizPanel({
             {itemType === 'feature'
               ? 'What physical feature is marked on the map?'
               : itemType === 'region'
-                ? 'Which region is highlighted?'
+                ? 'Which region is marked by the highlighted blank?'
                 : 'Which country is highlighted?'}
           </p>
           <div className="mc-options">
@@ -129,7 +129,7 @@ export function QuizPanel({
             {itemType === 'feature'
               ? 'Name the highlighted physical feature'
               : itemType === 'region'
-                ? 'Name the highlighted region'
+                ? 'Name the region marked by the highlighted blank'
                 : 'Name the highlighted country'}
           </p>
           <form
@@ -234,7 +234,7 @@ export function QuizPanel({
                 lastAnswer.clickedName && (
                 <p className="feedback-sub">
                   {lastAnswer.targetType === 'region'
-                    ? 'Green = correct region · Red = where you clicked'
+                    ? 'Green = correct blank · Red = the blank you clicked'
                     : 'Green = correct country · Red = where you clicked'}
                 </p>
               )}

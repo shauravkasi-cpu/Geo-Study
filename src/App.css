@@ -606,6 +606,117 @@
   border: 1px solid var(--border);
 }
 
+.region-bubble-map {
+  width: 100%;
+  max-width: 980px;
+  background: #f8fafc;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  padding: 0.75rem 0.75rem 0.35rem;
+}
+
+.region-bubble-map-title {
+  margin: 0 0 0.15rem;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.01em;
+}
+
+.region-bubble {
+  pointer-events: auto;
+}
+
+.region-bubble rect {
+  fill: #ffffff;
+  stroke: #334155;
+  stroke-width: 1.1;
+}
+
+.region-bubble-map .region-bubble:hover rect {
+  stroke: #2563eb;
+  stroke-width: 1.55;
+}
+
+.region-bubble-wide rect {
+  stroke-width: 1.1;
+}
+
+.region-bubble-reveal rect {
+  fill: #dbeafe;
+  stroke: #2563eb;
+  stroke-width: 1.6;
+}
+
+.region-bubble-correct rect {
+  fill: #bbf7d0;
+  stroke: #15803d;
+  stroke-width: 1.6;
+}
+
+.region-bubble-wrong rect {
+  fill: #fecaca;
+  stroke: #b91c1c;
+  stroke-width: 1.6;
+}
+
+.region-bubble-hint rect {
+  fill: #ede9fe;
+  stroke: #7c3aed;
+  stroke-width: 1.4;
+}
+
+.region-bubble-dim rect {
+  fill: #f1f5f9;
+  stroke: #94a3b8;
+  opacity: 0.55;
+}
+
+.region-caribbean-box {
+  stroke: #64748b;
+  stroke-width: 1.15;
+  stroke-dasharray: 4 3;
+}
+
+.region-bubble-label {
+  font-size: 8.4px;
+  font-weight: 700;
+  fill: #0f172a;
+  pointer-events: none;
+}
+
+.region-study-page {
+  padding-bottom: 2rem;
+}
+
+.region-study-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.region-study-card {
+  padding: 0.5rem;
+}
+
+.region-study-card .region-bubble-map {
+  max-width: none;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+}
+
+[data-theme='dark'] .region-bubble-map {
+  background: #e2e8f0;
+}
+
+[data-theme='dark'] .region-bubble-map-title {
+  color: #0f172a;
+}
+
 .map-hint {
   text-align: center;
   font-size: 0.82rem;

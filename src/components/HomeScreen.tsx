@@ -178,8 +178,8 @@ export function ApHumanHub({
             <div className="ap-human-card-content">
               <span className="card-title">{AP_HUMAN_REGIONS_QUIZ_NAME}</span>
               <span className="card-desc">
-                {AP_HUMAN_REGIONS_STATS.bigPicture} world regions · {AP_HUMAN_REGIONS_STATS.closerLook}{' '}
-                subregions
+                {AP_HUMAN_REGIONS_STATS.bigPicture} big-picture labels · {AP_HUMAN_REGIONS_STATS.closerLook}{' '}
+                closer-look subregions
               </span>
             </div>
           </div>
